@@ -1,0 +1,18 @@
+I programmi di prova possono essere compilati e linkati usando il Makefile 
+allegato.
+Segue una breve descrizione dell'obiettivo di ogni programma di esempio.
+
+persp_sdl_gl: programma di visualizzazione interattiva di una funzione z=f(x,y);
+       implementa i vari parametri camera e procede alla visualizzazione
+       realizzando le trasformazioni di vista e di proiezione via software
+
+persp_cube_sdl_gl: programma di visualizzazione interattiva di un cubo mesh;
+       implementa i vari parametri camera e procede alla visualizzazione
+       realizzando le trasformazioni di vista e di proiezione via software
+
+persp_cube_sdl_gl3D: programma di visualizzazione interattiva di un cubo mesh;
+       implementa i vari parametri camera e procede alla visualizzazione
+       usando la pipeline OpenGL
+
+bezier3d: programma demo che usa opengl ed sdl senza GC_GraLib2; il soggetto
+          sono le curve 3D di Bezier e l'algoritmo di de Casteljau

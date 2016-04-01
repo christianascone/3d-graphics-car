@@ -1,0 +1,30 @@
+I programmi di prova possono essere compilati e linkati usando il Makefile 
+allegato.
+Segue una breve descrizione dell'obiettivo di ogni programma di esempio.
+
+persp_sdl: programma di visualizzazione interattiva di una funzione z=f(x,y);
+       implementa i vari parametri camera, ed effettua le trasformazioni di
+       vista e di proiezione in software; rappresenta la funzione discretizzata
+       in wire-frame
+
+persp_cube_sdl: programma di visualizzazione interattiva di un cubo mesh;
+       implementa i vari parametri camera, ed effettua le trasformazioni di
+       vista e di proiezione in software; rappresenta la mesh in wire-frame
+
+persp_cube_color: estensione del codice persp_cube_sdl.c per rappresentare
+                  la mesh a facce colorate (divide in triangoli 
+                  le facce quadrilatere).
+                  Commentando alcune linee di codice si puo' visionare la colorazione
+                  scorretta che si ha se non si effettua la correzione del parametro
+                  a causa della proiezione prospettica.
+                  Gestisce l'Hidden-Surface mediante back-face culling.
+
+persp_cube_image: estensione del codice persp_cube_sdl.c per rappresentare
+                  la mesh a facce texturate (divide in triangoli                                   
+                  le facce quadrilatere) con una immagine in formato .ppm;
+                  Carica l'immagine da file, disegna su una Surface con GC_PutPixel.
+                  Commentando alcune linee di codice si puo' visionare il texturing
+                  scorretto che capita se non si effettua la correzione del parametro
+                  a causa della proiezione prospettica.
+                  Gestisce l'Hidden-Surface mediante back-face culling.
+

@@ -1,0 +1,18 @@
+I programmi di prova possono essere compilati e linkati usando il Makefile 
+allegato.
+
+Segue una breve descrizione dell'obiettivo di ogni programma di esempio.
+
+rgb2gray: programma di caricamento e visualizzazione di immagini in formato standard .ppm;
+          esempio di modifica immagine per trasformarla da colori a livello di grigio.
+
+raster_draw_color: programma che rasterizza un triangolo facendo uso di coordinate
+                   baricentriche e 2^24 colori (true color);
+
+raster_draw_image: programma che texturizza un triangolo facendo uso di coordinate
+                   baricentriche e una immagine in formato .ppm; 
+	           Carica l'immagine da file e disegna su una SDL_Window
+
+line_clip: algoritmo di clipping 2D di linee di Cohen-Sutherland.
+
+scan_conv: algoritmo generale per scan conversion di un poligono di nv vertici.
