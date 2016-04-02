@@ -75,6 +75,8 @@ for(t = 0.1; t < 1; t+=0.1){
   
   SDL_RenderDrawLine(ren, oldX, oldY, newX, newY);
   
+  oldResult[0] = result[0];
+  oldResult[1] = result[1];
 }
 
     
