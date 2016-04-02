@@ -4,6 +4,7 @@
 
 #define DIM 100
 #define DEFAULT_PTSIZE  18
+#define MAX_PARAM_VALUE 1
 
 typedef struct RECT RECT;
 struct RECT
@@ -46,8 +47,9 @@ void draw_data (SDL_Renderer* ren, int n, VIEWPORT view, WINDOW win, float x[], 
 	py = y[1];
 	wind_view (px, py, &x1, &y1, view, win);
 
-	for (i = 2; i <= n; i++)
+	for (i = 0; i < n; i++)
 	{
+		printf("Dentro %d\n", i);
 		px = x[i];
 		py = y[i];
 
@@ -65,7 +67,7 @@ void draw_data (SDL_Renderer* ren, int n, VIEWPORT view, WINDOW win, float x[], 
 /*
  * Esegue il set dei dati e della Window 
 **/
-void setData (int n, WINDOW* rect, float x[], float y[])
+void setData (int *n, WINDOW* rect, float x[], float y[])
 {
 	int i;
 	float t, px, py;
@@ -76,7 +78,10 @@ void setData (int n, WINDOW* rect, float x[], float y[])
 	// 0 <= t <= 1
 	printf("*****************\n");
 	printf("* STAMPA VALORI *\n");
-	for (i = 0; i < n; i++){
+
+	
+	i = 0;
+	while(t < MAX_PARAM_VALUE){
 		px = t - 2*(sin(t));
 		py = 2 - 2*(cos(t));
 
@@ -85,15 +90,17 @@ void setData (int n, WINDOW* rect, float x[], float y[])
 		x[i]=px;
 		y[i]=py;
 		t+=0.1;
-		//printf("%s\n", );
+
+		i++;
 	}
 	printf("*  FINE STAMPA  *\n");
 
+	*n = i;
 
 	rect->xmin=rect->xmax=x[0];
 	rect->ymin=rect->ymax=y[0];
 
-	for (i = 1; i < n; i++)
+	for (i = 1; i < *n; i++)
 	{
 		if(x[i]<rect->xmin) rect->xmin=x[i];
 		else if(x[i]>rect->xmax){ 
@@ -169,7 +176,7 @@ int main (void)
 	GC_DrawText (ren, font, 255, 0, 0, 0, 255, 255, 255, 0, "Grafico Curva", 600, 50, shaded);
 	GC_DrawText (ren, font, 0, 0, 0, 0, 255, 255, 255, 0, "x = t - 2*(sin(t))", 600, 90, shaded);
 	GC_DrawText (ren, font, 0, 0, 0, 0, 255, 255, 255, 0, "y = 2 - 2*(cos(t))", 600, 120, shaded);
-	GC_DrawText (ren, font, 0, 0, 0, 0, 255, 255, 255, 0, "0<=t<=1", 600, 150, shaded);
+	GC_DrawText (ren, font, 0, 0, 0, 0, 255, 255, 255, 0, "0 <= t <= 1", 600, 150, shaded);
 	SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
 
 	sub_v.x = v.x + 10;
@@ -187,12 +194,9 @@ int main (void)
 //	SDL_RenderCopy(ren, tex, NULL, NULL);
 	SDL_RenderPresent(ren);
 
-	// Numero di valori da disegnare
-	n = 10;
-
 	do
 	{
-		setData (n, &fun_win, x, y);
+		setData (&n, &fun_win, x, y);
 
 		SDL_SetRenderDrawColor(ren, 240, 240, 240, 255);
 		SDL_RenderFillRect (ren, &sub_v);
@@ -205,7 +209,7 @@ int main (void)
 		//SDL_RenderCopy(ren, tex, NULL, NULL);
 		SDL_RenderPresent(ren);
 
-		printf ("\n <e> EXIT   <f> NEW DATA  ");
+		printf ("\n <e> EXIT");
 		while ((ch = getchar ()) != '\n' && ch != EOF);
 		scanf ("%c", &ch);
 	}
