@@ -24,12 +24,6 @@ void bezier_point(int rank, int k, int bezX[], int bezY[], float t, int result[]
   printf("*** Bezier ***\n");
   printf("rank %d, k %d\n", rank, k);
 
-  if(rank == k){
-    result[0] = bezX[0];
-    result[1] = bezY[0];
-
-    return;
-  }
   
   // sizeof x - k mi dice quanti punti ho da analizzare
 
@@ -38,6 +32,12 @@ void bezier_point(int rank, int k, int bezX[], int bezY[], float t, int result[]
     bezY[i] = (1-t)*bezY[i] + t*bezY[i+1];
 
     printf("Bezier point: k=%d - P%d -> x=%d, y=%d \n", k, i, bezX[i], bezY[i]);
+  }
+
+  if(rank == k){
+    result[0] = bezX[0];
+    result[1] = bezY[0];
+    return;
   }
 
   bezier_point(rank, k+1, bezX, bezY, t, result);
@@ -72,9 +72,9 @@ t = 1;
   printf("OldX %d, OldY %d \n", oldX, oldY);
   printf("newX %d, newY %d \n", newX, newY);
 
-  SDL_RenderDrawLine(ren, x[0], y[0], oldX, oldY);
+  
   SDL_RenderDrawLine(ren, oldX, oldY, newX, newY);
-  SDL_RenderDrawLine(ren, newX, newY, x[n], y[n]);
+  SDL_RenderDrawLine(ren, newX, newY, x[n-1], y[n-1]);
 //}
 
     
