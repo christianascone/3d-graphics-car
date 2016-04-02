@@ -44,7 +44,8 @@ void bezier_point(int rank, int k, int bezX[], int bezY[], float t, int result[]
 }
 
 void draw_bezier(SDL_Renderer *ren, int n, int x[], int y[], int bezX[], int bezY[]){
-  int i, rank, k, t;
+  int i, rank, k;
+  float t;
   int oldResult[2];
   int result[2];
 
@@ -60,8 +61,7 @@ void draw_bezier(SDL_Renderer *ren, int n, int x[], int y[], int bezX[], int bez
 
 bezier_point(rank, k+1, bezX, bezY, 0, oldResult);
 printf("OldX %d, OldY %d \n", oldResult[0], oldResult[1]);
-//for(t = 0.1; t < 1; t+=0.1){
-t = 1;
+for(t = 0.1; t < 1; t+=0.1){
   bezier_point(rank, k+1, bezX, bezY, t, result);
   int newX = result[0];
   int newY = result[1];
@@ -74,8 +74,8 @@ t = 1;
 
   
   SDL_RenderDrawLine(ren, oldX, oldY, newX, newY);
-  SDL_RenderDrawLine(ren, newX, newY, x[n-1], y[n-1]);
-//}
+  
+}
 
     
 // FOR con t che va da 0 a 1
