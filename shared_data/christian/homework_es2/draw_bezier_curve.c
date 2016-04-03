@@ -20,6 +20,17 @@ void redraw(int n, int x[], int y[],SDL_Renderer *ren)
  }
 }
 
+/*
+* Verifica se il punto relativo all'evento (xEvent e yEvent) è nei "confini" del punto esistente (xPoint e yPoint)
+*/
+int isInBound(int xPoint, int yPoint, int xEvent, int yEvent){
+  if((xEvent>=(xPoint-CIRCLE_RAD) && xEvent<=(xPoint+CIRCLE_RAD)) && (yEvent>=(yPoint-CIRCLE_RAD) && yEvent<=(yPoint+CIRCLE_RAD))){
+    return 0;
+  }else{
+    return 1;
+  }
+}
+
 /**
 * Formula per l'algoritmo di De Casteljau
 */
@@ -44,6 +55,9 @@ void bezier_point(int rank, int k, int bezX[], int bezY[], float t, int result[]
   bezier_point(rank, k+1, bezX, bezY, t, result);
 }
 
+/*
+* Disegna la curva di bezier di grado n-1, dove n è il numero di punti disegnati sullo schermo
+*/
 void draw_bezier(SDL_Renderer *ren, int n, int x[], int y[], int bezX[], int bezY[]){
   int i, rank, k;
   float t;
@@ -52,8 +66,9 @@ void draw_bezier(SDL_Renderer *ren, int n, int x[], int y[], int bezX[], int bez
 
   rank = n-1;
   k = 0;
-  printf("Bezier - grado: %d\n", rank);
+  printf("Disegno Bezier - grado: %d\n", rank);
 
+  // Copia dei punti di controllo nell'array per l'applicazione dell'algoritmo
   for(i = 0; i < n; i++){
     bezX[i]=x[i];
     bezY[i]=y[i];
@@ -84,12 +99,13 @@ int main(void)
   SDL_Renderer *ren;
   SDL_Event event;
   int vxmax,vymax;
-  int esc=1,i,j,n=0;
+  int esc=1,i,n=0;
   int x[DIM],y[DIM];
   int bezX[DIM],bezY[DIM]; 
   Uint32 windowID;
   int editing = 0;
   int editingIndex = 0;
+  int ok;
 
 
   if(SDL_Init(SDL_INIT_VIDEO)<0)
@@ -124,7 +140,7 @@ int main(void)
 
  printf("\nDisegno di una poligonale interattivamente: \n");
  printf("Dare i punti sulla finestra grafica con il mouse (button sinistro) \n");
- printf("Finire l'inserimento con il button destro \n");
+ printf("Per spostare un punto esistente, cliccare su di esso e successivamente cliccare sulla nuova posizione (button sinistro) \n");
  printf("Uscire dal programma con il tasto <ESC>  \n");
 
  while(esc)
@@ -145,7 +161,8 @@ int main(void)
     }else{
 
       for(i = 0; i < n; i++){
-        if((event.button.x>=(x[i]-CIRCLE_RAD) && event.button.x<=(x[i]+CIRCLE_RAD)) && (event.button.y>=(y[i]-CIRCLE_RAD) && event.button.y<=(y[i]+CIRCLE_RAD))){
+        ok = isInBound(x[i], y[i], event.button.x, event.button.y);
+        if(ok == 0){
           editing = 1;
           editingIndex = i;
         }
@@ -175,49 +192,36 @@ int main(void)
     if(n>2){
       draw_bezier(ren, n, x, y, bezX, bezY);
     }
-}
+  }
 
-  // Tasto destro: chiude il poligono
-if(event.button.button==3)
-{
- SDL_RenderDrawLine(ren, x[n-1], y[n-1], x[0], y[0]);
-
-  /* disegno artistico: definire DEBUG nel Makefile */
-  #ifdef DEBUG 
- for (i=0; i<n; i++)
-  for (j=i+1; j<n; j++)
-    SDL_RenderDrawLine(ren, x[i], y[i], x[j], y[j]);
-  n=0;
-  #endif
-}
-SDL_RenderPresent(ren);
-break;
+  SDL_RenderPresent(ren);
+  break;
   // Exit
-case SDL_KEYDOWN:
-if(event.key.keysym.sym == SDLK_ESCAPE)
-  esc=0;
-break;
+  case SDL_KEYDOWN:
+  if(event.key.keysym.sym == SDLK_ESCAPE)
+    esc=0;
+  break;
 
-case SDL_WINDOWEVENT:
-windowID = SDL_GetWindowID(win);
-if (event.window.windowID == windowID)  {
- switch (event.window.event)  {
-   case SDL_WINDOWEVENT_SIZE_CHANGED:  {
-     vxmax = event.window.data1;
-     vymax = event.window.data2;
+  case SDL_WINDOWEVENT:
+  windowID = SDL_GetWindowID(win);
+  if (event.window.windowID == windowID)  {
+   switch (event.window.event)  {
+     case SDL_WINDOWEVENT_SIZE_CHANGED:  {
+       vxmax = event.window.data1;
+       vymax = event.window.data2;
 //          printf("vxmax= %d \n vymax= %d \n", vxmax,vymax);
 
-     SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-     SDL_RenderClear(ren);
-     SDL_SetRenderDrawColor(ren, 255, 0, 50, 255);
-     redraw(n-1,x,y,ren);
+       SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+       SDL_RenderClear(ren);
+       SDL_SetRenderDrawColor(ren, 255, 0, 50, 255);
+       redraw(n-1,x,y,ren);
 
-     SDL_RenderPresent(ren);
-     break;
+       SDL_RenderPresent(ren);
+       break;
+     }
    }
  }
-}
-break;
+ break;
 
 }
 }
