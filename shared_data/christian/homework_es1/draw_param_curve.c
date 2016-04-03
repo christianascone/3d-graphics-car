@@ -5,6 +5,7 @@
 #define DIM 100
 #define DEFAULT_PTSIZE  18
 #define MAX_PARAM_VALUE 1
+#define T_STEP 0.02
 
 typedef struct RECT RECT;
 struct RECT
@@ -89,7 +90,7 @@ void setData (int *n, WINDOW* rect, float x[], float y[])
 		printf("py[%d] %f\n", i, py);
 		x[i]=px;
 		y[i]=py;
-		t+=0.1;
+		t+=T_STEP;
 
 		i++;
 	}
