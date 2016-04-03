@@ -87,6 +87,8 @@ int main(void)
   int x[DIM],y[DIM];
   int bezX[DIM],bezY[DIM]; 
   Uint32 windowID;
+  int editing = 0;
+  int editingIndex = 0;
 
 
   if(SDL_Init(SDL_INIT_VIDEO)<0)
@@ -133,8 +135,30 @@ int main(void)
     // Disegna un punto sullo schermo ed eventualmente lo collega al precedente
    if(event.button.button==1)
    {
-    x[n]=event.button.x;
-    y[n]=event.button.y;
+
+    if(editing == 1){
+      editing = 0;
+      printf("editingindex %d\n", editingIndex);
+      x[editingIndex]=event.button.x;
+      y[editingIndex]=event.button.y;  
+      n--;
+    }else{
+
+      for(i = 0; i < n; i++){
+        if(x[i]== event.button.x && y[i]== event.button.y){
+          editing = 1;
+          editingIndex = i;
+        }
+      }
+
+      if(editing == 1){
+        break;
+      }
+
+      x[n]=event.button.x;
+      y[n]=event.button.y;
+    }
+
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
     SDL_RenderClear(ren);
     SDL_SetRenderDrawColor(ren, 255, 0, 50, 255);
