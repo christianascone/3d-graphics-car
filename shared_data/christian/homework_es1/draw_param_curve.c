@@ -50,7 +50,6 @@ void draw_data (SDL_Renderer* ren, int n, VIEWPORT view, WINDOW win, float x[], 
 
 	for (i = 0; i < n; i++)
 	{
-		printf("Dentro %d\n", i);
 		px = x[i];
 		py = y[i];
 
