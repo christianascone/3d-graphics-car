@@ -5,6 +5,7 @@
 
 #define DIM 100
 #define T_STEP 0.02
+#define CIRCLE_RAD 3
 
 /*funzione di redraw*/
 void redraw(int n, int x[], int y[],SDL_Renderer *ren)
@@ -138,14 +139,13 @@ int main(void)
 
     if(editing == 1){
       editing = 0;
-      printf("editingindex %d\n", editingIndex);
       x[editingIndex]=event.button.x;
       y[editingIndex]=event.button.y;  
       n--;
     }else{
 
       for(i = 0; i < n; i++){
-        if(x[i]== event.button.x && y[i]== event.button.y){
+        if((event.button.x>=(x[i]-CIRCLE_RAD) && event.button.x<=(x[i]+CIRCLE_RAD)) && (event.button.y>=(y[i]-CIRCLE_RAD) && event.button.y<=(y[i]+CIRCLE_RAD))){
           editing = 1;
           editingIndex = i;
         }
@@ -165,7 +165,7 @@ int main(void)
     SDL_RenderPresent(ren);
     
     for(i = 0; i <= n; i++){
-      GC_FillCircle(ren,x[i],y[i],3);
+      GC_FillCircle(ren,x[i],y[i],CIRCLE_RAD);
       if(i>0){
         SDL_RenderDrawLine(ren, x[i-1], y[i-1], x[i], y[i]);
       }
