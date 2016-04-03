@@ -4,6 +4,7 @@
 #include "../GCGraLib2/GCGraLib2.h"
 
 #define DIM 100
+#define T_STEP 0.02
 
 /*funzione di redraw*/
 void redraw(int n, int x[], int y[],SDL_Renderer *ren)
@@ -18,20 +19,19 @@ void redraw(int n, int x[], int y[],SDL_Renderer *ren)
  }
 }
 
+/**
+* Formula per l'algoritmo di De Casteljau
+*/
+int de_casteljau_formula(int valueI, int valueII, float t){
+  return (1-t)*valueI + t*valueII;
+}
+
 void bezier_point(int rank, int k, int bezX[], int bezY[], float t, int result[]){
   int i;
 
-  printf("*** Bezier ***\n");
-  printf("rank %d, k %d\n", rank, k);
-
-  
-  // sizeof x - k mi dice quanti punti ho da analizzare
-
   for( i = 0; i <= rank-k; i++){
-    bezX[i] = (1-t)*bezX[i] + t*bezX[i+1];
-    bezY[i] = (1-t)*bezY[i] + t*bezY[i+1];
-
-    printf("Bezier point: k=%d - P%d -> x=%d, y=%d \n", k, i, bezX[i], bezY[i]);
+    bezX[i] = de_casteljau_formula(bezX[i], bezX[i+1], t);
+    bezY[i] = de_casteljau_formula(bezY[i], bezY[i+1], t);
   }
 
   if(rank == k){
@@ -51,37 +51,29 @@ void draw_bezier(SDL_Renderer *ren, int n, int x[], int y[], int bezX[], int bez
 
   rank = n-1;
   k = 0;
-  printf("Bezier rank: %d\n", rank);
+  printf("Bezier - grado: %d\n", rank);
 
   for(i = 0; i < n; i++){
-        bezX[i]=x[i];
-        bezY[i]=y[i];
-    }
+    bezX[i]=x[i];
+    bezY[i]=y[i];
+  }
 
 
-bezier_point(rank, k+1, bezX, bezY, 0, oldResult);
-printf("OldX %d, OldY %d \n", oldResult[0], oldResult[1]);
-for(t = 0.1; t < 1; t+=0.1){
-  bezier_point(rank, k+1, bezX, bezY, t, result);
-  int newX = result[0];
-  int newY = result[1];
+  bezier_point(rank, k+1, bezX, bezY, 0, oldResult);
+  for(t = T_STEP; t < 1; t+=T_STEP){
+    bezier_point(rank, k+1, bezX, bezY, t, result);
+    int newX = result[0];
+    int newY = result[1];
 
-  int oldX = oldResult[0];
-  int oldY = oldResult[1];
+    int oldX = oldResult[0];
+    int oldY = oldResult[1];
 
-  printf("OldX %d, OldY %d \n", oldX, oldY);
-  printf("newX %d, newY %d \n", newX, newY);
+    SDL_RenderDrawLine(ren, oldX, oldY, newX, newY);
 
-  
-  SDL_RenderDrawLine(ren, oldX, oldY, newX, newY);
-  
-  oldResult[0] = result[0];
-  oldResult[1] = result[1];
-}
+    oldResult[0] = result[0];
+    oldResult[1] = result[1];
+  }
 
-    
-// FOR con t che va da 0 a 1
-    //printf("Bezier point finale %d,%d\n", *(result + 0), *(result + 1));
 }
 
 /*semplice programma di prova di input da mouse e tastiera*/
@@ -143,56 +135,65 @@ int main(void)
    {
     x[n]=event.button.x;
     y[n]=event.button.y;
-    GC_FillCircle(ren,x[n],y[n],3);
-    if(n>0) 
-      SDL_RenderDrawLine(ren, x[n-1], y[n-1], x[n], y[n]);
+    SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+    SDL_RenderClear(ren);
+    SDL_SetRenderDrawColor(ren, 255, 0, 50, 255);
+    SDL_RenderPresent(ren);
+    
+    for(i = 0; i <= n; i++){
+      GC_FillCircle(ren,x[i],y[i],3);
+      if(i>0){
+        SDL_RenderDrawLine(ren, x[i-1], y[i-1], x[i], y[i]);
+      }
+    }
     n++;
 
-    if(n>2)
-    draw_bezier(ren, n, x, y, bezX, bezY);
-  }
+    if(n>2){
+      draw_bezier(ren, n, x, y, bezX, bezY);
+    }
+}
 
   // Tasto destro: chiude il poligono
-  if(event.button.button==3)
-  {
-   SDL_RenderDrawLine(ren, x[n-1], y[n-1], x[0], y[0]);
+if(event.button.button==3)
+{
+ SDL_RenderDrawLine(ren, x[n-1], y[n-1], x[0], y[0]);
 
   /* disegno artistico: definire DEBUG nel Makefile */
   #ifdef DEBUG 
-     for (i=0; i<n; i++)
-      for (j=i+1; j<n; j++)
-        SDL_RenderDrawLine(ren, x[i], y[i], x[j], y[j]);
-      n=0;
+ for (i=0; i<n; i++)
+  for (j=i+1; j<n; j++)
+    SDL_RenderDrawLine(ren, x[i], y[i], x[j], y[j]);
+  n=0;
   #endif
-  }
-  SDL_RenderPresent(ren);
-  break;
+}
+SDL_RenderPresent(ren);
+break;
   // Exit
-  case SDL_KEYDOWN:
-  if(event.key.keysym.sym == SDLK_ESCAPE)
-    esc=0;
-  break;
+case SDL_KEYDOWN:
+if(event.key.keysym.sym == SDLK_ESCAPE)
+  esc=0;
+break;
 
-  case SDL_WINDOWEVENT:
-  windowID = SDL_GetWindowID(win);
-  if (event.window.windowID == windowID)  {
-   switch (event.window.event)  {
-     case SDL_WINDOWEVENT_SIZE_CHANGED:  {
-       vxmax = event.window.data1;
-       vymax = event.window.data2;
+case SDL_WINDOWEVENT:
+windowID = SDL_GetWindowID(win);
+if (event.window.windowID == windowID)  {
+ switch (event.window.event)  {
+   case SDL_WINDOWEVENT_SIZE_CHANGED:  {
+     vxmax = event.window.data1;
+     vymax = event.window.data2;
 //          printf("vxmax= %d \n vymax= %d \n", vxmax,vymax);
 
-       SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-       SDL_RenderClear(ren);
-       SDL_SetRenderDrawColor(ren, 255, 0, 50, 255);
-       redraw(n-1,x,y,ren);
+     SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+     SDL_RenderClear(ren);
+     SDL_SetRenderDrawColor(ren, 255, 0, 50, 255);
+     redraw(n-1,x,y,ren);
 
-       SDL_RenderPresent(ren);
-       break;
-     }
+     SDL_RenderPresent(ren);
+     break;
    }
  }
- break;
+}
+break;
 
 }
 }
