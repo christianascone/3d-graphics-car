@@ -48,10 +48,11 @@ menu[0].rect.h = 30;
 strcpy(menu[0].text, "QUIT");
 //finewin = 0;
 
-menu[1].rect.x = 605;
-menu[1].rect.y = 20;
-menu[1].rect.w = 100;
-menu[1].rect.h = 100;
+// TODO il menu è stato spostato sopra all'intero riquadro del cubo
+menu[1].rect.x = 0;
+menu[1].rect.y = 0;
+menu[1].rect.w = 605;
+menu[1].rect.h = 600;
 strcpy(menu[1].text, "THETA");
 //tetawin=1;
 
@@ -409,6 +410,8 @@ while (done == 0)
    case SDL_MOUSEMOTION:
     if(myevent.motion.state==1)
     {
+      // Verifica quale rettangolo (voce del menu) è stato oggetto
+      // dell'evento
        opt_menu(menu,11,myevent.motion.x,myevent.motion.y,&choice);
        switch(choice)
        {
