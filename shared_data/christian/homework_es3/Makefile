@@ -13,21 +13,21 @@ GCGLib=GCGraLib2
 LDLIB = -L/usr/X11R6/lib -lX11 -lSDL2 -lSDL2_ttf -lSDL2_image -lm
 
 # ---- Files --- 
-SRC14= persp_cube_sdl.c $(GCGDIR)$(GCGLib).c $(GCGDIR)$(GCGLib).h
-OBJ14= persp_cube_sdl.o $(GCGDIR)$(GCGLib).o
+SRC14= persp_mesh.c $(GCGDIR)$(GCGLib).c $(GCGDIR)$(GCGLib).h
+OBJ14= persp_mesh.o $(GCGDIR)$(GCGLib).o
 
-BIN= persp_cube_sdl
+BIN= persp_mesh
 
 all:$(BIN) 
 
-persp_cube_sdl:$(OBJ14)
+persp_mesh:$(OBJ14)
 	$(CC) $(OBJ14) $(LDLIB) -o $@
 
 $(GCGDIR)$(GCGLib).o: $(GCGDIR)$(GCGLib).c $(GCGDIR)$(GCGLib).h
 	$(CC) $(CFLAGS) $(GCGDIR)$(GCGLib).c -o $@
 
-persp_cube_sdl.o:$(SRC14)
-	$(CC) $(CDEB) $(CFLAGS) persp_cube_sdl.c
+persp_mesh.o:$(SRC14)
+	$(CC) $(CDEB) $(CFLAGS) persp_mesh.c
 
 .c.o:
 	$(CC) $(CFLAGS) *.c
