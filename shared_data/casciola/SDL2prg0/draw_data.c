@@ -16,6 +16,8 @@ typedef RECT WINDOW;
 
 void get_scale (RECT r1, RECT r2, float *scx, float *scy)
 {
+	printf("GET_SCALE Rect1.xmax: %f Rect1.ymax: %f Rect1.xmin: %f Rect1.ymin: %f\n", r1.xmax, r1.ymax, r1.xmin, r1.ymin);
+	printf("GET_SCALE Rect2.xmax: %f Rect2.ymax: %f Rect2.xmin: %f Rect2.ymin: %f\n", r2.xmax, r2.ymax, r2.xmin, r2.ymin);
 	*scx = (r1.xmax - r1.xmin) / (r2.xmax - r2.xmin);
 	*scy = (r1.ymax - r1.ymin) / (r2.ymax - r2.ymin);
 }
@@ -50,6 +52,8 @@ float px, py;
 	{
 		px = x[i];
 		py = y[i];
+
+		printf("px %f e py %f\n", px, py);
 
 		wind_view (px, py, &x2, &y2, view, win);
 		SDL_RenderDrawLine(ren, x1, y1, x2, y2);
@@ -128,7 +132,7 @@ char ch;
 		return (2);
 	}
 
-	font = TTF_OpenFont ("/usr/share/fonts/truetype/freefont/FreeSans.ttf", DEFAULT_PTSIZE);
+	font = TTF_OpenFont ("FreeSans.ttf", DEFAULT_PTSIZE);
 	if (font == NULL)
 	{
 		fprintf (stderr, "Couldn't load font\n");
