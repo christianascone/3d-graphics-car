@@ -53,14 +53,10 @@ void init_menu(SDL_Renderer *ren, RECT menu[], float teta, float fi)
   menu[1].rect.y = 0;
   menu[1].rect.w = 605;
   menu[1].rect.h = 600;
-  strcpy(menu[1].text, "THETA");
+  //strcpy(menu[1].text, "THETA");
 //tetawin=1;
 
-  menu[2].rect.x = 605;
-  menu[2].rect.y = 150;
-  menu[2].rect.w = 100;
-  menu[2].rect.h = 100;
-  strcpy(menu[2].text, "PHI");
+  
 //fiwin = 2;
 
   menu[3].rect.x = 602;
@@ -420,7 +416,7 @@ while (done == 0)
         tmpy = tmpy / 300;
         teta -= tmpx;
         fi -= tmpy;
-        
+
         if(teta > 3){
           teta = -3;
         }
@@ -435,21 +431,6 @@ while (done == 0)
           fi = 3;
         }
 
-      //tmpx = myevent.motion.x;
-      //tmpy = myevent.motion.y;
-      //printf("x %f \n", tmpx);
-      //printf("y %f \n", tmpy);
-      //printf("teta %f \n", teta);
-
-      //tmpx = myevent.motion.xrel;
-      //tmpy = myevent.motion.yrel;
-      //printf("xrel %f \n", tmpx);
-      //printf("yrel %f \n", tmpy);
-      //printf("teta %f \n", atan2());
-
-
-
-        
 
         SDL_SetRenderDrawColor(ren,255,255,255,255);
         SDL_RenderFillRect(ren,&(menu[1].rect));
@@ -458,33 +439,14 @@ while (done == 0)
           menu[1].rect.x, menu[1].rect.y, shaded);
                 //GC_DrawRect(ren,menu[1].rect.x,menu[1].rect.y,menu[1].rect.w,menu[1].rect.h);
         SDL_RenderDrawRect(ren,&(menu[1].rect));
-        
+
 
         SDL_SetRenderDrawColor(ren,255,255,255,255);
         SDL_RenderFillRect(ren,&sub_v);
         SDL_SetRenderDrawColor(ren,0,0,0,255);
         draw_mesh(ren);
         break;
-	 case 2: //choice==fiwin 	  
-   tmpx = myevent.motion.x-(menu[2].rect.x+menu[2].rect.w/2);
-   tmpy = myevent.motion.y-(menu[2].rect.y+menu[2].rect.h/2);
-   SDL_SetRenderDrawColor(ren,255,255,255,255);
-   SDL_RenderFillRect(ren,&(menu[2].rect));
-   SDL_SetRenderDrawColor(ren,0,0,0,255);
-   GC_DrawText(ren, font, 0, 0, 0, 0, 255, 255, 255, 0, menu[2].text,
-    menu[2].rect.x, menu[2].rect.y, shaded);
-                //GC_DrawRect(ren,menu[2].rect.x,menu[2].rect.y,menu[2].rect.w,menu[2].rect.h);
-   SDL_RenderDrawRect(ren,&(menu[2].rect));
-   SDL_RenderDrawLine (ren, myevent.motion.x,myevent.motion.y,
-    menu[2].rect.x+menu[2].rect.w/2,menu[2].rect.y+menu[2].rect.h/2);
-
-   SDL_SetRenderDrawColor(ren,255,255,255,255);
-   SDL_RenderFillRect(ren,&sub_v);
-   SDL_SetRenderDrawColor(ren,0,0,0,255);
-   fi = atan2(tmpy,tmpx);
-   printf("fi %f \n", fi);
-   draw_mesh(ren);
-   break;
+	
  }
 }
 break;
