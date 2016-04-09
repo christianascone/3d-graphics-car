@@ -204,9 +204,9 @@ void define_object()
 /*diagonale faccia*/
   edge[12][0]=1;edge[12][1]=6;
 
-//copy_trasl(8,&nvert,x,y,z,13,&nedge,edge,2.0,0.0,0.0);
-//copy_trasl(8,&nvert,x,y,z,13,&nedge,edge,0.0,2.0,0.0);
-//copy_trasl(8,&nvert,x,y,z,13,&nedge,edge,0.0,0.0,2.0);
+  copy_trasl(8,&nvert,x,y,z,13,&nedge,edge,2.0,0.0,0.0);
+  copy_trasl(8,&nvert,x,y,z,13,&nedge,edge,0.0,2.0,0.0);
+  copy_trasl(8,&nvert,x,y,z,13,&nedge,edge,0.0,0.0,2.0);
 }
 
 /* trasformazione prospettica a tre punti di fuga (generico punto di vista) */
@@ -446,17 +446,17 @@ while (done == 0)
         SDL_SetRenderDrawColor(ren,0,0,0,255);
         draw_mesh(ren);
         break;
-	
- }
-}
-break;
+        
+      }
+    }
+    break;
 
-case SDL_MOUSEBUTTONDOWN:
-if(myevent.button.button==1)
-{
- opt_menu(menu,11,myevent.button.x,myevent.button.y,&choice);
- switch(choice)
- {
+    case SDL_MOUSEBUTTONDOWN:
+    if(myevent.button.button==1)
+    {
+     opt_menu(menu,11,myevent.button.x,myevent.button.y,&choice);
+     switch(choice)
+     {
             case 0: //choice == finewin 
             done = 1;
             break;
@@ -493,53 +493,53 @@ if(myevent.button.button==1)
       draw_mesh(ren);
       break;	
 	     case 10: //choice == downwin
-       SDL_SetRenderDrawColor(ren,255,255,255,255);
-       SDL_RenderFillRect(ren,&sub_v);
-       ssx=-cos(fi)*cos(teta);
-       ssy=-cos(fi)*sin(teta);
-       ssz=sin(fi);
-       csx-=sr*ssx;
-       csy-=sr*ssy;
-       csz-=sr*ssz;
-       SDL_SetRenderDrawColor(ren,0,0,0,255);
-       draw_mesh(ren);
-       break;
-	     case 3: //choice == ziwin
-       if (alpha-salpha >0)
-         alpha-=salpha;
-       SDL_SetRenderDrawColor(ren,255,255,255,255);
-       SDL_RenderFillRect(ren,&sub_v);
-       SDL_SetRenderDrawColor(ren,0,0,0,255);
-       draw_mesh(ren);
-       break;
-	     case 4: //choice == zowin
-      if (alpha+salpha <1.57)
-       alpha+=salpha;
-     SDL_SetRenderDrawColor(ren,255,255,255,255);
-     SDL_RenderFillRect(ren,&sub_v);
-     SDL_SetRenderDrawColor(ren,0,0,0,255);
-     draw_mesh(ren);
-     break;
-	     case 5: //choice == Dziwin
-      if (D-Dstep>0)
-       D-=Dstep;
-     SDL_SetRenderDrawColor(ren,255,255,255,255);
-     SDL_RenderFillRect(ren,&sub_v);
-     SDL_SetRenderDrawColor(ren,0,0,0,255);
-     draw_mesh(ren);
-     break;
-	     case 6: //choice == Dzowin
-      D+=Dstep;
       SDL_SetRenderDrawColor(ren,255,255,255,255);
       SDL_RenderFillRect(ren,&sub_v);
+      ssx=-cos(fi)*cos(teta);
+      ssy=-cos(fi)*sin(teta);
+      ssz=sin(fi);
+      csx-=sr*ssx;
+      csy-=sr*ssy;
+      csz-=sr*ssz;
       SDL_SetRenderDrawColor(ren,0,0,0,255);
       draw_mesh(ren);
       break;
-    }
-  }
-  break;     
-  case SDL_KEYDOWN:
-  if(myevent.key.keysym.sym == SDLK_ESCAPE)
+	     case 3: //choice == ziwin
+      if (alpha-salpha >0)
+       alpha-=salpha;
+     SDL_SetRenderDrawColor(ren,255,255,255,255);
+     SDL_RenderFillRect(ren,&sub_v);
+     SDL_SetRenderDrawColor(ren,0,0,0,255);
+     draw_mesh(ren);
+     break;
+	     case 4: //choice == zowin
+       if (alpha+salpha <1.57)
+         alpha+=salpha;
+       SDL_SetRenderDrawColor(ren,255,255,255,255);
+       SDL_RenderFillRect(ren,&sub_v);
+       SDL_SetRenderDrawColor(ren,0,0,0,255);
+       draw_mesh(ren);
+       break;
+	     case 5: //choice == Dziwin
+       if (D-Dstep>0)
+         D-=Dstep;
+       SDL_SetRenderDrawColor(ren,255,255,255,255);
+       SDL_RenderFillRect(ren,&sub_v);
+       SDL_SetRenderDrawColor(ren,0,0,0,255);
+       draw_mesh(ren);
+       break;
+	     case 6: //choice == Dzowin
+       D+=Dstep;
+       SDL_SetRenderDrawColor(ren,255,255,255,255);
+       SDL_RenderFillRect(ren,&sub_v);
+       SDL_SetRenderDrawColor(ren,0,0,0,255);
+       draw_mesh(ren);
+       break;
+     }
+   }
+   break;     
+   case SDL_KEYDOWN:
+   if(myevent.key.keysym.sym == SDLK_ESCAPE)
     done = 1;
   break; 
    }/* fine switch */ 	
