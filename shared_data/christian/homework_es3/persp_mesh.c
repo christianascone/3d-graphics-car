@@ -229,9 +229,9 @@ void trasf_prosp_gen(int *init,float x, float y, float z,
     /* trasformazione in coordinate del sistema osservatore */
 
     // Trasformazione precedente, senza View-Up vector
-    *xe = -steta*x + y*cteta;
-    *ye = -cteta*cfi*x - y*steta*cfi + z*sfi;
-    *ze = -x*cteta*sfi - y*steta*sfi - z*cfi + D;
+    *xe = -x*steta + y*cteta; //-x sinθ + y cosθ
+    *ye = -x*cteta*cfi - y*steta*cfi + z*sfi; //-x cosθ cosϕ -y sinθ cos ϕ + z sinϕ
+    *ze = -x*cteta*sfi - y*steta*sfi - z*cfi + D; //-x cosθ sinϕ -y sinθ sinϕ -z cosϕ + D
 
     // Trasformazione con View-Up vector
     xcom = -steta*x -cteta*cfi*y -z*cteta*sfi;
