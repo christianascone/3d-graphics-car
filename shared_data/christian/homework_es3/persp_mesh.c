@@ -5,6 +5,7 @@
 #define MAXVERT (100)
 #define MAXEDGE (200)
 #define DEFAULT_PTSIZE  12
+#define X_SPACE 712
 
 /* Dati per visualizzare un oggetto definito solo da vertici e lati*/
 float   x[MAXVERT],y[MAXVERT],z[MAXVERT];       /* coordinate vertici */
@@ -56,6 +57,10 @@ void init_menu(SDL_Renderer *ren, RECT menu[], float teta, float fi)
     //strcpy(menu[1].text, "THETA");
     //tetawin=1;
     
+    menu[2].rect.x = X_SPACE;
+    menu[2].rect.y = 0;
+    menu[2].rect.w = 605;
+    menu[2].rect.h = 600;
     
     //fiwin = 2;
     
@@ -211,7 +216,7 @@ void define_object()
 
 /* trasformazione prospettica a tre punti di fuga (generico punto di vista) */
 void trasf_prosp_gen(int *init,float x, float y, float z,
-                     float *xe, float *ye, float *ze)
+                     float *xe, float *ye, float *ze, float tetaV, float fiV)
 {
     static float steta,cteta,cfi,sfi;
     // Variabili per la viewup
@@ -220,10 +225,10 @@ void trasf_prosp_gen(int *init,float x, float y, float z,
     if (*init)
     {
         *init=0;
-        steta=sin(teta);
-        cteta=cos(teta);
-        sfi=sin(fi);
-        cfi=cos(fi);
+        steta=sin(tetaV);
+        cteta=cos(tetaV);
+        sfi=sin(fiV);
+        cfi=cos(fiV);
     }
     
     /* trasformazione in coordinate del sistema osservatore */
@@ -304,9 +309,48 @@ void draw_mesh(SDL_Renderer *ren)
     init=1;
     for (k=0;k<nvert;k++)
     {
-        trasf_prosp_gen(&init,x[k]-csx,y[k]-csy,z[k]-csz,&xe,&ye,&ze);
+        trasf_prosp_gen(&init,x[k]-csx,y[k]-csy,z[k]-csz,&xe,&ye,&ze, teta, fi);
         /* proiezione e trasformazione in coordinate schermo */
         xs[k] = (int)(Sx * ((di * xe)/ze - xwmin) + xvmin + 0.5);
+        ys[k] = (int)(Sy * (ywmin - (di * ye)/ze) + yvmax + 0.5);
+    }
+    
+    /* disegno mesh */
+    for (k = 0;k<nedge;k++)
+    {
+        t=edge[k][0];
+        u=edge[k][1];
+        SDL_RenderDrawLine(ren, xs[t],ys[t],xs[u],ys[u]);
+    }
+    /*printf("\n [D,teta,fi]= %f %f %f",D,teta,fi);*/
+    
+    SDL_RenderPresent(ren);
+}
+
+void draw_second_mesh(SDL_Renderer *ren)
+{
+    int t,u,k,init;
+    float xe,ye,ze;    /* coord. dell'osservatore */
+    
+    /* si ricalcola il semilato della window in base a D e ad alpha */
+    s=D*tan(alpha);
+    xwmin = -s ;
+    xwmax = s;
+    ywmin = -s;
+    ywmax = s;
+    
+    /* fattori di scala per trasf. Window-Viewport */
+    Sx = ((float)(xvmax) - (float)(xvmin))/(xwmax - xwmin);
+    Sy = ((float)(yvmax) -(float)(yvmin))/(ywmax - ywmin);
+    
+    /* il piano di proiezione viene definito a passare per l'origine */
+    di=D;
+    init=1;
+    for (k=0;k<nvert;k++)
+    {
+        trasf_prosp_gen(&init,x[k]-csx,y[k]-csy,z[k]-csz,&xe,&ye,&ze, teta+2, fi+2);
+        /* proiezione e trasformazione in coordinate schermo */
+        xs[k] = (int)(Sx * ((di * xe)/ze - xwmin) + xvmin + 0.5) + X_SPACE;
         ys[k] = (int)(Sy * (ywmin - (di * ye)/ze) + yvmax + 0.5);
     }
     
@@ -330,6 +374,7 @@ int main()
     TTF_Font *font;
     SDL_Event myevent;
     int choice, done=0;
+    float totalWidth;
     
     if (SDL_Init (SDL_INIT_VIDEO) < 0)
     {
@@ -354,6 +399,7 @@ int main()
     v.x = 0;
     v.y = 0;
     v.w = 720;
+    totalWidth = v.w + X_SPACE;
     v.h = 600;
     xvmin = v.x+5;
     yvmin = v.y+5;
@@ -368,7 +414,7 @@ int main()
     bsub_v.w=sub_v.w+4;
     bsub_v.h=sub_v.h+4;
     
-    win= SDL_CreateWindow("View Cube Model", 0, 0, v.w, v.h, SDL_WINDOW_RESIZABLE);
+    win= SDL_CreateWindow("View Cube Model", 0, 0, totalWidth, v.h, SDL_WINDOW_RESIZABLE);
     if(win==NULL){
         fprintf(stderr,"SDL_CreateWindow Error: %s\n",SDL_GetError());
         SDL_Quit();
@@ -400,6 +446,7 @@ int main()
     define_object();   /* determinazione mesh oggetto */
     define_view();  /*calcolo dei parametri di vista */
     draw_mesh(ren);
+    draw_second_mesh(ren);
     
     //Disegnare tutte le volte, anche per eventi intermedi,
     //rallenta tutto senza dare un contributo all'immagine finale.
@@ -446,20 +493,23 @@ int main()
                                     fi = 3;
                                 }
                                 
+
                                 
                                 SDL_SetRenderDrawColor(ren,255,255,255,255);
                                 SDL_RenderFillRect(ren,&(menu[1].rect));
+                                SDL_RenderFillRect(ren,&(menu[2].rect));
                                 SDL_SetRenderDrawColor(ren,0,0,0,255);
                                 GC_DrawText(ren, font, 0, 0, 0, 0, 255, 255, 255, 0, menu[1].text,
                                             menu[1].rect.x, menu[1].rect.y, shaded);
                                 //GC_DrawRect(ren,menu[1].rect.x,menu[1].rect.y,menu[1].rect.w,menu[1].rect.h);
                                 SDL_RenderDrawRect(ren,&(menu[1].rect));
-                                
+                                SDL_RenderDrawRect(ren,&(menu[2].rect));
                                 
                                 SDL_SetRenderDrawColor(ren,255,255,255,255);
                                 SDL_RenderFillRect(ren,&sub_v);
                                 SDL_SetRenderDrawColor(ren,0,0,0,255);
                                 draw_mesh(ren);
+                                draw_second_mesh(ren);
                                 break;
                                 
                         }
