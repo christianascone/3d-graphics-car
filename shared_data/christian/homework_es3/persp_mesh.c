@@ -120,16 +120,32 @@ void init_menu(SDL_Renderer *ren, RECT menu[], float teta, float fi)
     strcpy(menu[10].text, "DOWN");
     //downwin = 10;
     
-    SDL_RenderDrawLine(ren, menu[2].rect.x+menu[2].rect.w/2, menu[2].rect.y+menu[2].rect.h/2,
-                       (int)(menu[2].rect.w/2)*cos(fi)+menu[2].rect.x+menu[2].rect.w/2,
-                       (int)(menu[2].rect.h/2)*sin(fi)+menu[2].rect.y+menu[2].rect.h/2);
+    menu[11].rect.x = 605;
+    menu[11].rect.y = 20;
+    menu[11].rect.w = 100;
+    menu[11].rect.h = 100;
+    strcpy(menu[11].text, "THETA");
+    //tetawin=1;
+    
+    menu[12].rect.x = 605;
+    menu[12].rect.y = 150;
+    menu[12].rect.w = 100;
+    menu[12].rect.h = 100;
+    strcpy(menu[12].text, "PHI");
+    
+    SDL_RenderDrawLine(ren, menu[11].rect.x+menu[11].rect.w/2, menu[11].rect.y+menu[11].rect.h/2,
+                       (int)(menu[11].rect.w/2)*cos(teta)+menu[11].rect.x+menu[11].rect.w/2,
+                       (int)(menu[11].rect.h/2)*sin(teta)+menu[11].rect.y+menu[11].rect.h/2);
+    SDL_RenderDrawLine(ren, menu[12].rect.x+menu[12].rect.w/2, menu[12].rect.y+menu[12].rect.h/2,
+                       (int)(menu[12].rect.w/2)*cos(fi)+menu[12].rect.x+menu[12].rect.w/2,
+                       (int)(menu[12].rect.h/2)*sin(fi)+menu[12].rect.y+menu[12].rect.h/2);
 }
 
 void draw_menu(RECT menu[], SDL_Renderer *ren, TTF_Font *font)
 {
     int i;
     
-    for( i=0 ; i<=10 ; i++ )
+    for( i=0 ; i<=12 ; i++ )
     {
         GC_DrawText(ren, font, 0, 0, 0, 0, 255, 255, 255, 0, menu[i].text,
                     menu[i].rect.x, menu[i].rect.y, shaded);
@@ -221,7 +237,7 @@ void trasf_prosp_gen(int *init,float x, float y, float z,
     static float steta,cteta,cfi,sfi;
     // Variabili per la viewup
     float xcom, ycom, zcom;
-
+    
     if (*init)
     {
         *init=0;
@@ -232,19 +248,19 @@ void trasf_prosp_gen(int *init,float x, float y, float z,
     }
     
     /* trasformazione in coordinate del sistema osservatore */
-
+    
     // Trasformazione precedente, senza View-Up vector
     // Matrice B
     *xe = -x*steta + y*cteta; //-x sinθ + y cosθ
     *ye = -x*cteta*cfi - y*steta*cfi + z*sfi; //-x cosθ cosϕ -y sinθ cos ϕ + z sinϕ
     *ze = -x*cteta*sfi - y*steta*sfi - z*cfi + D; //-x cosθ sinϕ -y sinθ sinϕ -z cosϕ + D
-
+    
     // Trasformazione con View-Up vector (inversione matrice)
     // Matrice A = B^-1
     xcom = -steta*x -cteta*cfi*y -z*cteta*sfi;
     ycom = x*cteta  -cfi*steta*y -z*steta*sfi;
     zcom = y*sfi - z*cfi + D;
-
+    
     *xe=xcom;
     *ye=ycom;
     *ze=zcom;
@@ -288,13 +304,13 @@ void define_view()
     
 }
 
-void draw_mesh(SDL_Renderer *ren)
+void draw_mesh(SDL_Renderer *ren, float right_space, float D_add, float teta_add, float fi_add)
 {
     int t,u,k,init;
     float xe,ye,ze;    /* coord. dell'osservatore */
     
     /* si ricalcola il semilato della window in base a D e ad alpha */
-    s=D*tan(alpha);
+    s=(D+D_add)*tan(alpha);
     xwmin = -s ;
     xwmax = s;
     ywmin = -s;
@@ -309,9 +325,9 @@ void draw_mesh(SDL_Renderer *ren)
     init=1;
     for (k=0;k<nvert;k++)
     {
-        trasf_prosp_gen(&init,x[k]-csx,y[k]-csy,z[k]-csz,&xe,&ye,&ze, teta, fi);
+        trasf_prosp_gen(&init,x[k]-csx,y[k]-csy,z[k]-csz,&xe,&ye,&ze, teta+teta_add, fi+fi_add);
         /* proiezione e trasformazione in coordinate schermo */
-        xs[k] = (int)(Sx * ((di * xe)/ze - xwmin) + xvmin + 0.5);
+        xs[k] = (int)(Sx * ((di * xe)/ze - xwmin) + xvmin + 0.5) + right_space;
         ys[k] = (int)(Sy * (ywmin - (di * ye)/ze) + yvmax + 0.5);
     }
     
@@ -327,43 +343,14 @@ void draw_mesh(SDL_Renderer *ren)
     SDL_RenderPresent(ren);
 }
 
+void draw_first_mesh(SDL_Renderer *ren)
+{
+    draw_mesh(ren, 0, 0, 0, 0);
+}
+
 void draw_second_mesh(SDL_Renderer *ren)
 {
-    int t,u,k,init;
-    float xe,ye,ze;    /* coord. dell'osservatore */
-    
-    /* si ricalcola il semilato della window in base a D e ad alpha */
-    s=D*tan(alpha);
-    xwmin = -s ;
-    xwmax = s;
-    ywmin = -s;
-    ywmax = s;
-    
-    /* fattori di scala per trasf. Window-Viewport */
-    Sx = ((float)(xvmax) - (float)(xvmin))/(xwmax - xwmin);
-    Sy = ((float)(yvmax) -(float)(yvmin))/(ywmax - ywmin);
-    
-    /* il piano di proiezione viene definito a passare per l'origine */
-    di=D;
-    init=1;
-    for (k=0;k<nvert;k++)
-    {
-        trasf_prosp_gen(&init,x[k]-csx,y[k]-csy,z[k]-csz,&xe,&ye,&ze, teta+2, fi+2);
-        /* proiezione e trasformazione in coordinate schermo */
-        xs[k] = (int)(Sx * ((di * xe)/ze - xwmin) + xvmin + 0.5) + X_SPACE;
-        ys[k] = (int)(Sy * (ywmin - (di * ye)/ze) + yvmax + 0.5);
-    }
-    
-    /* disegno mesh */
-    for (k = 0;k<nedge;k++)
-    {
-        t=edge[k][0];
-        u=edge[k][1];
-        SDL_RenderDrawLine(ren, xs[t],ys[t],xs[u],ys[u]);
-    }
-    /*printf("\n [D,teta,fi]= %f %f %f",D,teta,fi);*/
-    
-    SDL_RenderPresent(ren);
+    draw_mesh(ren, X_SPACE, Dstep*10, 2, 2);
 }
 
 int main()
@@ -445,7 +432,7 @@ int main()
     draw_menu(menu,ren,font);
     define_object();   /* determinazione mesh oggetto */
     define_view();  /*calcolo dei parametri di vista */
-    draw_mesh(ren);
+    draw_first_mesh(ren);
     draw_second_mesh(ren);
     
     //Disegnare tutte le volte, anche per eventi intermedi,
@@ -467,7 +454,7 @@ int main()
                     {
                         // Verifica quale rettangolo (voce del menu) è stato oggetto
                         // dell'evento
-                        opt_menu(menu,11,myevent.motion.x,myevent.motion.y,&choice);
+                        opt_menu(menu,12,myevent.motion.x,myevent.motion.y,&choice);
                         switch(choice)
                         {
                             case 1: //choice==tetawin
@@ -493,7 +480,7 @@ int main()
                                     fi = 3;
                                 }
                                 
-
+                                
                                 
                                 SDL_SetRenderDrawColor(ren,255,255,255,255);
                                 SDL_RenderFillRect(ren,&(menu[1].rect));
@@ -508,13 +495,61 @@ int main()
                                 SDL_SetRenderDrawColor(ren,255,255,255,255);
                                 SDL_RenderFillRect(ren,&sub_v);
                                 SDL_SetRenderDrawColor(ren,0,0,0,255);
-                                draw_mesh(ren);
+                                draw_first_mesh(ren);
                                 draw_second_mesh(ren);
                                 break;
+                            case 11: //choice==tetawin
+                                tmpx = myevent.motion.x-(menu[11].rect.x+menu[11].rect.w/2);
+                                tmpy = myevent.motion.y-(menu[11].rect.y+menu[11].rect.h/2);
+                                teta = atan2(tmpy,tmpx);
+                                SDL_SetRenderDrawColor(ren,255,255,255,255);
+                                SDL_RenderFillRect(ren,&(menu[1].rect));
+                                SDL_RenderFillRect(ren,&(menu[2].rect));
+                                SDL_RenderFillRect(ren,&(menu[11].rect));
+                                SDL_SetRenderDrawColor(ren,0,0,0,255);
+                                GC_DrawText(ren, font, 0, 0, 0, 0, 255, 255, 255, 0, menu[11].text,
+                                            menu[11].rect.x, menu[11].rect.y, shaded);
                                 
+                                SDL_RenderDrawRect(ren,&(menu[1].rect));
+                                SDL_RenderDrawRect(ren,&(menu[2].rect));
+                                SDL_RenderDrawRect(ren,&(menu[11].rect));
+                                SDL_RenderDrawLine(ren, myevent.motion.x,myevent.motion.y,
+                                                   menu[11].rect.x+menu[11].rect.w/2,menu[11].rect.y+menu[11].rect.h/2);
+                                
+                                SDL_SetRenderDrawColor(ren,255,255,255,255);
+                                SDL_RenderFillRect(ren,&sub_v);
+                                SDL_SetRenderDrawColor(ren,0,0,0,255);
+                                draw_first_mesh(ren);
+                                draw_second_mesh(ren);
+                                break;
+                            case 12: //choice==fiwin
+                                tmpx = myevent.motion.x-(menu[12].rect.x+menu[12].rect.w/2);
+                                tmpy = myevent.motion.y-(menu[12].rect.y+menu[12].rect.h/2);
+                                fi = atan2(tmpy,tmpx);
+                                
+                                SDL_SetRenderDrawColor(ren,255,255,255,255);
+                                SDL_RenderFillRect(ren,&(menu[1].rect));
+                                SDL_RenderFillRect(ren,&(menu[2].rect));
+                                SDL_RenderFillRect(ren,&(menu[12].rect));
+                                SDL_SetRenderDrawColor(ren,0,0,0,255);
+                                GC_DrawText(ren, font, 0, 0, 0, 0, 255, 255, 255, 0, menu[12].text,menu[12].rect.x, menu[12].rect.y, shaded);
+                                
+                                SDL_RenderDrawRect(ren,&(menu[1].rect));
+                                SDL_RenderDrawRect(ren,&(menu[2].rect));
+                                SDL_RenderDrawRect(ren,&(menu[12].rect));
+                                SDL_RenderDrawLine (ren, myevent.motion.x,myevent.motion.y, menu[12].rect.x+menu[12].rect.w/2,menu[12].rect.y+menu[12].rect.h/2);
+                                
+                                SDL_SetRenderDrawColor(ren,255,255,255,255);
+                                SDL_RenderFillRect(ren,&sub_v);
+                                SDL_SetRenderDrawColor(ren,0,0,0,255);
+                                draw_first_mesh(ren);
+                                draw_second_mesh(ren);
+                                break;
                         }
                     }
                     break;
+                    
+                    
                     
                 case SDL_MOUSEBUTTONDOWN:
                     if(myevent.button.button==1)
@@ -533,7 +568,7 @@ int main()
                                 csx-=sr*ssx;
                                 csy-=sr*ssy;
                                 SDL_SetRenderDrawColor(ren,0,0,0,255);
-                                draw_mesh(ren);
+                                draw_first_mesh(ren);
                                 break;
                             case 8: //choice == leftwin
                                 SDL_SetRenderDrawColor(ren,255,255,255,255);
@@ -543,7 +578,7 @@ int main()
                                 csx+=sr*ssx;
                                 csy+=sr*ssy;
                                 SDL_SetRenderDrawColor(ren,0,0,0,255);
-                                draw_mesh(ren);
+                                draw_first_mesh(ren);
                                 break;
                             case 9: //choice == upwin
                                 SDL_SetRenderDrawColor(ren,255,255,255,255);
@@ -555,8 +590,8 @@ int main()
                                 csy+=sr*ssy;
                                 csz+=sr*ssz;
                                 SDL_SetRenderDrawColor(ren,0,0,0,255);
-                                draw_mesh(ren);
-                                break;	
+                                draw_first_mesh(ren);
+                                break;
                             case 10: //choice == downwin
                                 SDL_SetRenderDrawColor(ren,255,255,255,255);
                                 SDL_RenderFillRect(ren,&sub_v);
@@ -567,7 +602,7 @@ int main()
                                 csy-=sr*ssy;
                                 csz-=sr*ssz;
                                 SDL_SetRenderDrawColor(ren,0,0,0,255);
-                                draw_mesh(ren);
+                                draw_first_mesh(ren);
                                 break;
                             case 3: //choice == ziwin
                                 if (alpha-salpha >0)
@@ -575,7 +610,7 @@ int main()
                                 SDL_SetRenderDrawColor(ren,255,255,255,255);
                                 SDL_RenderFillRect(ren,&sub_v);
                                 SDL_SetRenderDrawColor(ren,0,0,0,255);
-                                draw_mesh(ren);
+                                draw_first_mesh(ren);
                                 break;
                             case 4: //choice == zowin
                                 if (alpha+salpha <1.57)
@@ -583,7 +618,7 @@ int main()
                                 SDL_SetRenderDrawColor(ren,255,255,255,255);
                                 SDL_RenderFillRect(ren,&sub_v);
                                 SDL_SetRenderDrawColor(ren,0,0,0,255);
-                                draw_mesh(ren);
+                                draw_first_mesh(ren);
                                 break;
                             case 5: //choice == Dziwin
                                 if (D-Dstep>0)
@@ -591,14 +626,14 @@ int main()
                                 SDL_SetRenderDrawColor(ren,255,255,255,255);
                                 SDL_RenderFillRect(ren,&sub_v);
                                 SDL_SetRenderDrawColor(ren,0,0,0,255);
-                                draw_mesh(ren);
+                                draw_first_mesh(ren);
                                 break;
                             case 6: //choice == Dzowin
                                 D+=Dstep;
                                 SDL_SetRenderDrawColor(ren,255,255,255,255);
                                 SDL_RenderFillRect(ren,&sub_v);
                                 SDL_SetRenderDrawColor(ren,0,0,0,255);
-                                draw_mesh(ren);
+                                draw_first_mesh(ren);
                                 break;
                         }
                     }
