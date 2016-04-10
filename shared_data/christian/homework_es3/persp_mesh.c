@@ -214,7 +214,7 @@ void trasf_prosp_gen(int *init,float x, float y, float z,
                      float *xe, float *ye, float *ze)
 {
     static float steta,cteta,cfi,sfi;
-    // Variabili per la viewport
+    // Variabili per la viewup
     float xcom, ycom, zcom;
 
     if (*init)
@@ -229,11 +229,13 @@ void trasf_prosp_gen(int *init,float x, float y, float z,
     /* trasformazione in coordinate del sistema osservatore */
 
     // Trasformazione precedente, senza View-Up vector
+    // Matrice B
     *xe = -x*steta + y*cteta; //-x sinθ + y cosθ
     *ye = -x*cteta*cfi - y*steta*cfi + z*sfi; //-x cosθ cosϕ -y sinθ cos ϕ + z sinϕ
     *ze = -x*cteta*sfi - y*steta*sfi - z*cfi + D; //-x cosθ sinϕ -y sinθ sinϕ -z cosϕ + D
 
-    // Trasformazione con View-Up vector
+    // Trasformazione con View-Up vector (inversione matrice)
+    // Matrice A = B^-1
     xcom = -steta*x -cteta*cfi*y -z*cteta*sfi;
     ycom = x*cteta  -cfi*steta*y -z*steta*sfi;
     zcom = y*sfi - z*cfi + D;
