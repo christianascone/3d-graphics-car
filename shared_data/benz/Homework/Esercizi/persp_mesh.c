@@ -119,11 +119,17 @@ void init_menu(SDL_Renderer *ren, RECT menu[], float teta, float fi)
     strcpy(menu[10].text, "DOWN");
     //downwin = 10;
 
-		menu[11].rect.x = xvmin;
+	menu[11].rect.x = xvmin;
     menu[11].rect.y = yvmin;
     menu[11].rect.w = xvmax;
     menu[11].rect.h = yvmax;
     strcpy(menu[11].text, "RENDER");
+
+    menu[12].rect.x = xvmin + 700;
+    menu[12].rect.y = yvmin;
+    menu[12].rect.w = xvmax;
+    menu[12].rect.h = yvmax;
+    strcpy(menu[12].text, "RENDER");
     //downwin = 10;
 
 
@@ -226,7 +232,7 @@ void define_object()
 
 /* trasformazione prospettica a tre punti di fuga (generico punto di vista) */
 void trasf_prosp_gen(int *init,float x, float y, float z,
-float *xe, float *ye, float *ze)
+float *xe, float *ye, float *ze, float tetaV, float fiV)
 {
     static float steta,cteta,cfi,sfi;
     float xcom, ycom, zcom;
@@ -234,10 +240,10 @@ float *xe, float *ye, float *ze)
     if (*init)
     {
         *init=0;
-        steta=sin(teta);
-        cteta=cos(teta);
-        sfi=sin(fi);
-        cfi=cos(fi);
+        steta=sin(tetaV);
+        cteta=cos(tetaV);
+        sfi=sin(fiV);
+        cfi=cos(fiV);
     }
 
     /* trasformazione in coordinate del sistema osservatore */
@@ -319,10 +325,50 @@ void draw_mesh(SDL_Renderer *ren)
     init=1;
     for (k=0;k<nvert;k++)
     {
-        trasf_prosp_gen(&init,x[k]-csx,y[k]-csy,z[k]-csz,&xe,&ye,&ze);
+        trasf_prosp_gen(&init,x[k]-csx,y[k]-csy,z[k]-csz,&xe,&ye,&ze, teta, fi);
         //gluLookAt(&init,x[k]-csx,y[k]-csy,z[k]-csz,&xe,&ye,&ze);
         /* proiezione e trasformazione in coordinate schermo */
         xs[k] = (int)(Sx * ((di * xe)/ze - xwmin) + xvmin + 0.5);
+        ys[k] = (int)(Sy * (ywmin - (di * ye)/ze) + yvmax + 0.5);
+    }
+
+    /* disegno mesh */
+    for (k = 0;k<nedge;k++)
+    {
+        t=edge[k][0];
+        u=edge[k][1];
+        SDL_RenderDrawLine(ren, xs[t],ys[t],xs[u],ys[u]);
+    }
+    //printf("n [D,teta,fi]= %f %f %f",D,teta,fi);
+
+    SDL_RenderPresent(ren);
+}
+
+void draw_second_mesh(SDL_Renderer *ren)
+{
+    int t,u,k,init;
+    float xe,ye,ze;    /* coord. dell'osservatore */
+
+    /* si ricalcola il semilato della window in base a D e ad alpha */
+    s=D*tan(alpha);
+    xwmin = -s ;
+    xwmax = s;
+    ywmin = -s;
+    ywmax = s;
+
+    /* fattori di scala per trasf. Window-Viewport */
+    Sx = ((float)(xvmax) - (float)(xvmin))/(xwmax - xwmin);
+    Sy = ((float)(yvmax) -(float)(yvmin))/(ywmax - ywmin);
+
+    /* il piano di proiezione viene definito a passare per l'origine */
+    di=D;
+    init=1;
+    for (k=0;k<nvert;k++)
+    {
+        trasf_prosp_gen(&init,x[k]-csx,y[k]-csy,z[k]-csz,&xe,&ye,&ze, teta + 2, fi + 2);
+        //gluLookAt(&init,x[k]-csx,y[k]-csy,z[k]-csz,&xe,&ye,&ze);
+        /* proiezione e trasformazione in coordinate schermo */
+        xs[k] = (int)(Sx * ((di * xe)/ze - xwmin) + xvmin + 0.5) + 700;
         ys[k] = (int)(Sy * (ywmin - (di * ye)/ze) + yvmax + 0.5);
     }
 
@@ -383,7 +429,7 @@ int main()
     bsub_v.w=sub_v.w+4;
     bsub_v.h=sub_v.h+4;
 
-    win = SDL_CreateWindow("View Cube Model", 0, 0, v.w, v.h, SDL_WINDOW_RESIZABLE);
+    win = SDL_CreateWindow("View Cube Model", 0, 0, v.w + 700, v.h, SDL_WINDOW_RESIZABLE);
     if(win==NULL){
         fprintf(stderr,"SDL_CreateWindow Error: %sn",SDL_GetError());
         SDL_Quit();
@@ -415,7 +461,7 @@ int main()
     define_object();   /* determinazione mesh oggetto */
     define_view();  /*calcolo dei parametri di vista */
     draw_mesh(ren);
-
+draw_second_mesh(ren);
     //Disegnare tutte le volte, anche per eventi intermedi,
     //rallenta tutto senza dare un contributo all'immagine finale.
     //Gli eventi si possono scremare in questo modo:
@@ -440,11 +486,13 @@ int main()
                         teta = atan2(tmpy,tmpx);
                         SDL_SetRenderDrawColor(ren,255,255,255,255);
                         SDL_RenderFillRect(ren,&(menu[1].rect));
+                        SDL_RenderFillRect(ren,&(menu[12].rect));
                         SDL_SetRenderDrawColor(ren,0,0,0,255);
                         GC_DrawText(ren, font, 0, 0, 0, 0, 255, 255, 255, 0, menu[1].text,
                         menu[1].rect.x, menu[1].rect.y, shaded);
 
-												SDL_RenderDrawRect(ren,&(menu[1].rect));
+						SDL_RenderDrawRect(ren,&(menu[1].rect));
+                        SDL_RenderDrawRect(ren,&(menu[12].rect));
                         SDL_RenderDrawLine(ren, myevent.motion.x,myevent.motion.y,
                         menu[1].rect.x+menu[1].rect.w/2,menu[1].rect.y+menu[1].rect.h/2);
 
@@ -452,7 +500,7 @@ int main()
                         SDL_RenderFillRect(ren,&sub_v);
                         SDL_SetRenderDrawColor(ren,0,0,0,255);
                         draw_mesh(ren);
-
+                        draw_second_mesh(ren);
                         break;
                         case 2: //choice==fiwin
                         tmpx = myevent.motion.x-(menu[2].rect.x+menu[2].rect.w/2);
@@ -460,10 +508,12 @@ int main()
 
                         SDL_SetRenderDrawColor(ren,255,255,255,255);
                         SDL_RenderFillRect(ren,&(menu[2].rect));
+                        SDL_RenderFillRect(ren,&(menu[12].rect));
                         SDL_SetRenderDrawColor(ren,0,0,0,255);
                         GC_DrawText(ren, font, 0, 0, 0, 0, 255, 255, 255, 0, menu[2].text,menu[2].rect.x, menu[2].rect.y, shaded);
 
-												SDL_RenderDrawRect(ren,&(menu[2].rect));
+						SDL_RenderDrawRect(ren,&(menu[2].rect));
+                        SDL_RenderDrawRect(ren,&(menu[12].rect));
                         SDL_RenderDrawLine (ren, myevent.motion.x,myevent.motion.y, menu[2].rect.x+menu[2].rect.w/2,menu[2].rect.y+menu[2].rect.h/2);
 
                         SDL_SetRenderDrawColor(ren,255,255,255,255);
@@ -471,6 +521,7 @@ int main()
                         SDL_SetRenderDrawColor(ren,0,0,0,255);
                         fi = atan2(tmpy,tmpx);
                         draw_mesh(ren);
+                        draw_second_mesh(ren);
                         break;
 												case 11:
 
@@ -481,11 +532,13 @@ int main()
                         fi = atan2(tmpy,1);
                         SDL_SetRenderDrawColor(ren,255,255,255,255);
                         SDL_RenderFillRect(ren,&(menu[1].rect));
+                        SDL_RenderFillRect(ren,&(menu[12].rect));
                         SDL_SetRenderDrawColor(ren,0,0,0,255);
                         GC_DrawText(ren, font, 0, 0, 0, 0, 255, 255, 255, 0, menu[1].text,
                         menu[1].rect.x, menu[1].rect.y, shaded);
 
-												SDL_RenderDrawRect(ren,&(menu[1].rect));
+						SDL_RenderDrawRect(ren,&(menu[1].rect));
+                        SDL_RenderDrawRect(ren,&(menu[12].rect));
                         SDL_RenderDrawLine(ren, myevent.motion.x,myevent.motion.y,
                         menu[1].rect.x+menu[1].rect.w/2,menu[1].rect.y+menu[1].rect.h/2);
 
@@ -493,6 +546,7 @@ int main()
                         SDL_RenderFillRect(ren,&sub_v);
                         SDL_SetRenderDrawColor(ren,0,0,0,255);
                         draw_mesh(ren);
+                        draw_second_mesh(ren);
                         break;
                     }
                 }
