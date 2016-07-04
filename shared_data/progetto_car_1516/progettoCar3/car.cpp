@@ -15,7 +15,7 @@
 #include "mesh.h"
 
 // var globale di tipo mesh
-Mesh carlinga((char *)"Ferrari_chassis.obj"); // chiama il costruttore
+Mesh carlinga((char *)"ape_mod.obj"); // chiama il costruttore
 Mesh wheelBR1((char *)"Ferrari_wheel_back_R.obj");
 Mesh wheelFR1((char *)"Ferrari_wheel_front_R.obj");
 Mesh wheelBR2((char *)"Ferrari_wheel_back_R_metal.obj");
