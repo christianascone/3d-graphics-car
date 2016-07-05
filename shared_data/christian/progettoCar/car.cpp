@@ -58,10 +58,10 @@ void Controller::Joy(int keymap, bool pressed_or_released)
 }
 
 // Funzione che prepara tutto per usare un env map
-void SetupEnvmapTexture()
+void SetupEnvmapTexture(int textureNum)
 {
   // facciamo binding con la texture 1
-  glBindTexture(GL_TEXTURE_2D, 1);
+  glBindTexture(GL_TEXTURE_2D, textureNum);
 
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_TEXTURE_GEN_S); // abilito la generazione automatica delle coord texture S e T
@@ -70,6 +70,16 @@ void SetupEnvmapTexture()
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_SPHERE_MAP);
   glColor3f(1, 1, 1); // metto il colore neutro (viene moltiplicato col colore texture, componente per componente)
   glDisable(GL_LIGHTING); // disabilito il lighting OpenGL standard (lo faccio con la texture)
+}
+
+void SetupEnvmapTextureRed()
+{
+  SetupEnvmapTexture(1);
+}
+
+void SetupEnvmapTextureBrown()
+{
+  SetupEnvmapTexture(3);
 }
 
 // funzione che prepara tutto per creare le coordinate texture (s,t) da (x,y,z)
@@ -298,18 +308,16 @@ void Car::RenderAllParts(bool usecolor) const {
     if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
   }
   else {
-    if (usecolor) SetupEnvmapTexture();
+    if (usecolor) SetupEnvmapTextureRed();
   }
   carlinga.RenderNxV(); // rendering delle mesh carlinga usando normali per vertice
   if (usecolor) glEnable(GL_LIGHTING);
 
   // Disegno vetri
-
   antenna.RenderNxV();
   asta.RenderNxV();
   backpiruli.RenderNxV();
   backsits.RenderNxV();
-  bars.RenderNxV();
   board.RenderNxV();
   bottomsits.RenderNxV();
   brakes.RenderNxV();
@@ -323,6 +331,16 @@ void Car::RenderAllParts(bool usecolor) const {
   piruli.RenderNxV();
   portapacchi_piruli.RenderNxV();
   shades.RenderNxV();
+  if (usecolor) glEnable(GL_LIGHTING);
+
+  if (!useEnvmap)
+  {
+    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+  }
+  else {
+    if (usecolor) SetupEnvmapTextureBrown();
+  }
+  bars.RenderNxV();
   if (usecolor) glEnable(GL_LIGHTING);
 
   for (int i = 0; i < 2; i++) {
@@ -440,14 +458,14 @@ void Car::RenderAllParts(bool usecolor) const {
 void Car::Render() const {
   // sono nello spazio mondo
 
-  drawAxis(); // disegno assi spazio mondo
+  //drawAxis(); // disegno assi spazio mondo
   glPushMatrix();
 
   glTranslatef(px, py, pz);
   glRotatef(facing, 0, 1, 0);
 
   // sono nello spazio MACCHINA
-  drawAxis(); // disegno assi spazio macchina
+  //drawAxis(); // disegno assi spazio macchina
 
   DrawHeadlight(-0.3, 0, -1, 0, useHeadlight); // accendi faro sinistro
   DrawHeadlight(+0.3, 0, -1, 1, useHeadlight); // accendi faro destro
