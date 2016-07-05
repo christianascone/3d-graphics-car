@@ -465,7 +465,7 @@ void Car::Render() const {
   glRotatef(facing, 0, 1, 0);
 
   // sono nello spazio MACCHINA
-  //drawAxis(); // disegno assi spazio macchina
+  //  drawAxis(); // disegno assi spazio macchina
 
   DrawHeadlight(-0.3, 0, -1, 0, useHeadlight); // accendi faro sinistro
   DrawHeadlight(+0.3, 0, -1, 1, useHeadlight); // accendi faro destro
