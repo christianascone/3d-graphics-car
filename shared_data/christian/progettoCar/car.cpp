@@ -14,7 +14,25 @@
 #include "mesh.h"
 
 // var globale di tipo mesh
-Mesh carlinga((char *)"ape_mod.obj"); // chiama il costruttore
+Mesh antenna((char *)"ape/obj/antenna.obj"); // chiama il costruttore
+Mesh asta((char *)"ape/obj/asta.obj");
+Mesh backpiruli((char *)"ape/obj/backpiruli.obj"); // chiama il costruttore
+Mesh backsits((char *)"ape/obj/backsits.obj");
+Mesh bars((char *)"ape/obj/bars.obj"); // chiama il costruttore
+Mesh board((char *)"ape/obj/board.obj");
+Mesh bottomsits((char *)"ape/obj/bottomsits.obj"); // chiama il costruttore
+Mesh brakes((char *)"ape/obj/brakes.obj");
+Mesh carlinga((char *)"ape/obj/carlinga.obj"); // chiama il costruttore
+Mesh glasses((char *)"ape/obj/glass.obj");
+Mesh interni((char *)"ape/obj/interni.obj"); // chiama il costruttore
+Mesh lateral((char *)"ape/obj/lateral.obj");
+Mesh lights((char *)"ape/obj/lights.obj"); // chiama il costruttore
+Mesh marmitta((char *)"ape/obj/marmitta.obj");
+Mesh mirrors((char *)"ape/obj/mirrors.obj"); // chiama il costruttore
+Mesh parafango((char *)"ape/obj/parafango.obj"); // chiama il costruttore
+Mesh piruli((char *)"ape/obj/piruli.obj");
+Mesh portapacchi_piruli((char *)"ape/obj/portapacchi_piruli.obj");
+Mesh shades((char *)"ape/obj/shades.obj");
 Mesh wheelBR1((char *)"Ferrari_wheel_back_R.obj");
 Mesh wheelFR1((char *)"Ferrari_wheel_front_R.obj");
 Mesh wheelBR2((char *)"Ferrari_wheel_back_R_metal.obj");
@@ -285,6 +303,28 @@ void Car::RenderAllParts(bool usecolor) const {
   carlinga.RenderNxV(); // rendering delle mesh carlinga usando normali per vertice
   if (usecolor) glEnable(GL_LIGHTING);
 
+  // Disegno vetri
+
+  antenna.RenderNxV();
+  asta.RenderNxV();
+  backpiruli.RenderNxV();
+  backsits.RenderNxV();
+  bars.RenderNxV();
+  board.RenderNxV();
+  bottomsits.RenderNxV();
+  brakes.RenderNxV();
+  glasses.RenderNxV();
+  interni.RenderNxV();
+  lateral.RenderNxV();
+  lights.RenderNxV();
+  marmitta.RenderNxV();
+  mirrors.RenderNxV();
+  parafango.RenderNxV();
+  piruli.RenderNxV();
+  portapacchi_piruli.RenderNxV();
+  shades.RenderNxV();
+  if (usecolor) glEnable(GL_LIGHTING);
+
   for (int i = 0; i < 2; i++) {
     // i==0 -> disegno ruote destre.
     // i==1 -> disegno ruote sinistre.
@@ -304,8 +344,8 @@ void Car::RenderAllParts(bool usecolor) const {
       //   glTranslatef(0, -wheelFR1.Center().Y(), 0);
       // }
 
-      glTranslatef(-4.7, +wheelFR1.Center().Y()-0.5, 0+5);
-      glTranslatef(-4.7, -wheelFR1.Center().Y()-0.5, 0+5);
+      glTranslatef(-4.7, +wheelFR1.Center().Y() - 0.5, 0 + 5);
+      glTranslatef(-4.7, -wheelFR1.Center().Y() - 0.5, 0 + 5);
 
       glTranslate(  wheelFR1.Center() );
       glRotatef( sign * sterzo, 0, 1, 0);
@@ -332,14 +372,14 @@ void Car::RenderAllParts(bool usecolor) const {
       glTranslatef(0, -wheelBR1.Center().Y(), 0);
     }
 
-    if(i == 0){
-      glTranslatef(2, +wheelFR1.Center().Y(), 0-2);
-      glTranslatef(2, -wheelFR1.Center().Y(), 0-2);
+    if (i == 0) {
+      glTranslatef(2, +wheelFR1.Center().Y(), 0 - 2);
+      glTranslatef(2, -wheelFR1.Center().Y(), 0 - 2);
     }
 
-    if(i == 1){
-      glTranslatef(3.5, +wheelFR1.Center().Y(), 0-2);
-      glTranslatef(3.5, -wheelFR1.Center().Y(), 0-2);
+    if (i == 1) {
+      glTranslatef(3.5, +wheelFR1.Center().Y(), 0 - 2);
+      glTranslatef(3.5, -wheelFR1.Center().Y(), 0 - 2);
     }
 
     glTranslate(  wheelBR1.Center() );

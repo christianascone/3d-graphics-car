@@ -271,7 +271,7 @@ void setCamera(){
         switch (cameraType) {
         case CAMERA_BACK_CAR:
                 camd = 2.5;
-                camh = 1.0;
+                camh = 2.0;
                 ex = px + camd*sinf;
                 ey = py + camh;
                 ez = pz + camd*cosf;
