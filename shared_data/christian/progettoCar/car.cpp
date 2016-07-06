@@ -37,7 +37,7 @@ Mesh wheelBR1((char *)"Ferrari_wheel_back_R.obj");
 Mesh wheelFR1((char *)"Ferrari_wheel_front_R.obj");
 Mesh wheelBR2((char *)"Ferrari_wheel_back_R_metal.obj");
 Mesh wheelFR2((char *)"Ferrari_wheel_front_R_metal.obj");
-Mesh pista((char *)"pista.obj");
+Mesh pista((char *)"pista2.obj");
 
 extern bool useEnvmap; // var globale esterna: per usare l'evnrionment mapping
 extern bool useHeadlight; // var globale esterna: per usare i fari
@@ -80,6 +80,11 @@ void SetupEnvmapTextureRed()
 void SetupEnvmapTextureBrown()
 {
   SetupEnvmapTexture(3);
+}
+
+void SetupEnvmapTextureGlass()
+{
+  SetupEnvmapTexture(4);
 }
 
 // funzione che prepara tutto per creare le coordinate texture (s,t) da (x,y,z)
@@ -321,12 +326,11 @@ void Car::RenderAllParts(bool usecolor) const {
   board.RenderNxV();
   bottomsits.RenderNxV();
   brakes.RenderNxV();
-  glasses.RenderNxV();
+  
   interni.RenderNxV();
   lateral.RenderNxV();
   lights.RenderNxV();
   marmitta.RenderNxV();
-  mirrors.RenderNxV();
   parafango.RenderNxV();
   piruli.RenderNxV();
   portapacchi_piruli.RenderNxV();
@@ -341,6 +345,17 @@ void Car::RenderAllParts(bool usecolor) const {
     if (usecolor) SetupEnvmapTextureBrown();
   }
   bars.RenderNxV();
+  if (usecolor) glEnable(GL_LIGHTING);
+
+  if (!useEnvmap)
+  {
+    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+  }
+  else {
+    if (usecolor) SetupEnvmapTextureGlass();
+  }
+  glasses.RenderNxV();
+  mirrors.RenderNxV();
   if (usecolor) glEnable(GL_LIGHTING);
 
   for (int i = 0; i < 2; i++) {
