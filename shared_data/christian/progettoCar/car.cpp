@@ -499,9 +499,8 @@ void Car::Render() const {
   // sono nello spazio MACCHINA
   //  drawAxis(); // disegno assi spazio macchina
 
-  DrawHeadlight(-0.3, 0, -1, 0, useHeadlight); // accendi faro sinistro
-  DrawHeadlight(+0.3, 0, -1, 1, useHeadlight); // accendi faro destro
-
+  DrawHeadlight(0, 0, -2, 0, useHeadlight); // accendi faro centrale
+  
   RenderAllParts(true);
 
   // ombra!
