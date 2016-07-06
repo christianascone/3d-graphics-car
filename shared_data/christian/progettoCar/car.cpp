@@ -309,7 +309,13 @@ void Car::RenderAllParts(bool usecolor) const {
 
   // disegna la carliga con una mesh
   glPushMatrix();
-  glScalef(-0.05, 0.05, -0.05); // patch: riscaliamo la mesh di 1/10
+  
+  // Codice per piegare
+  // glScalef(-0.05, 0.05, -0.05); // patch: riscaliamo la mesh di 1/10
+  // glTranslate(  asta.Center() );
+  // glRotatef( -1 * sterzo/2, 0, 0, 1);
+  // glTranslate( -asta.Center() );
+
   if (!useEnvmap)
   {
     if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
