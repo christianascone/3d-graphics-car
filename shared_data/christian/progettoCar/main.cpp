@@ -7,6 +7,10 @@
 
 #include "car.h"
 
+#include <GL/freeglut.h>
+
+
+
 #define CAMERA_BACK_CAR 0
 #define CAMERA_TOP_FIXED 1
 #define CAMERA_TOP_CAR 2
@@ -369,6 +373,13 @@ void drawSky() {
 
 }
 
+void RenderString()
+{
+  glRasterPos2i(0, 0);
+  glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+  glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char *)"Testo");
+}
+
 /* Esegue il Rendering della scena */
 void rendering(SDL_Window *win) {
 
@@ -431,6 +442,7 @@ void rendering(SDL_Window *win) {
   drawPista(); // disegna la pista
 
   car.Render(); // disegna la macchina
+  RenderString();
 
   // attendiamo la fine della rasterizzazione di
   // tutte le primitive mandate
@@ -450,6 +462,7 @@ void rendering(SDL_Window *win) {
   glVertex2d(10, y);
   glVertex2d(0, y);
   glVertex2d(0, 0);
+  RenderString();
   glEnd();
 
   glEnable(GL_DEPTH_TEST);
@@ -469,6 +482,7 @@ void redraw() {
   e.window.event = SDL_WINDOWEVENT_EXPOSED;
   SDL_PushEvent(&e);
 }
+
 
 int main(int argc, char* argv[])
 {
@@ -512,6 +526,11 @@ int main(int argc, char* argv[])
   if (!LoadTexture(2, (char *)"sky_ok.jpg")) return -1;
   if (!LoadTexture(3, (char *)"texture/brown.jpg")) return 0;
   if (!LoadTexture(4, (char *)"texture/glass.jpg")) return 0;
+
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+  //glClearColor(0.0, 0.0, 0.0, 1.0);
+  //RenderString();
 
   bool done = 0;
   while (!done) {
