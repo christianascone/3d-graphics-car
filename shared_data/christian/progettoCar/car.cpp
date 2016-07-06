@@ -16,12 +16,14 @@
 // var globale di tipo mesh
 Mesh antenna((char *)"ape/obj/antenna.obj"); // chiama il costruttore
 Mesh asta((char *)"ape/obj/asta.obj");
+Mesh asta_brake((char *)"ape/obj/asta_brake.obj");
 Mesh backpiruli((char *)"ape/obj/backpiruli.obj"); // chiama il costruttore
 Mesh backsits((char *)"ape/obj/backsits.obj");
 Mesh bars((char *)"ape/obj/bars.obj"); // chiama il costruttore
 Mesh board((char *)"ape/obj/board.obj");
 Mesh bottomsits((char *)"ape/obj/bottomsits.obj"); // chiama il costruttore
 Mesh brakes((char *)"ape/obj/brakes.obj");
+Mesh brake_block((char *)"ape/obj/brake_block.obj");
 Mesh carlinga((char *)"ape/obj/carlinga.obj"); // chiama il costruttore
 Mesh glasses((char *)"ape/obj/glass.obj");
 Mesh interni((char *)"ape/obj/interni.obj"); // chiama il costruttore
@@ -320,13 +322,23 @@ void Car::RenderAllParts(bool usecolor) const {
 
   // Disegno vetri
   antenna.RenderNxV();
+
+  glPushMatrix();
+  glTranslate(  asta.Center() );
+  glRotatef( 1 * sterzo, 0, 1, 0);
+  //glRotatef(-1 * mozzoA, 1, 0, 0);
+  glTranslate( -asta.Center() );
+  brakes.RenderNxV();
   asta.RenderNxV();
+  glPopMatrix();
+
+  asta_brake.RenderNxV();
   backpiruli.RenderNxV();
   backsits.RenderNxV();
+  brake_block.RenderNxV();
   board.RenderNxV();
   bottomsits.RenderNxV();
-  brakes.RenderNxV();
-  
+
   interni.RenderNxV();
   lateral.RenderNxV();
   lights.RenderNxV();
