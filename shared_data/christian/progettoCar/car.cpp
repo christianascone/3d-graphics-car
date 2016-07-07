@@ -102,6 +102,16 @@ void SetupEnvmapTextureLeaf()
   SetupEnvmapTexture(6);
 }
 
+void SetupEnvmapTextureLightLeather()
+{
+  SetupEnvmapTexture(7);
+}
+
+void SetupEnvmapTextureDarkLeather()
+{
+  SetupEnvmapTexture(8);
+}
+
 // funzione che prepara tutto per creare le coordinate texture (s,t) da (x,y,z)
 // Mappo l'intervallo [ minY , maxY ] nell'intervallo delle T [0..1]
 //     e l'intervallo [ minZ , maxZ ] nell'intervallo delle S [0..1]
@@ -378,13 +388,10 @@ void Car::RenderAllParts(bool usecolor) const {
 
   asta_brake.RenderNxV();
   backpiruli.RenderNxV();
-  backsits.RenderNxV();
   brake_block.RenderNxV();
   board.RenderNxV();
-  bottomsits.RenderNxV();
-
   interni.RenderNxV();
-  lateral.RenderNxV();
+
   lights.RenderNxV();
   marmitta.RenderNxV();
   parafango.RenderNxV();
@@ -412,6 +419,28 @@ void Car::RenderAllParts(bool usecolor) const {
   }
   glasses.RenderNxV();
   mirrors.RenderNxV();
+  if (usecolor) glEnable(GL_LIGHTING);
+
+
+  if (!useEnvmap)
+  {
+    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+  }
+  else {
+    if (usecolor) SetupEnvmapTextureLightLeather();
+  }
+  lateral.RenderNxV();
+  bottomsits.RenderNxV();
+  if (usecolor) glEnable(GL_LIGHTING);
+
+  if (!useEnvmap)
+  {
+    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+  }
+  else {
+    if (usecolor) SetupEnvmapTextureDarkLeather();
+  }
+  backsits.RenderNxV();
   if (usecolor) glEnable(GL_LIGHTING);
 
   for (int i = 0; i < 2; i++) {
@@ -539,7 +568,7 @@ void Car::Render() const {
   //  drawAxis(); // disegno assi spazio macchina
 
   DrawHeadlight(0, 1.2, 0, 0, useHeadlight); // accendi faro centrale
-  
+
   RenderAllParts(true);
 
   // ombra!

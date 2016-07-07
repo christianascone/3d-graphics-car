@@ -542,12 +542,14 @@ int main(int argc, char* argv[])
   glPolygonOffset(1, 1);            // indietro di 1
 
   if (!LoadTexture(0, (char *)"logo.jpg")) return 0;
-  if (!LoadTexture(1, (char *)"italy2.jpg")) return 0;
+  if (!LoadTexture(1, (char *)"texture/red.jpg")) return 0;
   if (!LoadTexture(2, (char *)"sky_ok.jpg")) return -1;
   if (!LoadTexture(3, (char *)"texture/brown.jpg")) return 0;
   if (!LoadTexture(4, (char *)"texture/glass.jpg")) return 0;
   if (!LoadTexture(5, (char *)"texture/tree.jpg")) return 0;
   if (!LoadTexture(6, (char *)"texture/leaf.jpg")) return 0;
+  if (!LoadTexture(7, (char *)"texture/light_leather.jpg")) return 0;
+  if (!LoadTexture(8, (char *)"texture/dark_leather.jpg")) return 0;
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
