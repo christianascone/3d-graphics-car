@@ -35,11 +35,13 @@ Mesh parafango((char *)"ape/obj/parafango.obj"); // chiama il costruttore
 Mesh piruli((char *)"ape/obj/piruli.obj");
 Mesh portapacchi_piruli((char *)"ape/obj/portapacchi_piruli.obj");
 Mesh shades((char *)"ape/obj/shades.obj");
-Mesh wheelBR1((char *)"Ferrari_wheel_back_R.obj");
-Mesh wheelFR1((char *)"Ferrari_wheel_front_R.obj");
-Mesh wheelBR2((char *)"Ferrari_wheel_back_R_metal.obj");
-Mesh wheelFR2((char *)"Ferrari_wheel_front_R_metal.obj");
-Mesh pista((char *)"pista2.obj");
+Mesh wheelBR1((char *)"obj/Ferrari_wheel_back_R.obj");
+Mesh wheelFR1((char *)"obj/Ferrari_wheel_front_R.obj");
+Mesh wheelBR2((char *)"obj/Ferrari_wheel_back_R_metal.obj");
+Mesh wheelFR2((char *)"obj/Ferrari_wheel_front_R_metal.obj");
+Mesh pista((char *)"obj/pista.obj");
+Mesh tree1((char *)"obj/tree1.obj");
+Mesh tree2((char *)"obj/tree2.obj");
 
 extern bool useEnvmap; // var globale esterna: per usare l'evnrionment mapping
 extern bool useHeadlight; // var globale esterna: per usare i fari
@@ -87,6 +89,16 @@ void SetupEnvmapTextureBrown()
 void SetupEnvmapTextureGlass()
 {
   SetupEnvmapTexture(4);
+}
+
+void SetupEnvmapTextureTree()
+{
+  SetupEnvmapTexture(5);
+}
+
+void SetupEnvmapTextureLeaf()
+{
+  SetupEnvmapTexture(6);
 }
 
 // funzione che prepara tutto per creare le coordinate texture (s,t) da (x,y,z)
@@ -175,6 +187,31 @@ void drawPista () {
   glTranslatef(0, 0.01, 0);
   //pista.RenderNxV();
   pista.RenderNxF();
+  glPopMatrix();
+}
+
+void drawTree () {
+  bool usecolor = true;
+  glPushMatrix();
+  if (!useEnvmap)
+  {
+    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+  }
+  else {
+    if (usecolor) SetupEnvmapTextureTree();
+  }
+  tree1.RenderNxV();
+  if (usecolor) glEnable(GL_LIGHTING);
+
+  if (!useEnvmap)
+  {
+    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+  }
+  else {
+    if (usecolor) SetupEnvmapTextureLeaf();
+  }
+  tree2.RenderNxV();
+  if (usecolor) glEnable(GL_LIGHTING);
   glPopMatrix();
 }
 

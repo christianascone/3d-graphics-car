@@ -41,6 +41,7 @@ int fpsNow = 0; // quanti fotogrammi ho disegnato fin'ora nell'intervallo attual
 Uint32 timeLastInterval = 0; // quando e' cominciato l'ultimo intervallo
 
 extern void drawPista();
+extern void drawTree();
 
 // setta le matrici di trasformazione in modo
 // che le coordinate in spazio oggetto siano le coord
@@ -459,6 +460,7 @@ void rendering(SDL_Window *win) {
 
   drawFloor(); // disegna il suolo
   drawPista(); // disegna la pista
+  drawTree(); // disegna la pista
 
   car.Render(); // disegna la macchina
   renderString(1, 50, "test");
@@ -544,6 +546,8 @@ int main(int argc, char* argv[])
   if (!LoadTexture(2, (char *)"sky_ok.jpg")) return -1;
   if (!LoadTexture(3, (char *)"texture/brown.jpg")) return 0;
   if (!LoadTexture(4, (char *)"texture/glass.jpg")) return 0;
+  if (!LoadTexture(5, (char *)"texture/tree.jpg")) return 0;
+  if (!LoadTexture(6, (char *)"texture/leaf.jpg")) return 0;
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
