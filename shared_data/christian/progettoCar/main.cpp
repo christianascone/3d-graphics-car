@@ -376,8 +376,10 @@ void drawSky() {
 
 }
 
+// Renderizza una data stringa nelle coordinate indicate
 void renderString(float x, float y, std::string text)
-{ glMatrixMode(GL_PROJECTION);
+{ 
+  glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
   glOrtho(0.0, 640, 480, 0.0, -1.0f, 1.0f);
@@ -385,7 +387,7 @@ void renderString(float x, float y, std::string text)
   glLoadIdentity();
 
   glColor3f(1, 0, 0);
-  glRasterPos2f(5, 100);
+  glRasterPos2f(x, y);
   char tab2[1024];
   strncpy(tab2, text.c_str(), sizeof(tab2));
   tab2[sizeof(tab2) - 1] = 0;
@@ -459,7 +461,7 @@ void rendering(SDL_Window *win) {
   drawPista(); // disegna la pista
 
   car.Render(); // disegna la macchina
-  renderString(1, 2, "test");
+  renderString(1, 50, "test");
 
   // attendiamo la fine della rasterizzazione di
   // tutte le primitive mandate
