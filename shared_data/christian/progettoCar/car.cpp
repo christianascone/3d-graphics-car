@@ -42,6 +42,7 @@ Mesh wheelFR2((char *)"obj/Ferrari_wheel_front_R_metal.obj");
 Mesh pista((char *)"obj/pista.obj");
 Mesh tree1((char *)"obj/tree1.obj");
 Mesh tree2((char *)"obj/tree2.obj");
+Mesh tree3((char *)"obj/tree3.obj");
 
 extern bool useEnvmap; // var globale esterna: per usare l'evnrionment mapping
 extern bool useHeadlight; // var globale esterna: per usare i fari
@@ -201,6 +202,7 @@ void drawTree () {
     if (usecolor) SetupEnvmapTextureTree();
   }
   tree1.RenderNxV();
+  tree3.RenderNxV();
   if (usecolor) glEnable(GL_LIGHTING);
 
   if (!useEnvmap)
