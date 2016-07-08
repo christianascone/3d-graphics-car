@@ -263,6 +263,29 @@ void drawFloor()
   glEnd();
 }
 
+void setCameraMap() {
+
+  double px = car.px;
+  double py = car.py;
+  double pz = car.pz;
+  double angle = car.facing;
+  double cosf = cos(angle * M_PI / 180.0);
+  double sinf = sin(angle * M_PI / 180.0);
+  double camd, camh, ex, ey, ez, cx, cy, cz;
+  double cosff, sinff;
+
+    camd = 2.5;
+    camh = 5.0;
+    ex = px + camd * sinf;
+    ey = py + camh;
+    ez = pz + camd * cosf;
+    cx = px - camd * sinf;
+    cy = py + camh;
+    cz = pz - camd * cosf;
+    gluLookAt(ex, ey + 5, ez, cx, cy, cz, 0.0, 1.0, 0.0);
+    
+}
+
 // setto la posizione della camera
 void setCamera() {
 
@@ -400,6 +423,81 @@ void renderString(float x, float y, std::string text)
   glMatrixMode(GL_MODELVIEW);
 }
 
+void showMap(){
+  // settiamo il viewport
+  glViewport(0, 0, 100, 100);
+
+  // colore sfondo = bianco
+  glClearColor(1, 1, 1, 1);
+
+
+  // settiamo la matrice di proiezione
+  glMatrixMode( GL_PROJECTION );
+  glLoadIdentity();
+  gluPerspective( 70, //fovy,
+                  ((float)scrW) / scrH,//aspect Y/X,
+                  0.2,//distanza del NEAR CLIPPING PLANE in coordinate vista
+                  1000  //distanza del FAR CLIPPING PLANE in coordinate vista
+                );
+
+  glMatrixMode( GL_MODELVIEW );
+  glLoadIdentity();
+
+  // riempe tutto lo screen buffer di pixel color sfondo
+  //glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+  //drawAxis(); // disegna assi frame VISTA
+
+  // setto la posizione luce
+  float tmpv[4] = {0, 1, 2,  0}; // ultima comp=0 => luce direzionale
+  glLightfv(GL_LIGHT0, GL_POSITION, tmpv );
+
+
+  // settiamo matrice di vista
+  //glTranslatef(0,0,-eyeDist);
+  //glRotatef(viewBeta,  1,0,0);
+  //glRotatef(viewAlpha, 0,1,0);
+  setCameraMap();
+
+  static float tmpcol[4] = {1, 1, 1,  1};
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, tmpcol);
+  glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 127);
+
+  glEnable(GL_LIGHTING);
+
+  // settiamo matrice di modellazione
+  //drawAxis(); // disegna assi frame OGGETTO
+  //drawCubeWire();
+
+  drawSky(); // disegna il cielo come sfondo
+
+  drawFloor(); // disegna il suolo
+  drawPista(); // disegna la pista
+  drawTree(); // disegna la pista
+
+  car.Render(); // disegna la macchina
+
+  // attendiamo la fine della rasterizzazione di
+  // tutte le primitive mandate
+
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+
+// disegnamo i fps (frame x sec) come una barra a sinistra.
+// (vuota = 0 fps, piena = 100 fps)
+  SetCoordToPixel();
+
+  glBegin(GL_QUADS);
+  float y = 100 * fps / 100;
+  float ramp = fps / 100;
+  glColor3f(1 - ramp, 0, ramp);
+  glVertex2d(10, 0);
+  glVertex2d(10, y);
+  glVertex2d(0, y);
+  glVertex2d(0, 0);
+  glEnd();
+}
+
 /* Esegue il Rendering della scena */
 void rendering(SDL_Window *win) {
 
@@ -483,13 +581,19 @@ void rendering(SDL_Window *win) {
   glVertex2d(10, y);
   glVertex2d(0, y);
   glVertex2d(0, 0);
+
+  
   glEnd();
+
+  showMap();
+  
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_LIGHTING);
 
 
   glFinish();
+
   // ho finito: buffer di lavoro diventa visibile
   SDL_GL_SwapWindow(win);
 }
