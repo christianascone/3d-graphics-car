@@ -274,8 +274,8 @@ void setCameraMap() {
   double camd, camh, ex, ey, ez, cx, cy, cz;
   double cosff, sinff;
 
-    camd = 2.5;
-    camh = 5.0;
+    camd = 1;
+    camh = 30.0;
     ex = px + camd * sinf;
     ey = py + camh;
     ez = pz + camd * cosf;
@@ -425,7 +425,7 @@ void renderString(float x, float y, std::string text)
 
 void showMap(){
   // settiamo il viewport
-  glViewport(0, 0, 100, 100);
+  glViewport(5, 5, 100, 100);
 
   // colore sfondo = bianco
   glClearColor(1, 1, 1, 1);
