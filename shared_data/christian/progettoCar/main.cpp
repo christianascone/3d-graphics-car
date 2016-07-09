@@ -274,16 +274,16 @@ void setCameraMap() {
   double camd, camh, ex, ey, ez, cx, cy, cz;
   double cosff, sinff;
 
-    camd = 1;
-    camh = 30.0;
-    ex = px + camd * sinf;
-    ey = py + camh;
-    ez = pz + camd * cosf;
-    cx = px - camd * sinf;
-    cy = py + camh;
-    cz = pz - camd * cosf;
-    gluLookAt(ex, ey + 5, ez, cx, cy, cz, 0.0, 1.0, 0.0);
-    
+  camd = 1;
+  camh = 30.0;
+  ex = px + camd * sinf;
+  ey = py + camh;
+  ez = pz + camd * cosf;
+  cx = px - camd * sinf;
+  cy = py + camh;
+  cz = pz - camd * cosf;
+  gluLookAt(ex, ey + 5, ez, cx, cy, cz, 0.0, 1.0, 0.0);
+
 }
 
 // setto la posizione della camera
@@ -402,7 +402,7 @@ void drawSky() {
 
 // Renderizza una data stringa nelle coordinate indicate
 void renderString(float x, float y, std::string text)
-{ 
+{
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
@@ -423,7 +423,7 @@ void renderString(float x, float y, std::string text)
   glMatrixMode(GL_MODELVIEW);
 }
 
-void showMap(){
+void showMap() {
   // settiamo il viewport
   glViewport(5, 5, 100, 100);
 
@@ -563,7 +563,7 @@ void rendering(SDL_Window *win) {
   car.Render(); // disegna la macchina
 
   std::string cameraText = "";
-switch (cameraType) {
+  switch (cameraType) {
   case CAMERA_BACK_CAR:
     cameraText = "CAMERA: Back Car";
     break;
@@ -581,7 +581,7 @@ switch (cameraType) {
     break;
   }
 
-  renderString(scrW/3, 20, cameraText);
+  renderString(scrW / 3, 20, cameraText);
 
   // Stampo i comandi
   renderString(2, 20, "F1: Cambia camera");
@@ -609,11 +609,11 @@ switch (cameraType) {
   glVertex2d(0, y);
   glVertex2d(0, 0);
 
-  
+
   glEnd();
 
   showMap();
-  
+
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_LIGHTING);
