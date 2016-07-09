@@ -581,7 +581,14 @@ switch (cameraType) {
     break;
   }
 
-  renderString(1, 50, cameraText);
+  renderString(scrW/3, 20, cameraText);
+
+  // Stampo i comandi
+  renderString(2, 20, "F1: Cambia camera");
+  renderString(2, 40, "F2: Switch mesh");
+  renderString(2, 60, "F3: Switch texture");
+  renderString(2, 80, "F4: Switch luci");
+  renderString(2, 100, "F5: Switch ombre");
 
   // attendiamo la fine della rasterizzazione di
   // tutte le primitive mandate
