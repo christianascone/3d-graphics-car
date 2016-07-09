@@ -337,8 +337,8 @@ void setCamera() {
     gluLookAt(ex, ey + 5, ez, cx, cy, cz, 0.0, 1.0, 0.0);
     break;
   case CAMERA_PILOT:
-    camd = 0.2;
-    camh = 0.55;
+    camd = 0.3;
+    camh = 1;
     ex = px + camd * sinf;
     ey = py + camh;
     ez = pz + camd * cosf;

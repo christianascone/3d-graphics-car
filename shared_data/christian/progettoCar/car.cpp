@@ -417,7 +417,7 @@ void Car::RenderAllParts(bool usecolor) const {
   else {
     if (usecolor) SetupEnvmapTextureGlass();
   }
-  glasses.RenderNxV();
+  //glasses.RenderNxV();
   mirrors.RenderNxV();
   if (usecolor) glEnable(GL_LIGHTING);
 
