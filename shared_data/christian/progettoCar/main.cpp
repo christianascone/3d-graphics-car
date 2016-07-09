@@ -312,8 +312,8 @@ void setCamera() {
     gluLookAt(ex, ey, ez, cx, cy, cz, 0.0, 1.0, 0.0);
     break;
   case CAMERA_TOP_FIXED:
-    camd = 0.5;
-    camh = 0.55;
+    camd = 0.6;
+    camh = 0.70;
     angle = car.facing + 40.0;
     cosff = cos(angle * M_PI / 180.0);
     sinff = sin(angle * M_PI / 180.0);
@@ -561,7 +561,27 @@ void rendering(SDL_Window *win) {
   drawTree(); // disegna la pista
 
   car.Render(); // disegna la macchina
-  renderString(1, 50, "test");
+
+  std::string cameraText = "";
+switch (cameraType) {
+  case CAMERA_BACK_CAR:
+    cameraText = "CAMERA: Back Car";
+    break;
+  case CAMERA_TOP_FIXED:
+    cameraText = "CAMERA: Top";
+    break;
+  case CAMERA_TOP_CAR:
+    cameraText = "CAMERA: Top Car";
+    break;
+  case CAMERA_PILOT:
+    cameraText = "CAMERA: Pilot";
+    break;
+  case CAMERA_MOUSE:
+    cameraText = "CAMERA: Mouse";
+    break;
+  }
+
+  renderString(1, 50, cameraText);
 
   // attendiamo la fine della rasterizzazione di
   // tutte le primitive mandate
