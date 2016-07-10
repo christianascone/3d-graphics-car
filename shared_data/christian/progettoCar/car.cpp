@@ -147,12 +147,18 @@ void SetupSelfieTexture(Point3 min, Point3 max) {
   // in modo che la texture sia "attaccata" all'oggetto, e non "proiettata" su esso
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
-  float sz = 1.0 / (max.Z() - min.Z());
-  float ty = 1.0 / (max.Y() - min.Y());
-  float rx = 1.0 / (max.X() - min.X());
-  float r[4] = {0, 0, sz,  - min.Z()*sz };
+  glTexGeni(GL_R, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  
+  float sx = 1.0 / (min.X() - max.X()); // Inverto per flip sx - dx
+  float ty = 1.0 / (min.Y() - max.Y()); // Inverto per flip up - down
+  float rz = 1.0 / (max.Z() - min.Z());
+  
+  float s[4] = {sx, 0, 0,  - min.X()*sx };
   float t[4] = {0, ty, 0,  - min.Y()*ty };
-  float s[4] = {rx, 0, 0,  - min.X()*rx };
+  float r[4] = {0, 0, rz,  - min.Z()*rz };
+  
   glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
   glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
   glTexGenfv(GL_R, GL_OBJECT_PLANE, r);
@@ -404,9 +410,10 @@ void Car::RenderAllParts(bool usecolor) const {
     if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
   }
   else {
-    if (usecolor) SetupSelfieTexture(top.bbmin, top.bbmax);
+    if (usecolor) SetupSelfieTexture(glasses.bbmin, glasses.bbmax);
   }
-  top.RenderNxV();
+  glasses.RenderNxV();
+  //top.RenderNxV();
   if (usecolor) glEnable(GL_LIGHTING);
 
   glPushMatrix();
