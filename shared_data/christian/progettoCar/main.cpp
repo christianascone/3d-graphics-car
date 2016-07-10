@@ -498,6 +498,7 @@ void showMap() {
   glEnd();
 }
 
+// Stampa i comandi possibili sullo schermo
 void printCommands(){
   // Stampo i comandi
   renderString(2, 20, "F1: Cambia camera");

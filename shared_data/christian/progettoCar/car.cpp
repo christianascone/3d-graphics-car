@@ -213,7 +213,7 @@ void drawTree () {
   }
   tree1.RenderNxV();
   tree3.RenderNxV();
-  if (usecolor) glEnable(GL_LIGHTING);
+  //if (usecolor) glEnable(GL_LIGHTING);
 
   if (!useEnvmap)
   {
@@ -223,7 +223,7 @@ void drawTree () {
     if (usecolor) SetupEnvmapTextureLeaf();
   }
   tree2.RenderNxV();
-  if (usecolor) glEnable(GL_LIGHTING);
+  //if (usecolor) glEnable(GL_LIGHTING);
   glPopMatrix();
 }
 
@@ -374,21 +374,30 @@ void Car::RenderAllParts(bool usecolor) const {
   carlinga.RenderNxV(); // rendering delle mesh carlinga usando normali per vertice
   if (usecolor) glEnable(GL_LIGHTING);
 
-  // Disegno vetri
-  antenna.RenderNxV();
+  
 
   glPushMatrix();
   glTranslate(  asta.Center() );
   glRotatef( 1 * sterzo, 0, 1, 0);
   //glRotatef(-1 * mozzoA, 1, 0, 0);
   glTranslate( -asta.Center() );
+  glColor3f(0, 0, 0);
   brakes.RenderNxV();
   asta.RenderNxV();
+  brake_block.RenderNxV();
+  asta_brake.RenderNxV();
+  antenna.RenderNxV();
   glPopMatrix();
 
-  asta_brake.RenderNxV();
+  if (!useEnvmap)
+  {
+    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+  }
+  else {
+    if (usecolor) SetupEnvmapTextureRed();
+  }
+  
   backpiruli.RenderNxV();
-  brake_block.RenderNxV();
   board.RenderNxV();
   interni.RenderNxV();
 
@@ -398,6 +407,9 @@ void Car::RenderAllParts(bool usecolor) const {
   piruli.RenderNxV();
   portapacchi_piruli.RenderNxV();
   shades.RenderNxV();
+  if (usecolor) glEnable(GL_LIGHTING);
+
+
   if (usecolor) glEnable(GL_LIGHTING);
 
   if (!useEnvmap)
