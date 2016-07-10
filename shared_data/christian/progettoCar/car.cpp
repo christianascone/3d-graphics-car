@@ -35,6 +35,7 @@ Mesh parafango((char *)"ape/obj/parafango.obj"); // chiama il costruttore
 Mesh piruli((char *)"ape/obj/piruli.obj");
 Mesh portapacchi_piruli((char *)"ape/obj/portapacchi_piruli.obj");
 Mesh shades((char *)"ape/obj/shades.obj");
+Mesh top((char *)"ape/obj/top.obj");
 Mesh wheelBR1((char *)"obj/Ferrari_wheel_back_R.obj");
 Mesh wheelFR1((char *)"obj/Ferrari_wheel_front_R.obj");
 Mesh wheelBR2((char *)"obj/Ferrari_wheel_back_R_metal.obj");
@@ -132,6 +133,29 @@ void SetupWheelTexture(Point3 min, Point3 max) {
   float t[4] = {0, ty, 0,  - min.Y()*ty };
   glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
   glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
+}
+
+void SetupSelfieTexture(Point3 min, Point3 max) {
+  glBindTexture(GL_TEXTURE_2D, 9);
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_TEXTURE_GEN_S);
+  glEnable(GL_TEXTURE_GEN_T);
+  glEnable(GL_TEXTURE_GEN_R);
+
+  // ulilizzo le coordinate OGGETTO
+  // cioe' le coordnate originali, PRIMA della moltiplicazione per la ModelView
+  // in modo che la texture sia "attaccata" all'oggetto, e non "proiettata" su esso
+  glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
+  glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
+  float sz = 1.0 / (max.Z() - min.Z());
+  float ty = 1.0 / (max.Y() - min.Y());
+  float rx = 1.0 / (max.X() - min.X());
+  float r[4] = {0, 0, sz,  - min.Z()*sz };
+  float t[4] = {0, ty, 0,  - min.Y()*ty };
+  float s[4] = {rx, 0, 0,  - min.X()*rx };
+  glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
+  glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
+  glTexGenfv(GL_R, GL_OBJECT_PLANE, r);
 }
 
 // DoStep: facciamo un passo di fisica (a delta_t costante)
@@ -374,7 +398,16 @@ void Car::RenderAllParts(bool usecolor) const {
   carlinga.RenderNxV(); // rendering delle mesh carlinga usando normali per vertice
   if (usecolor) glEnable(GL_LIGHTING);
 
-  
+  // Top con foto
+  if (!useEnvmap)
+  {
+    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+  }
+  else {
+    if (usecolor) SetupSelfieTexture(top.bbmin, top.bbmax);
+  }
+  top.RenderNxV();
+  if (usecolor) glEnable(GL_LIGHTING);
 
   glPushMatrix();
   glTranslate(  asta.Center() );
@@ -413,8 +446,6 @@ void Car::RenderAllParts(bool usecolor) const {
   shades.RenderNxV();
   if (usecolor) glEnable(GL_LIGHTING);
 
-
-  if (usecolor) glEnable(GL_LIGHTING);
 
   if (!useEnvmap)
   {
@@ -458,6 +489,8 @@ void Car::RenderAllParts(bool usecolor) const {
   }
   backsits.RenderNxV();
   if (usecolor) glEnable(GL_LIGHTING);
+
+  
 
   for (int i = 0; i < 2; i++) {
     // i==0 -> disegno ruote destre.

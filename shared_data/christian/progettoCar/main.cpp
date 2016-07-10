@@ -686,6 +686,7 @@ int main(int argc, char* argv[])
   if (!LoadTexture(6, (char *)"texture/leaf.jpg")) return 0;
   if (!LoadTexture(7, (char *)"texture/light_leather.jpg")) return 0;
   if (!LoadTexture(8, (char *)"texture/dark_leather.jpg")) return 0;
+  if (!LoadTexture(9, (char *)"texture/selfie.jpg")) return 0;
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
