@@ -383,7 +383,11 @@ void Car::RenderAllParts(bool usecolor) const {
   glTranslate( -asta.Center() );
   glColor3f(0, 0, 0);
   brakes.RenderNxV();
-  asta.RenderNxV();
+  asta.RenderNxV(); 
+  glPopMatrix();
+
+  glPushMatrix();
+  glColor3f(0, 0, 0);
   brake_block.RenderNxV();
   asta_brake.RenderNxV();
   antenna.RenderNxV();
