@@ -148,8 +148,7 @@ void SetupSelfieTexture(Point3 min, Point3 max) {
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
   glTexGeni(GL_R, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  
   
   float sx = 1.0 / (min.X() - max.X()); // Inverto per flip sx - dx
   float ty = 1.0 / (min.Y() - max.Y()); // Inverto per flip up - down
