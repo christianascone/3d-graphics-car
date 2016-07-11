@@ -35,7 +35,6 @@ Mesh parafango((char *)"ape/obj/parafango.obj"); // chiama il costruttore
 Mesh piruli((char *)"ape/obj/piruli.obj");
 Mesh portapacchi_piruli((char *)"ape/obj/portapacchi_piruli.obj");
 Mesh shades((char *)"ape/obj/shades.obj");
-Mesh top((char *)"ape/obj/top.obj");
 Mesh wheelBR1((char *)"obj/Ferrari_wheel_back_R.obj");
 Mesh wheelFR1((char *)"obj/Ferrari_wheel_front_R.obj");
 Mesh wheelBR2((char *)"obj/Ferrari_wheel_back_R_metal.obj");
@@ -44,6 +43,13 @@ Mesh pista((char *)"obj/pista.obj");
 Mesh tree1((char *)"obj/tree1.obj");
 Mesh tree2((char *)"obj/tree2.obj");
 Mesh tree3((char *)"obj/tree3.obj");
+
+// Billboard
+Mesh billboard_base((char *)"obj/billboard/base.obj");
+Mesh billboard_face1((char *)"obj/billboard/face1.obj");
+Mesh billboard_face2((char *)"obj/billboard/face2.obj");
+Mesh billboard_internal((char *)"obj/billboard/internal.obj");
+Mesh billboard_lightsupport((char *)"obj/billboard/light_support.obj");
 
 extern bool useEnvmap; // var globale esterna: per usare l'evnrionment mapping
 extern bool useHeadlight; // var globale esterna: per usare i fari
@@ -111,6 +117,11 @@ void SetupEnvmapTextureLightLeather()
 void SetupEnvmapTextureDarkLeather()
 {
   SetupEnvmapTexture(8);
+}
+
+void SetupEnvmapTextureDecorMetal()
+{
+  SetupEnvmapTexture(10);
 }
 
 // funzione che prepara tutto per creare le coordinate texture (s,t) da (x,y,z)
@@ -252,6 +263,45 @@ void drawTree () {
     if (usecolor) SetupEnvmapTextureLeaf();
   }
   tree2.RenderNxV();
+  //if (usecolor) glEnable(GL_LIGHTING);
+  glPopMatrix();
+}
+
+void drawBillboard () {
+  bool usecolor = true;
+  glPushMatrix();
+  if (!useEnvmap)
+  {
+    if (usecolor) glColor3f(0.5, 0.5, 0.5);   // colore nero, da usare con Lighting
+  }
+  else {
+    if (usecolor) glColor3f(0.5, 0.5, 0.5);   // colore rosso, da usare con Lighting
+    if (usecolor) SetupEnvmapTextureDecorMetal();
+  }
+  billboard_base.RenderNxF();
+  billboard_internal.RenderNxF();
+  billboard_lightsupport.RenderNxF();
+  //if (usecolor) glEnable(GL_LIGHTING);
+
+  if (!useEnvmap)
+  {
+    if (usecolor) glColor3f(1, 1, 1);   // colore rosso, da usare con Lighting
+  }
+  else {
+    if (usecolor) glColor3f(1, 1, 1);   // colore rosso, da usare con Lighting
+    if (usecolor) SetupSelfieTexture(billboard_face1.bbmin, billboard_face1.bbmax);
+  }
+  billboard_face1.RenderNxV();
+
+  if (!useEnvmap)
+  {
+    if (usecolor) glColor3f(1, 1, 1);   // colore rosso, da usare con Lighting
+  }
+  else {
+    if (usecolor) glColor3f(1, 1, 1);   // colore rosso, da usare con Lighting
+    if (usecolor) SetupSelfieTexture(billboard_face2.bbmin, billboard_face2.bbmax);
+  }
+  billboard_face2.RenderNxV();
   //if (usecolor) glEnable(GL_LIGHTING);
   glPopMatrix();
 }
@@ -403,17 +453,6 @@ void Car::RenderAllParts(bool usecolor) const {
   carlinga.RenderNxV(); // rendering delle mesh carlinga usando normali per vertice
   if (usecolor) glEnable(GL_LIGHTING);
 
-  // Top con foto
-  if (!useEnvmap)
-  {
-    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
-  }
-  else {
-    if (usecolor) SetupSelfieTexture(glasses.bbmin, glasses.bbmax);
-  }
-  glasses.RenderNxV();
-  //top.RenderNxV();
-  if (usecolor) glEnable(GL_LIGHTING);
 
   glPushMatrix();
   glTranslate(  asta.Center() );
@@ -470,7 +509,7 @@ void Car::RenderAllParts(bool usecolor) const {
   else {
     if (usecolor) SetupEnvmapTextureGlass();
   }
-  //glasses.RenderNxV();
+  glasses.RenderNxV();
   mirrors.RenderNxV();
   if (usecolor) glEnable(GL_LIGHTING);
 
