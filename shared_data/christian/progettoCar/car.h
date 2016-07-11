@@ -11,7 +11,7 @@ public:
 
 class Car{
 
-  void RenderAllParts(bool usecolor) const; 
+  void RenderAllParts(bool usecolor, bool allParts) const; 
                          // disegna tutte le parti della macchina
                          // invocato due volte: per la car e la sua ombra
 
@@ -19,6 +19,7 @@ public:
   // Metodi
   void Init(); // inizializza variabili
   void Render() const; // disegna a schermo
+  void Render(bool allParts) const; // disegna a schermo
   void DoStep(); // computa un passo del motore fisico
   Car(){Init();} // costruttore
  

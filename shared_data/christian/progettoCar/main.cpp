@@ -271,7 +271,7 @@ void drawSphere(double r, int lats, int longs) {
 
 void drawFloor()
 {
-  const float S = 100; // size
+  const float S = 200; // size
   const float H = 0; // altezza
   const int K = 150; //disegna K x K quads
 
@@ -517,7 +517,7 @@ void showMap() {
   //drawTree(); // disegna la pista
   //drawBillboard(); // disegna il cartellone
 
-  car.Render(); // disegna la macchina
+  car.Render(false); // disegna la macchina
 
   // attendiamo la fine della rasterizzazione di
   // tutte le primitive mandate

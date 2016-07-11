@@ -159,16 +159,16 @@ void SetupSelfieTexture(Point3 min, Point3 max) {
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
   glTexGeni(GL_R, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
-  
-  
+
+
   float sx = 1.0 / (min.X() - max.X()); // Inverto per flip sx - dx
   float ty = 1.0 / (min.Y() - max.Y()); // Inverto per flip up - down
   float rz = 1.0 / (max.Z() - min.Z());
-  
+
   float s[4] = {sx, 0, 0,  - min.X()*sx };
   float t[4] = {0, ty, 0,  - min.Y()*ty };
   float r[4] = {0, 0, rz,  - min.Z()*rz };
-  
+
   glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
   glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
   glTexGenfv(GL_R, GL_OBJECT_PLANE, r);
@@ -431,7 +431,7 @@ void Car::DrawHeadlight(float x, float y, float z, int lightN, bool useHeadlight
 // (da invocarsi due volte: per la macchina, e per la sua ombra)
 // (se usecolor e' falso, NON sovrascrive il colore corrente
 //  e usa quello stabilito prima di chiamare la funzione)
-void Car::RenderAllParts(bool usecolor) const {
+void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
   // drawCarlinga(); // disegna la carliga con pochi parallelepidedi
 
@@ -453,203 +453,207 @@ void Car::RenderAllParts(bool usecolor) const {
   carlinga.RenderNxV(); // rendering delle mesh carlinga usando normali per vertice
   if (usecolor) glEnable(GL_LIGHTING);
 
+  // Se all parts è false non disegno tutto perché sto facendo la mappa
+  if (allParts) {
+    glPushMatrix();
+    glTranslate(  asta.Center() );
+    glRotatef( 1 * sterzo, 0, 1, 0);
+    //glRotatef(-1 * mozzoA, 1, 0, 0);
+    glTranslate( -asta.Center() );
+    glColor3f(0, 0, 0);
+    brakes.RenderNxV();
+    asta.RenderNxV();
+    glPopMatrix();
 
-  glPushMatrix();
-  glTranslate(  asta.Center() );
-  glRotatef( 1 * sterzo, 0, 1, 0);
-  //glRotatef(-1 * mozzoA, 1, 0, 0);
-  glTranslate( -asta.Center() );
-  glColor3f(0, 0, 0);
-  brakes.RenderNxV();
-  asta.RenderNxV(); 
-  glPopMatrix();
+    glPushMatrix();
+    glColor3f(0, 0, 0);
+    brake_block.RenderNxV();
+    asta_brake.RenderNxV();
+    antenna.RenderNxV();
+    glPopMatrix();
 
-  glPushMatrix();
-  glColor3f(0, 0, 0);
-  brake_block.RenderNxV();
-  asta_brake.RenderNxV();
-  antenna.RenderNxV();
-  glPopMatrix();
+    if (!useEnvmap)
+    {
+      if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+    }
+    else {
+      if (usecolor) SetupEnvmapTextureRed();
+    }
 
-  if (!useEnvmap)
-  {
-    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
-  }
-  else {
-    if (usecolor) SetupEnvmapTextureRed();
-  }
-  
-  backpiruli.RenderNxV();
-  board.RenderNxV();
-  interni.RenderNxV();
+    backpiruli.RenderNxV();
+    board.RenderNxV();
+    interni.RenderNxV();
 
-  lights.RenderNxV();
-  marmitta.RenderNxV();
-  parafango.RenderNxV();
-  piruli.RenderNxV();
-  portapacchi_piruli.RenderNxV();
-  shades.RenderNxV();
-  if (usecolor) glEnable(GL_LIGHTING);
-
-
-  if (!useEnvmap)
-  {
-    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
-  }
-  else {
-    if (usecolor) SetupEnvmapTextureBrown();
-  }
-  bars.RenderNxV();
-  if (usecolor) glEnable(GL_LIGHTING);
-
-  if (!useEnvmap)
-  {
-    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
-  }
-  else {
-    if (usecolor) SetupEnvmapTextureGlass();
-  }
-  glasses.RenderNxV();
-  mirrors.RenderNxV();
-  if (usecolor) glEnable(GL_LIGHTING);
+    lights.RenderNxV();
+    marmitta.RenderNxV();
+    parafango.RenderNxV();
+    piruli.RenderNxV();
+    portapacchi_piruli.RenderNxV();
+    shades.RenderNxV();
+    if (usecolor) glEnable(GL_LIGHTING);
 
 
-  if (!useEnvmap)
-  {
-    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
-  }
-  else {
-    if (usecolor) SetupEnvmapTextureLightLeather();
-  }
-  lateral.RenderNxV();
-  bottomsits.RenderNxV();
-  if (usecolor) glEnable(GL_LIGHTING);
+    if (!useEnvmap)
+    {
+      if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+    }
+    else {
+      if (usecolor) SetupEnvmapTextureBrown();
+    }
+    bars.RenderNxV();
+    if (usecolor) glEnable(GL_LIGHTING);
 
-  if (!useEnvmap)
-  {
-    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
-  }
-  else {
-    if (usecolor) SetupEnvmapTextureDarkLeather();
-  }
-  backsits.RenderNxV();
-  if (usecolor) glEnable(GL_LIGHTING);
+    if (!useEnvmap)
+    {
+      if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+    }
+    else {
+      if (usecolor) SetupEnvmapTextureGlass();
+    }
+    glasses.RenderNxV();
+    mirrors.RenderNxV();
+    if (usecolor) glEnable(GL_LIGHTING);
 
-  
 
-  for (int i = 0; i < 2; i++) {
-    // i==0 -> disegno ruote destre.
-    // i==1 -> disegno ruote sinistre.
-    int sign;
-    if (i == 0) sign = 1;
-    else sign = -1;
+    if (!useEnvmap)
+    {
+      if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+    }
+    else {
+      if (usecolor) SetupEnvmapTextureLightLeather();
+    }
+    lateral.RenderNxV();
+    bottomsits.RenderNxV();
+    if (usecolor) glEnable(GL_LIGHTING);
 
-    /*
-    ** Inizio a disegnare la ruota davanti
-    **/
+    if (!useEnvmap)
+    {
+      if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+    }
+    else {
+      if (usecolor) SetupEnvmapTextureDarkLeather();
+    }
+    backsits.RenderNxV();
+    if (usecolor) glEnable(GL_LIGHTING);
 
-    if (i == 0) {
+
+
+    for (int i = 0; i < 2; i++) {
+      // i==0 -> disegno ruote destre.
+      // i==1 -> disegno ruote sinistre.
+      int sign;
+      if (i == 0) sign = 1;
+      else sign = -1;
+
+      /*
+      ** Inizio a disegnare la ruota davanti
+      **/
+
+      if (i == 0) {
+        glPushMatrix();
+        // if (i == 1) {
+        //   glTranslatef(0, +wheelFR1.Center().Y(), 0);
+        //   glRotatef(180, 0, 0, 1 );
+        //   glTranslatef(0, -wheelFR1.Center().Y(), 0);
+        // }
+
+        glTranslatef(-4.7, +wheelFR1.Center().Y() - 0.5, 0 + 5);
+        glTranslatef(-4.7, -wheelFR1.Center().Y() - 0.5, 0 + 5);
+
+        glTranslate(  wheelFR1.Center() );
+        glRotatef( sign * sterzo, 0, 1, 0);
+        glRotatef(-sign * mozzoA, 1, 0, 0);
+        glTranslate( -wheelFR1.Center() );
+
+        if (usecolor) glColor3f(.6, .6, .6);
+        if (usecolor) SetupWheelTexture(wheelFR1.bbmin, wheelFR1.bbmax);
+        wheelFR1.RenderNxF(); // la ruota viene meglio FLAT SHADED - normali per faccia
+        // provare x credere
+        glDisable(GL_TEXTURE_2D);
+        if (usecolor) glColor3f(0.9, 0.9, 0.9);
+        wheelFR2.RenderNxV();
+        glPopMatrix();
+      }
+
+      /*
+      ** Inizio a disegnare la ruota dietro
+      **/
       glPushMatrix();
-      // if (i == 1) {
-      //   glTranslatef(0, +wheelFR1.Center().Y(), 0);
-      //   glRotatef(180, 0, 0, 1 );
-      //   glTranslatef(0, -wheelFR1.Center().Y(), 0);
-      // }
+      if (i == 1) {
+        glTranslatef(0, +wheelBR1.Center().Y(), 0);
+        glRotatef(180, 0, 0, 1 );
+        glTranslatef(0, -wheelBR1.Center().Y(), 0);
+      }
 
-      glTranslatef(-4.7, +wheelFR1.Center().Y() - 0.5, 0 + 5);
-      glTranslatef(-4.7, -wheelFR1.Center().Y() - 0.5, 0 + 5);
+      if (i == 0) {
+        glTranslatef(2, +wheelFR1.Center().Y(), 0 - 2);
+        glTranslatef(2, -wheelFR1.Center().Y(), 0 - 2);
+      }
 
-      glTranslate(  wheelFR1.Center() );
-      glRotatef( sign * sterzo, 0, 1, 0);
+      if (i == 1) {
+        glTranslatef(3.5, +wheelFR1.Center().Y(), 0 - 2);
+        glTranslatef(3.5, -wheelFR1.Center().Y(), 0 - 2);
+      }
+
+      glTranslate(  wheelBR1.Center() );
       glRotatef(-sign * mozzoA, 1, 0, 0);
-      glTranslate( -wheelFR1.Center() );
+      glTranslate( -wheelBR1.Center() );
 
       if (usecolor) glColor3f(.6, .6, .6);
-      if (usecolor) SetupWheelTexture(wheelFR1.bbmin, wheelFR1.bbmax);
-      wheelFR1.RenderNxF(); // la ruota viene meglio FLAT SHADED - normali per faccia
-      // provare x credere
+      if (usecolor) SetupWheelTexture(wheelBR1.bbmin, wheelBR1.bbmax);
+      wheelBR1.RenderNxF();
       glDisable(GL_TEXTURE_2D);
       if (usecolor) glColor3f(0.9, 0.9, 0.9);
-      wheelFR2.RenderNxV();
+      wheelBR2.RenderNxV();
       glPopMatrix();
     }
-
     /*
-    ** Inizio a disegnare la ruota dietro
-    **/
-    glPushMatrix();
-    if (i == 1) {
-      glTranslatef(0, +wheelBR1.Center().Y(), 0);
-      glRotatef(180, 0, 0, 1 );
-      glTranslatef(0, -wheelBR1.Center().Y(), 0);
-    }
+      // modo vecchio: disegno le ruote senza usare le mesh
+      // ruota posteriore D
+      glPushMatrix();
+      glTranslatef( 0.58,+raggioRuotaP-0.28,+0.8);
+      glRotatef(mozzoP,1,0,0);
+      // SONO NELLO SPAZIO RUOTA
+      glScalef(0.1, raggioRuotaP, raggioRuotaP);
+      drawWheel();
+      glPopMatrix();
 
-    if (i == 0) {
-      glTranslatef(2, +wheelFR1.Center().Y(), 0 - 2);
-      glTranslatef(2, -wheelFR1.Center().Y(), 0 - 2);
-    }
+      // ruota posteriore S
+      glPushMatrix();
+      glTranslatef(-0.58,+raggioRuotaP-0.28,+0.8);
+      glRotatef(mozzoP,1,0,0);
+      glScalef(0.1, raggioRuotaP, raggioRuotaP);
+      drawWheel();
+      glPopMatrix();
 
-    if (i == 1) {
-      glTranslatef(3.5, +wheelFR1.Center().Y(), 0 - 2);
-      glTranslatef(3.5, -wheelFR1.Center().Y(), 0 - 2);
-    }
+      // ruota anteriore D
+      glPushMatrix();
+      glTranslatef( 0.58,+raggioRuotaA-0.28,-0.55);
+      glRotatef(sterzo,0,1,0);
+      glRotatef(mozzoA,1,0,0);
+      glScalef(0.08, raggioRuotaA, raggioRuotaA);
+      drawWheel();
+      glPopMatrix();
 
-    glTranslate(  wheelBR1.Center() );
-    glRotatef(-sign * mozzoA, 1, 0, 0);
-    glTranslate( -wheelBR1.Center() );
-
-    if (usecolor) glColor3f(.6, .6, .6);
-    if (usecolor) SetupWheelTexture(wheelBR1.bbmin, wheelBR1.bbmax);
-    wheelBR1.RenderNxF();
-    glDisable(GL_TEXTURE_2D);
-    if (usecolor) glColor3f(0.9, 0.9, 0.9);
-    wheelBR2.RenderNxV();
-    glPopMatrix();
+      // ruota anteriore S
+      glPushMatrix();
+      glTranslatef(-0.58,+raggioRuotaA-0.28,-0.55);
+      glRotatef(sterzo,0,1,0);
+      glRotatef(mozzoA,1,0,0);
+      drawAxis();
+      glScalef(0.08, raggioRuotaA, raggioRuotaA);
+      drawWheel();
+      glPopMatrix();
+      */
   }
-  /*
-    // modo vecchio: disegno le ruote senza usare le mesh
-    // ruota posteriore D
-    glPushMatrix();
-    glTranslatef( 0.58,+raggioRuotaP-0.28,+0.8);
-    glRotatef(mozzoP,1,0,0);
-    // SONO NELLO SPAZIO RUOTA
-    glScalef(0.1, raggioRuotaP, raggioRuotaP);
-    drawWheel();
-    glPopMatrix();
-
-    // ruota posteriore S
-    glPushMatrix();
-    glTranslatef(-0.58,+raggioRuotaP-0.28,+0.8);
-    glRotatef(mozzoP,1,0,0);
-    glScalef(0.1, raggioRuotaP, raggioRuotaP);
-    drawWheel();
-    glPopMatrix();
-
-    // ruota anteriore D
-    glPushMatrix();
-    glTranslatef( 0.58,+raggioRuotaA-0.28,-0.55);
-    glRotatef(sterzo,0,1,0);
-    glRotatef(mozzoA,1,0,0);
-    glScalef(0.08, raggioRuotaA, raggioRuotaA);
-    drawWheel();
-    glPopMatrix();
-
-    // ruota anteriore S
-    glPushMatrix();
-    glTranslatef(-0.58,+raggioRuotaA-0.28,-0.55);
-    glRotatef(sterzo,0,1,0);
-    glRotatef(mozzoA,1,0,0);
-    drawAxis();
-    glScalef(0.08, raggioRuotaA, raggioRuotaA);
-    drawWheel();
-    glPopMatrix();
-    */
-
   glPopMatrix();
 }
 
-// disegna a schermo
 void Car::Render() const {
+  Car::Render(true);
+}
+// disegna a schermo
+void Car::Render(bool allParts) const {
   // sono nello spazio mondo
 
   //drawAxis(); // disegno assi spazio mondo
@@ -663,7 +667,7 @@ void Car::Render() const {
 
   DrawHeadlight(0, 1.2, 0, 0, useHeadlight); // accendi faro centrale
 
-  RenderAllParts(true);
+  RenderAllParts(true, allParts);
 
   // ombra!
   if (useShadow)
@@ -672,7 +676,7 @@ void Car::Render() const {
     glTranslatef(0, 0.01, 0); // alzo l'ombra di un epsilon per evitare z-fighting con il pavimento
     glScalef(1.01, 0, 1.01); // appiattisco sulla Y, ingrandisco dell'1% sulla Z e sulla X
     glDisable(GL_LIGHTING); // niente lighing per l'ombra
-    RenderAllParts(false);  // disegno la macchina appiattita
+    RenderAllParts(false, allParts);  // disegno la macchina appiattita
 
     glEnable(GL_LIGHTING);
   }
