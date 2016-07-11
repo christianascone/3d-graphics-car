@@ -228,7 +228,7 @@ void drawSphere(double r, int lats, int longs) {
 }
 
 // CODICE CECI
-// void drawFloor(bool map)
+// void drawPis(bool map)
 // {
 //   const float S=100; // size
 //   const float H=0;   // altezza
@@ -609,9 +609,10 @@ void rendering(SDL_Window *win) {
   drawSky(); // disegna il cielo come sfondo
 
   drawFloor(); // disegna il suolo
-  drawPista(); // disegna la pista
+  
   drawTree(); // disegna la pista
   drawBillboard(); // disegna il cartellone
+  drawPista(); // disegna la pista
 
   car.Render(); // disegna la macchina
 
@@ -731,6 +732,7 @@ int main(int argc, char* argv[])
   if (!LoadTexture(8, (char *)"texture/dark_leather.jpg")) return 0;
   if (!LoadTexture(9, (char *)"texture/selfie.jpg")) return 0;
   if (!LoadTexture(10, (char *)"texture/decor_metal.jpg")) return 0;
+  if (!LoadTexture(11, (char *)"texture/road2.jpg")) return 0;
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);

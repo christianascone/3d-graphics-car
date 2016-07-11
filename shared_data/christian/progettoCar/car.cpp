@@ -124,6 +124,11 @@ void SetupEnvmapTextureDecorMetal()
   SetupEnvmapTexture(10);
 }
 
+void SetupEnvmapTextureRoad()
+{
+  SetupEnvmapTexture(11);
+}
+
 // funzione che prepara tutto per creare le coordinate texture (s,t) da (x,y,z)
 // Mappo l'intervallo [ minY , maxY ] nell'intervallo delle T [0..1]
 //     e l'intervallo [ minZ , maxZ ] nell'intervallo delle S [0..1]
@@ -233,11 +238,19 @@ void drawAxis(); // anche questa
 
 void drawPista () {
   glPushMatrix();
-  glColor3f(0.4, 0.4, .8);
+  glColor3f(0.5, 0.5, 0.5);
   glScalef(0.75, 1.0, 0.75);
   glTranslatef(0, 0.01, 0);
   //pista.RenderNxV();
-  pista.RenderNxF();
+  // SetupEnvmapTextureRoad();
+  //SetupEnvmapTextureRoad();
+  glBindTexture(GL_TEXTURE_2D, 11);
+  
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+  pista.RenderNxV();
   glPopMatrix();
 }
 
@@ -279,9 +292,11 @@ void drawBillboard () {
     //if (usecolor) SetupEnvmapTextureDecorMetal();
     glBindTexture(GL_TEXTURE_2D, 10);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+    glDisable(GL_LIGHTING);
   }
   billboard_base.RenderNxV();
   billboard_internal.RenderNxV();
