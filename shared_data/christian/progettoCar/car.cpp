@@ -419,7 +419,6 @@ void Car::DrawHeadlight(float x, float y, float z, int lightN, bool useHeadlight
   if (useHeadlight)
   {
     glEnable(usedLight);
-glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     float col0[4] = {0.8, 0.8, 0.0,  1};
     glLightfv(usedLight, GL_DIFFUSE, col0);
 
