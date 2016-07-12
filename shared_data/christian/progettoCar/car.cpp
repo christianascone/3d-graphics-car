@@ -99,7 +99,18 @@ void SetupEnvmapTextureBrown()
 
 void SetupEnvmapTextureGlass()
 {
-  SetupEnvmapTexture(4);
+  glBindTexture(GL_TEXTURE_2D, 4);
+
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_TEXTURE_GEN_S); // abilito la generazione automatica delle coord texture S e T
+  glEnable(GL_TEXTURE_GEN_T);
+  glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_SPHERE_MAP); // Env map
+  glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_SPHERE_MAP);
+  // glColor3f(1, 1, 1); // metto il colore neutro (viene moltiplicato col colore texture, componente per componente)
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glColor4f (0.5, 0.5, 0.5, 0.3);
+  glDisable(GL_LIGHTING); // disabilito il lighting OpenGL standard (lo faccio con la texture)
 }
 
 void SetupEnvmapTextureTree()
