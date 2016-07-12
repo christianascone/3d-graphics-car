@@ -228,69 +228,23 @@ void drawSphere(double r, int lats, int longs) {
 }
 
 // CODICE CECI
-// void drawPis(bool map)
-// {
-//   const float S=100; // size
-//   const float H=0;   // altezza
-//   const int K=150; //disegna K x K quads
-
-//   if(!map){
-//     glBindTexture(GL_TEXTURE_2D,4);
-//     glEnable(GL_TEXTURE_2D);
-//     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-//     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-//   }
-//   glDisable(GL_LIGHTING);
-//   glColor3f(1,1,1);
-//   // disegna KxK quads
-//   glBegin(GL_QUADS);
-//     //glColor3f(0.6, 0.6, 0.6); // colore uguale x tutti i quads
-//     glNormal3f(0,1,0);       // normale verticale uguale x tutti
-//     for (int x=0; x<K; x++)
-//     for (int z=0; z<K; z++) {
-//       float x0=-S + 2*(x+0)*S/K;
-//       float x1=-S + 2*(x+1)*S/K;
-//       float z0=-S + 2*(z+0)*S/K;
-//       float z1=-S + 2*(z+1)*S/K;
-//       glTexCoord2f(0.0f, 1.0f);
-//       glVertex3d(x0, H, z0);
-//       glTexCoord2f(0.0f, 0.0f);
-//       glVertex3d(x1, H, z0);
-//       glTexCoord2f(1.0f, 0.0f);
-//       glVertex3d(x1, H, z1);
-//       glTexCoord2f(1.0f, 1.0f);
-//       glVertex3d(x0, H, z1);
-//     }
-//   glEnd();
-
-//   glDisable(GL_TEXTURE_GEN_S);
-//   glDisable(GL_TEXTURE_GEN_T);
-//   glDisable(GL_TEXTURE_2D);
-//   glEnable(GL_LIGHTING);
-// }
-
-void drawFloor()
+void drawFloor(bool map)
 {
-  const float S = 200; // size
+  const float S = 100; // size
   const float H = 0; // altezza
   const int K = 150; //disegna K x K quads
 
-  /*
-  //vecchio codice ora commentato
-  // disegna un quad solo
-  glBegin(GL_QUADS);
-    glColor3f(0.5, 0.2, 0.0);
-    glNormal3f(0,1,0);
-    glVertex3d(-S, H, -S);
-    glVertex3d(+S, H, -S);
-    glVertex3d(+S, H, +S);
-    glVertex3d(-S, H, +S);
-  glEnd();
-  */
-
+  if (!map) {
+    glBindTexture(GL_TEXTURE_2D, 12);
+    glEnable(GL_TEXTURE_2D);
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+  }
+  glDisable(GL_LIGHTING);
+  glColor3f(1, 1, 1);
   // disegna KxK quads
   glBegin(GL_QUADS);
-  glColor3f(0.6, 0.6, 0.6); // colore uguale x tutti i quads
+  //glColor3f(0.6, 0.6, 0.6); // colore uguale x tutti i quads
   glNormal3f(0, 1, 0);     // normale verticale uguale x tutti
   for (int x = 0; x < K; x++)
     for (int z = 0; z < K; z++) {
@@ -298,33 +252,39 @@ void drawFloor()
       float x1 = -S + 2 * (x + 1) * S / K;
       float z0 = -S + 2 * (z + 0) * S / K;
       float z1 = -S + 2 * (z + 1) * S / K;
+      glTexCoord2f(0.0f, 1.0f);
       glVertex3d(x0, H, z0);
+      glTexCoord2f(0.0f, 0.0f);
       glVertex3d(x1, H, z0);
+      glTexCoord2f(1.0f, 0.0f);
       glVertex3d(x1, H, z1);
+      glTexCoord2f(1.0f, 1.0f);
       glVertex3d(x0, H, z1);
     }
   glEnd();
+
+  glDisable(GL_TEXTURE_GEN_S);
+  glDisable(GL_TEXTURE_GEN_T);
+  glDisable(GL_TEXTURE_2D);
+  glEnable(GL_LIGHTING);
 }
+
 
 void setCameraMap() {
 
-  double px = 0;//car.px;
-  double py = 0;//car.py;
-  double pz = 0;//car.pz;
-  double angle = 0;//car.facing;
+  double px = 0;
+  double py = 0;
+  double pz = 0;
+  double angle = 0;
   double cosf = cos(angle * M_PI / 180.0);
   double sinf = sin(angle * M_PI / 180.0);
-  double camd, camh, ex, ey, ez, cx, cy, cz;
-  double cosff, sinff;
+  double camd, camh, ex, ey, ez;
 
   camd = 1;
   camh = 130.0;
   ex = px + 0;
   ey = py + camh;
   ez = pz + camd;
-  cx = px - camd;
-  cy = py + camh;
-  cz = pz - camd;
   gluLookAt(ex, ey, ez, 0, 0, 0, 0.0, 1.0, 0.0);
 
 }
@@ -512,7 +472,7 @@ void showMap() {
   //drawAxis(); // disegna assi frame OGGETTO
   //drawCubeWire();
 
-  drawFloor(); // disegna il suolo
+  drawFloor(true); // disegna il suolo
   drawPista(); // disegna la pista
   //drawTree(); // disegna la pista
   //drawBillboard(); // disegna il cartellone
@@ -541,7 +501,7 @@ void showMap() {
 }
 
 // Stampa i comandi possibili sullo schermo
-void printCommands(){
+void printCommands() {
   // Stampo i comandi
   renderString(2, 20, "F1: Cambia camera");
   renderString(2, 40, "F2: Switch mesh");
@@ -608,8 +568,8 @@ void rendering(SDL_Window *win) {
 
   drawSky(); // disegna il cielo come sfondo
 
-  drawFloor(); // disegna il suolo
-  
+  drawFloor(false); // disegna il suolo
+
   drawTree(); // disegna la pista
   drawBillboard(); // disegna il cartellone
   drawPista(); // disegna la pista
@@ -733,6 +693,7 @@ int main(int argc, char* argv[])
   if (!LoadTexture(9, (char *)"texture/selfie.jpg")) return 0;
   if (!LoadTexture(10, (char *)"texture/decor_metal.jpg")) return 0;
   if (!LoadTexture(11, (char *)"texture/road2.jpg")) return 0;
+  if (!LoadTexture(12, (char *)"texture/grass.jpg")) return 0;
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);

@@ -35,11 +35,14 @@ Mesh parafango((char *)"ape/obj/parafango.obj"); // chiama il costruttore
 Mesh piruli((char *)"ape/obj/piruli.obj");
 Mesh portapacchi_piruli((char *)"ape/obj/portapacchi_piruli.obj");
 Mesh shades((char *)"ape/obj/shades.obj");
+
 Mesh wheelBR1((char *)"obj/Ferrari_wheel_back_R.obj");
 Mesh wheelFR1((char *)"obj/Ferrari_wheel_front_R.obj");
 Mesh wheelBR2((char *)"obj/Ferrari_wheel_back_R_metal.obj");
 Mesh wheelFR2((char *)"obj/Ferrari_wheel_front_R_metal.obj");
+
 Mesh pista((char *)"obj/pista.obj");
+
 Mesh tree1((char *)"obj/tree1.obj");
 Mesh tree2((char *)"obj/tree2.obj");
 Mesh tree3((char *)"obj/tree3.obj");
