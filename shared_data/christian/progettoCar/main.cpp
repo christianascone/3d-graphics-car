@@ -227,7 +227,6 @@ void drawSphere(double r, int lats, int longs) {
   }
 }
 
-// CODICE CECI
 void drawFloor(bool map)
 {
   const float S = 100; // size

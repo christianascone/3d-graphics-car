@@ -244,15 +244,6 @@ void drawPista () {
   glColor3f(0.5, 0.5, 0.5);
   glScalef(0.75, 1.0, 0.75);
   glTranslatef(0, 0.01, 0);
-  //pista.RenderNxV();
-  // SetupEnvmapTextureRoad();
-  //SetupEnvmapTextureRoad();
-  glBindTexture(GL_TEXTURE_2D, 11);
-  
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
   pista.RenderNxV();
   glPopMatrix();
 }
@@ -280,6 +271,7 @@ void drawTree () {
   }
   tree2.RenderNxV();
   //if (usecolor) glEnable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
   glPopMatrix();
 }
 
@@ -294,6 +286,7 @@ void drawBillboard () {
     if (usecolor) glColor3f(0.5, 0.5, 0.5);   // colore rosso, da usare con Lighting
     //if (usecolor) SetupEnvmapTextureDecorMetal();
     glBindTexture(GL_TEXTURE_2D, 10);
+    glEnable(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -326,6 +319,7 @@ void drawBillboard () {
   }
   billboard_face2.RenderNxV();
   //if (usecolor) glEnable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
   glPopMatrix();
 }
 
@@ -425,7 +419,7 @@ void Car::DrawHeadlight(float x, float y, float z, int lightN, bool useHeadlight
   if (useHeadlight)
   {
     glEnable(usedLight);
-
+glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     float col0[4] = {0.8, 0.8, 0.0,  1};
     glLightfv(usedLight, GL_DIFFUSE, col0);
 
