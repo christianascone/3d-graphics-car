@@ -253,7 +253,7 @@ void drawAxis(); // anche questa
 void drawPista () {
   glPushMatrix();
   glColor3f(0.5, 0.5, 0.5);
-  glScalef(0.75, 1.0, 0.75);
+  glScalef(0.70, 0.9, 0.70);
   glTranslatef(0, 0.01, 0);
   pista.RenderNxV();
   glPopMatrix();
@@ -289,6 +289,7 @@ void drawTree () {
 void drawBillboard () {
   bool usecolor = true;
   glPushMatrix();
+  glTranslatef(30, 0, 0);
   if (!useEnvmap)
   {
     if (usecolor) glColor3f(0.5, 0.5, 0.5);   // colore nero, da usare con Lighting

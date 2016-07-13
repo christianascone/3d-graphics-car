@@ -401,9 +401,26 @@ void renderString(float x, float y, std::string text)
   glMatrixMode(GL_MODELVIEW);
 }
 
+void drawFps() {
+  // disegnamo i fps (frame x sec) come una barra a sinistra.
+// (vuota = 0 fps, piena = 100 fps)
+  SetCoordToPixel();
+
+  glBegin(GL_QUADS);
+  float y = scrH * fps / 100;
+  float ramp = fps / 100;
+  glColor3f(1 - ramp, 0, ramp);
+  glVertex2d(10, 0);
+  glVertex2d(10, y);
+  glVertex2d(0, y);
+  glVertex2d(0, 0);
+
+  glEnd();
+}
+
 void showMap() {
   // settiamo il viewport
-  glViewport(5, 5, 100, 100);
+  glViewport(0, 5, 100, 100);
 
   // colore sfondo = bianco
   glClearColor(1, 1, 1, 1);
@@ -460,19 +477,7 @@ void showMap() {
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
 
-// disegnamo i fps (frame x sec) come una barra a sinistra.
-// (vuota = 0 fps, piena = 100 fps)
-  SetCoordToPixel();
 
-  glBegin(GL_QUADS);
-  float y = 100 * fps / 100;
-  float ramp = fps / 100;
-  glColor3f(1 - ramp, 0, ramp);
-  glVertex2d(10, 0);
-  glVertex2d(10, y);
-  glVertex2d(0, y);
-  glVertex2d(0, 0);
-  glEnd();
 }
 
 // Stampa i comandi possibili sullo schermo
@@ -580,20 +585,7 @@ void rendering(SDL_Window *win) {
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
 
-// disegnamo i fps (frame x sec) come una barra a sinistra.
-// (vuota = 0 fps, piena = 100 fps)
-  SetCoordToPixel();
-
-  glBegin(GL_QUADS);
-  float y = scrH * fps / 100;
-  float ramp = fps / 100;
-  glColor3f(1 - ramp, 0, ramp);
-  glVertex2d(10, 0);
-  glVertex2d(10, y);
-  glVertex2d(0, y);
-  glVertex2d(0, 0);
-
-  glEnd();
+  //drawFps();
 
   drawMenu();
   printCommands();
