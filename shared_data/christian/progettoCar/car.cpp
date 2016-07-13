@@ -13,7 +13,10 @@
 #include "point3.h"
 #include "mesh.h"
 
-// var globale di tipo mesh
+/** 
+** Inizializzazione mesh
+*/
+// Corpo Macchina
 Mesh antenna((char *)"ape/obj/antenna.obj"); // chiama il costruttore
 Mesh asta((char *)"ape/obj/asta.obj");
 Mesh asta_brake((char *)"ape/obj/asta_brake.obj");
@@ -36,6 +39,7 @@ Mesh piruli((char *)"ape/obj/piruli.obj");
 Mesh portapacchi_piruli((char *)"ape/obj/portapacchi_piruli.obj");
 Mesh shades((char *)"ape/obj/shades.obj");
 
+// Ruote
 Mesh wheelBR1((char *)"obj/Ferrari_wheel_back_R.obj");
 Mesh wheelFR1((char *)"obj/Ferrari_wheel_front_R.obj");
 Mesh wheelBR2((char *)"obj/Ferrari_wheel_back_R_metal.obj");
@@ -106,7 +110,6 @@ void SetupEnvmapTextureGlass()
   glEnable(GL_TEXTURE_GEN_T);
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_SPHERE_MAP); // Env map
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_SPHERE_MAP);
-  // glColor3f(1, 1, 1); // metto il colore neutro (viene moltiplicato col colore texture, componente per componente)
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glColor4f (0.5, 0.5, 0.5, 0.3);
@@ -165,7 +168,8 @@ void SetupWheelTexture(Point3 min, Point3 max) {
   glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
 }
 
-void SetupSelfieTexture(Point3 min, Point3 max) {
+// Setup della texture con la foto
+void SetupPhotoTexture(Point3 min, Point3 max) {
   glBindTexture(GL_TEXTURE_2D, 9);
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_TEXTURE_GEN_S);
@@ -250,6 +254,7 @@ void Car::DoStep() {
 //void drawCube(); // questa e' definita altrove (quick hack)
 void drawAxis(); // anche questa
 
+// Disegno la pista con la mesh pista
 void drawPista () {
   glPushMatrix();
   glColor3f(0.5, 0.5, 0.5);
@@ -259,9 +264,12 @@ void drawPista () {
   glPopMatrix();
 }
 
+// Disegno l'albero
 void drawTree () {
   bool usecolor = true;
   glPushMatrix();
+
+  // Setup della texture dei tronchi
   if (!useEnvmap)
   {
     if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
@@ -273,6 +281,7 @@ void drawTree () {
   tree3.RenderNxV();
   //if (usecolor) glEnable(GL_LIGHTING);
 
+  // Setup della texture per le foglie dell'albero
   if (!useEnvmap)
   {
     if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
@@ -286,6 +295,7 @@ void drawTree () {
   glPopMatrix();
 }
 
+// Disegna il cartellone pubblicitario con l'immagine
 void drawBillboard () {
   bool usecolor = true;
   glPushMatrix();
@@ -296,7 +306,8 @@ void drawBillboard () {
   }
   else {
     if (usecolor) glColor3f(0.5, 0.5, 0.5);   // colore rosso, da usare con Lighting
-    //if (usecolor) SetupEnvmapTextureDecorMetal();
+
+    // Applico la texture della parte "metallica" del cartellone
     glBindTexture(GL_TEXTURE_2D, 10);
     glEnable(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -306,6 +317,7 @@ void drawBillboard () {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
     glDisable(GL_LIGHTING);
   }
+
   billboard_base.RenderNxV();
   billboard_internal.RenderNxV();
   billboard_lightsupport.RenderNxV();
@@ -317,35 +329,14 @@ void drawBillboard () {
   }
   else {
     if (usecolor) glColor3f(1, 1, 1);   // colore rosso, da usare con Lighting
-    if (usecolor) SetupSelfieTexture(billboard_face1.bbmin, billboard_face1.bbmax);
+    if (usecolor) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax);
   }
   billboard_face1.RenderNxV();
-
-  if (!useEnvmap)
-  {
-    if (usecolor) glColor3f(1, 1, 1);   // colore rosso, da usare con Lighting
-  }
-  else {
-    if (usecolor) glColor3f(1, 1, 1);   // colore rosso, da usare con Lighting
-    if (usecolor) SetupSelfieTexture(billboard_face2.bbmin, billboard_face2.bbmax);
-  }
   billboard_face2.RenderNxV();
   //if (usecolor) glEnable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
   glPopMatrix();
 }
-
-/*
-// diesgna una ruota come due cubi intersecati a 45 gradi
-void drawWheel(){
-  glPushMatrix();
-  glScalef(1, 1.0/sqrt(2.0),  1.0/sqrt(2.0));
-  drawCube();
-  glRotatef(45,  1,0,0);
-  drawCube();
-  glPopMatrix();
-}
-*/
 
 void Controller::Init() {
   for (int i = 0; i < NKEYS; i++) key[i] = false;
@@ -382,47 +373,6 @@ void Car::Init() {
   grip = 0.45; // quanto il facing macchina si adegua velocemente allo sterzo
 }
 
-/*
-//vecchio codice ora commentato
-// disegna carlinga composta da 1 cubo traslato e scalato
-static void drawCarlinga(){
-  // disegna carlinga
-
-  glColor3f(1,0,0);
-
-  // sono nel frame CAR
-  glPushMatrix();
-
-  // vado al frame pezzo_A
-  glScalef(0.25 , 0.14 , 1);
-  drawCube();
-
-  // torno al frame CAR
-  glPopMatrix();
-
-  // vado frame pezzo_B
-  glPushMatrix();
-  glTranslatef(0,-0.11,-0.95);
-  glScalef(0.6, 0.05, 0.15);
-  drawCube();
-  glPopMatrix();
-
-   // vado frame pezzo_C
-  glPushMatrix();
-  glTranslatef(0,-0.11,0);
-  glScalef(0.6, 0.05, 0.3);
-  drawCube();
-  glPopMatrix();
-
-  // vado frame pezzo_D
-  glPushMatrix();
-  glRotatef(-5,1,0,0);
-  glTranslatef(0,+0.2,+0.95);
-  glScalef(0.6, 0.05, 0.3);
-  drawCube();
-  glPopMatrix();
-}
-*/
 
 // attiva una luce di openGL per simulare un faro della macchina
 void Car::DrawHeadlight(float x, float y, float z, int lightN, bool useHeadlight) const {
@@ -443,7 +393,7 @@ void Car::DrawHeadlight(float x, float y, float z, int lightN, bool useHeadlight
     float tmpDir[4] = {0, 0, -1,  0}; // ultima comp=1 => luce posizionale
     glLightfv(usedLight, GL_SPOT_DIRECTION, tmpDir );
 
-    glLightf (usedLight, GL_SPOT_CUTOFF, 50);
+    glLightf (usedLight, GL_SPOT_CUTOFF, 30);
     glLightf (usedLight, GL_SPOT_EXPONENT, 1);
 
     glLightf(usedLight, GL_CONSTANT_ATTENUATION, 0);
