@@ -60,7 +60,7 @@ struct MenuButton {
 };
 
 MenuButton cameraButton (5, 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
-MenuButton meshButton (5, (MENU_BUTTON_HEIGHT + 5) + 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
+MenuButton wireframeButton (5, (MENU_BUTTON_HEIGHT + 5) + 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
 MenuButton textureButton (5, (MENU_BUTTON_HEIGHT + 5) * 2 + 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
 
 MenuButton lightsButton (5 * 2 + MENU_BUTTON_WIDTH, 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
@@ -168,7 +168,7 @@ void drawButton(MenuButton menuButton) {
 
 void drawMenu() {
   drawButton(cameraButton);
-  drawButton(meshButton);
+  drawButton(wireframeButton);
   drawButton(textureButton);
   drawButton(lightsButton);
   drawButton(shadowsButton);
@@ -344,14 +344,14 @@ void setCamera() {
 }
 
 void drawSky() {
-  int H = 200;
+  int H = 100;
 
   if (useWireframe) {
     glDisable(GL_TEXTURE_2D);
     glColor3f(0, 0, 0);
     glDisable(GL_LIGHTING);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    drawSphere(400.0, 100, 100);
+    drawSphere(200.0, 40, 40);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glColor3f(1, 1, 1);
     glEnable(GL_LIGHTING);
@@ -368,7 +368,7 @@ void drawSky() {
     glDisable(GL_LIGHTING);
 
     //   drawCubeFill();
-    drawSphere(400.0, 100, 100);
+    drawSphere(200.0, 40, 40);
 
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
@@ -479,7 +479,7 @@ void showMap() {
 void printCommands() {
   // Stampo i comandi
   renderString(cameraButton.x + 5, cameraButton.y + 20, "F1: Camera");
-  renderString(meshButton.x + 5, meshButton.y + 10, "F2: Mesh");
+  renderString(wireframeButton.x + 5, wireframeButton.y + 10, "F2: Wireframe");
   renderString(textureButton.x + 5, textureButton.y + 10, "F3: Texture");
 
   renderString(lightsButton.x - 5, lightsButton.y + 20, "F4: Luci");
@@ -751,7 +751,7 @@ int main(int argc, char* argv[])
           int y = e.button.y;
 
           // Check di ogni bottone
-          MenuButton buttons[] = {cameraButton, meshButton, textureButton, lightsButton, shadowsButton, mapButton};
+          MenuButton buttons[] = {cameraButton, wireframeButton, textureButton, lightsButton, shadowsButton, mapButton};
 
           for (int index = 0; index < (sizeof(buttons) / sizeof(*buttons)); index++) {
             if (x > buttons[index].x & x < buttons[index].x + buttons[index].w & y > buttons[index].y & y < buttons[index].y + buttons[index].h) {
