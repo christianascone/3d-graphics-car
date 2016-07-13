@@ -477,13 +477,13 @@ void showMap() {
 // Stampa i comandi possibili sullo schermo
 void printCommands() {
   // Stampo i comandi
-  renderString(cameraButton.x+5, cameraButton.y + 20, "F1: Camera");
-  renderString(meshButton.x+5, meshButton.y + 10, "F2: Mesh");
-  renderString(textureButton.x+5, textureButton.y + 10, "F3: Texture");
+  renderString(cameraButton.x + 5, cameraButton.y + 20, "F1: Camera");
+  renderString(meshButton.x + 5, meshButton.y + 10, "F2: Mesh");
+  renderString(textureButton.x + 5, textureButton.y + 10, "F3: Texture");
 
-  renderString(lightsButton.x-5, lightsButton.y + 20, "F4: Luci");
-  renderString(shadowsButton.x-5, shadowsButton.y + 10, "F5: Ombre");
-  renderString(mapButton.x-5, mapButton.y + 10, "F6: Mappa");
+  renderString(lightsButton.x - 5, lightsButton.y + 20, "F4: Luci");
+  renderString(shadowsButton.x - 5, shadowsButton.y + 10, "F5: Ombre");
+  renderString(mapButton.x - 5, mapButton.y + 10, "F6: Mappa");
 }
 
 /* Esegue il Rendering della scena */
@@ -739,6 +739,28 @@ int main(int argc, char* argv[])
           // allontano il punto di vista (zoom out)
           eyeDist = eyeDist / 0.9;
         };
+        break;
+
+      case SDL_MOUSEBUTTONDOWN:
+        if (e.button.button == SDL_BUTTON_LEFT) {
+          int x = e.button.x;
+          int y = e.button.y;
+
+          // Check di ogni bottone
+          MenuButton buttons[] = {cameraButton, meshButton, textureButton, lightsButton, shadowsButton, mapButton};
+
+          for (int index = 0; index < (sizeof(buttons) / sizeof(*buttons)); index++) {
+            if (x > cameraButton.x & x < cameraButton.x + cameraButton.w & y > cameraButton.y & y < cameraButton.y + cameraButton.h) {
+              // if (showMap == true) {
+              //   showMap = false;
+              // }
+              // else {
+              //   showMap = true;
+              // }
+            }
+          }
+          redraw();
+        }
         break;
 
       case SDL_JOYAXISMOTION: /* Handle Joystick Motion */
