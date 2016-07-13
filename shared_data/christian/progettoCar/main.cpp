@@ -31,6 +31,7 @@ bool useWireframe = false;
 bool useEnvmap = true;
 bool useHeadlight = false;
 bool useShadow = true;
+bool useMap = true;
 int cameraType = 0;
 
 Car car; // la nostra macchina
@@ -597,7 +598,9 @@ void rendering(SDL_Window *win) {
   drawMenu();
   printCommands();
 
-  showMap();
+  if (useMap) {
+    showMap();
+  }
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_LIGHTING);
@@ -690,6 +693,7 @@ int main(int argc, char* argv[])
         if (e.key.keysym.sym == SDLK_F3) useEnvmap = !useEnvmap;
         if (e.key.keysym.sym == SDLK_F4) useHeadlight = !useHeadlight;
         if (e.key.keysym.sym == SDLK_F5) useShadow = !useShadow;
+        if (e.key.keysym.sym == SDLK_F6) useMap = !useMap;
         break;
       case SDL_KEYUP:
         car.controller.EatKey(e.key.keysym.sym, keymap , false);
@@ -750,13 +754,20 @@ int main(int argc, char* argv[])
           MenuButton buttons[] = {cameraButton, meshButton, textureButton, lightsButton, shadowsButton, mapButton};
 
           for (int index = 0; index < (sizeof(buttons) / sizeof(*buttons)); index++) {
-            if (x > cameraButton.x & x < cameraButton.x + cameraButton.w & y > cameraButton.y & y < cameraButton.y + cameraButton.h) {
-              // if (showMap == true) {
-              //   showMap = false;
-              // }
-              // else {
-              //   showMap = true;
-              // }
+            if (x > buttons[index].x & x < buttons[index].x + buttons[index].w & y > buttons[index].y & y < buttons[index].y + buttons[index].h) {
+              if (index == 0) {
+                cameraType = (cameraType + 1) % CAMERA_TYPE_MAX;
+              } else if (index == 1) {
+                useWireframe = !useWireframe;
+              } else if (index == 2) {
+                useEnvmap = !useEnvmap;
+              } else if (index == 3) {
+                useHeadlight = !useHeadlight;
+              } else if (index == 4) {
+                useShadow = !useShadow;
+              } else if (index == 5) {
+                useMap = !useMap;
+              }
             }
           }
           redraw();
