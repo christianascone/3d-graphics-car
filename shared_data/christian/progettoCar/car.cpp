@@ -442,8 +442,8 @@ void Car::DrawHeadlight(float x, float y, float z, int lightN, bool useHeadlight
     float tmpDir[4] = {0, 0, -1,  0}; // ultima comp=1 => luce posizionale
     glLightfv(usedLight, GL_SPOT_DIRECTION, tmpDir );
 
-    glLightf (usedLight, GL_SPOT_CUTOFF, 30);
-    glLightf (usedLight, GL_SPOT_EXPONENT, 5);
+    glLightf (usedLight, GL_SPOT_CUTOFF, 50);
+    glLightf (usedLight, GL_SPOT_EXPONENT, 1);
 
     glLightf(usedLight, GL_CONSTANT_ATTENUATION, 0);
     glLightf(usedLight, GL_LINEAR_ATTENUATION, 1);
@@ -692,7 +692,7 @@ void Car::Render(bool allParts) const {
   // sono nello spazio MACCHINA
   //  drawAxis(); // disegno assi spazio macchina
 
-  DrawHeadlight(0, 1.2, 0, 0, useHeadlight); // accendi faro centrale
+  DrawHeadlight(0, 2.2, -1, 0, useHeadlight); // accendi faro centrale
 
   RenderAllParts(true, allParts);
 

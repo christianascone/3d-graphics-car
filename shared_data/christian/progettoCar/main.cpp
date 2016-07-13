@@ -19,6 +19,9 @@
 #define CAMERA_MOUSE 4
 #define CAMERA_TYPE_MAX 5
 
+#define MENU_BUTTON_WIDTH 130
+#define MENU_BUTTON_HEIGHT 40
+
 using namespace std;
 
 float viewAlpha = 20, viewBeta = 40; // angoli che definiscono la vista
@@ -43,6 +46,25 @@ Uint32 timeLastInterval = 0; // quando e' cominciato l'ultimo intervallo
 extern void drawPista();
 extern void drawTree();
 extern void drawBillboard();
+
+struct MenuButton {
+  int x, y;
+  int w, h;
+  MenuButton(int x, int y, int w, int h) {
+    this->x = x;
+    this->y = y;
+    this->w = w;
+    this->h = h;
+  }
+};
+
+MenuButton cameraButton (5, 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
+MenuButton meshButton (5, (MENU_BUTTON_HEIGHT + 5) + 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
+MenuButton textureButton (5, (MENU_BUTTON_HEIGHT + 5) * 2 + 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
+
+MenuButton lightsButton (5 * 2 + MENU_BUTTON_WIDTH, 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
+MenuButton shadowsButton (5 * 2 + MENU_BUTTON_WIDTH, (MENU_BUTTON_HEIGHT + 5) + 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
+MenuButton mapButton (5 * 2 + MENU_BUTTON_WIDTH, (MENU_BUTTON_HEIGHT + 5) * 2 + 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
 
 // setta le matrici di trasformazione in modo
 // che le coordinate in spazio oggetto siano le coord
@@ -111,94 +133,47 @@ void drawAxis() {
 
 }
 
-/*
-//vecchio codice ora commentato
-// disegna un cubo rasterizzando quads
-void drawCubeFill()
-{
-const float S=100;
+void drawButton(MenuButton menuButton) {
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluOrtho2D(0.0, scrW, scrH, 0.0 );
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
+  glEnable(GL_TEXTURE_2D);
+  glDisable(GL_LIGHTING);
+
+  glBindTexture(GL_TEXTURE_2D, 13);
+  glDisable(GL_TEXTURE_GEN_S);
+  glDisable(GL_TEXTURE_GEN_T);
+  glColor3f(1, 1, 1);
+
+  int Width = menuButton.w;
+  int Height = menuButton.h;
+  int X = menuButton.x;
+  int Y = menuButton.y;
 
   glBegin(GL_QUADS);
-
-    glNormal3f(  0,0,+1  );
-    glVertex3f( +S,+S,+S );
-    glVertex3f( -S,+S,+S );
-    glVertex3f( -S,-S,+S );
-    glVertex3f( +S,-S,+S );
-
-    glNormal3f(  0,0,-1  );
-    glVertex3f( +S,-S,-S );
-    glVertex3f( -S,-S,-S );
-    glVertex3f( -S,+S,-S );
-    glVertex3f( +S,+S,-S );
-
-    glNormal3f(  0,+1,0  );
-    glVertex3f( +S,+S,+S );
-    glVertex3f( -S,+S,+S );
-    glVertex3f( -S,+S,-S );
-    glVertex3f( +S,+S,-S );
-
-    glNormal3f(  0,-1,0  );
-    glVertex3f( +S,-S,-S );
-    glVertex3f( -S,-S,-S );
-    glVertex3f( -S,-S,+S );
-    glVertex3f( +S,-S,+S );
-
-    glNormal3f( +1,0,0  );
-    glVertex3f( +S,+S,+S );
-    glVertex3f( +S,-S,+S );
-    glVertex3f( +S,-S,-S );
-    glVertex3f( +S,+S,-S );
-
-    glNormal3f( -1,0,0  );
-    glVertex3f( -S,+S,-S );
-    glVertex3f( -S,-S,-S );
-    glVertex3f( -S,-S,+S );
-    glVertex3f( -S,+S,+S );
-
+  glTexCoord2f(0.0f, 0.0f); glVertex2f(X, Y);
+  glTexCoord2f(1.0f, 0.0f); glVertex2f(X + Width, Y);
+  glTexCoord2f(1.0f, 1.0f); glVertex2f(X + Width, Y + Height);
+  glTexCoord2f(0.0f, 1.0f); glVertex2f(X, Y + Height);
   glEnd();
+
+  glEnable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
 }
 
-// disegna un cubo in wireframe
-void drawCubeWire()
-{
-  glBegin(GL_LINE_LOOP); // faccia z=+1
-    glVertex3f( +1,+1,+1 );
-    glVertex3f( -1,+1,+1 );
-    glVertex3f( -1,-1,+1 );
-    glVertex3f( +1,-1,+1 );
-  glEnd();
-
-  glBegin(GL_LINE_LOOP); // faccia z=-1
-    glVertex3f( +1,-1,-1 );
-    glVertex3f( -1,-1,-1 );
-    glVertex3f( -1,+1,-1 );
-    glVertex3f( +1,+1,-1 );
-  glEnd();
-
-  glBegin(GL_LINES);  // 4 segmenti da -z a +z
-    glVertex3f( -1,-1,-1 );
-    glVertex3f( -1,-1,+1 );
-
-    glVertex3f( +1,-1,-1 );
-    glVertex3f( +1,-1,+1 );
-
-    glVertex3f( +1,+1,-1 );
-    glVertex3f( +1,+1,+1 );
-
-    glVertex3f( -1,+1,-1 );
-    glVertex3f( -1,+1,+1 );
-  glEnd();
+void drawMenu() {
+  drawButton(cameraButton);
+  drawButton(meshButton);
+  drawButton(textureButton);
+  drawButton(lightsButton);
+  drawButton(shadowsButton);
+  drawButton(mapButton);
 }
 
-void drawCube()
-{
-  glColor3f(.9,.9,.9);
-  drawCubeFill();
-  glColor3f(0,0,0);
-  drawCubeWire();
-}
-*/
 
 void drawSphere(double r, int lats, int longs) {
   int i, j;
@@ -368,14 +343,14 @@ void setCamera() {
 }
 
 void drawSky() {
-  int H = 100;
+  int H = 200;
 
   if (useWireframe) {
     glDisable(GL_TEXTURE_2D);
     glColor3f(0, 0, 0);
     glDisable(GL_LIGHTING);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    drawSphere(100.0, 20, 20);
+    drawSphere(400.0, 100, 100);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glColor3f(1, 1, 1);
     glEnable(GL_LIGHTING);
@@ -392,7 +367,7 @@ void drawSky() {
     glDisable(GL_LIGHTING);
 
     //   drawCubeFill();
-    drawSphere(100.0, 20, 20);
+    drawSphere(400.0, 100, 100);
 
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
@@ -412,7 +387,7 @@ void renderString(float x, float y, std::string text)
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  glColor3f(1, 0, 0);
+  glColor3f(0, 0, 0);
   glRasterPos2f(x, y);
   char tab2[1024];
   strncpy(tab2, text.c_str(), sizeof(tab2));
@@ -502,11 +477,13 @@ void showMap() {
 // Stampa i comandi possibili sullo schermo
 void printCommands() {
   // Stampo i comandi
-  renderString(2, 20, "F1: Cambia camera");
-  renderString(2, 40, "F2: Switch mesh");
-  renderString(2, 60, "F3: Switch texture");
-  renderString(2, 80, "F4: Switch luci");
-  renderString(2, 100, "F5: Switch ombre");
+  renderString(cameraButton.x+5, cameraButton.y + 20, "F1: Camera");
+  renderString(meshButton.x+5, meshButton.y + 10, "F2: Mesh");
+  renderString(textureButton.x+5, textureButton.y + 10, "F3: Texture");
+
+  renderString(lightsButton.x-5, lightsButton.y + 20, "F4: Luci");
+  renderString(shadowsButton.x-5, shadowsButton.y + 10, "F5: Ombre");
+  renderString(mapButton.x-5, mapButton.y + 10, "F6: Mappa");
 }
 
 /* Esegue il Rendering della scena */
@@ -596,8 +573,6 @@ void rendering(SDL_Window *win) {
 
   renderString(scrW / 3, 20, cameraText);
 
-  printCommands();
-
   // attendiamo la fine della rasterizzazione di
   // tutte le primitive mandate
 
@@ -617,11 +592,12 @@ void rendering(SDL_Window *win) {
   glVertex2d(0, y);
   glVertex2d(0, 0);
 
-
   glEnd();
 
-  showMap();
+  drawMenu();
+  printCommands();
 
+  showMap();
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_LIGHTING);
@@ -693,6 +669,7 @@ int main(int argc, char* argv[])
   if (!LoadTexture(10, (char *)"texture/decor_metal.jpg")) return 0;
   if (!LoadTexture(11, (char *)"texture/road2.jpg")) return 0;
   if (!LoadTexture(12, (char *)"texture/grass.jpg")) return 0;
+  if (!LoadTexture(13, (char *)"texture/button.jpg")) return 0;
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
