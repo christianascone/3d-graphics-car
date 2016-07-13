@@ -13,7 +13,7 @@
 #include "point3.h"
 #include "mesh.h"
 
-/** 
+/**
 ** Inizializzazione mesh
 */
 // Corpo Macchina
@@ -633,6 +633,17 @@ void Car::Render() const {
 // disegna a schermo
 void Car::Render(bool allParts) const {
   // sono nello spazio mondo
+  // CHECK COLLISION EX
+
+  // 10/2 perché mi assicuro di essere all'interno del cerchio e non a lato
+  bool isInBoundX = px < 10/3 && px > -10/3;
+  bool isInBoundZ = pz < 1 && pz > -1;
+
+  if (isInBoundX && isInBoundZ) {
+    printf("collision\n");
+  }
+  printf("px %f\n", px);
+  printf("pz %f\n", pz);
 
   //drawAxis(); // disegno assi spazio mondo
   glPushMatrix();

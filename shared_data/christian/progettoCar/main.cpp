@@ -175,6 +175,17 @@ void drawMenu() {
   drawButton(mapButton);
 }
 
+void drawCircle(int x, int y) {
+  glBegin(GL_LINE_STRIP);
+  glColor3f(0.1, 0.2, 0.3);
+  int n = 100;
+  float t = 0;
+  float dt = 0.1;
+  int r = 10;
+  for (int i = 0; i <= n; i++, t += dt)
+    glVertex2f(x + r * cos(t), y + r * sin(t));
+  glEnd();
+}
 
 void drawSphere(double r, int lats, int longs) {
   int i, j;
@@ -483,13 +494,19 @@ void showMap() {
 // Stampa i comandi possibili sullo schermo
 void printCommands() {
   // Stampo i comandi
-  renderString(cameraButton.x + 5, cameraButton.y + 20, "F1: Camera");
-  renderString(wireframeButton.x + 5, wireframeButton.y + 10, "F2: Wireframe");
-  renderString(textureButton.x + 5, textureButton.y + 10, "F3: Texture");
+  int stringY = 20;
+  renderString(cameraButton.x + 5, cameraButton.y + stringY, "F1: Camera");
+  stringY/=2;
+  renderString(wireframeButton.x + 5, wireframeButton.y + stringY, "F2: Wireframe");
+  stringY/=2;
+  renderString(textureButton.x + 5, textureButton.y + stringY, "F3: Texture");
 
-  renderString(lightsButton.x - 5, lightsButton.y + 20, "F4: Luci");
-  renderString(shadowsButton.x - 5, shadowsButton.y + 10, "F5: Ombre");
-  renderString(mapButton.x - 5, mapButton.y + 10, "F6: Mappa");
+  stringY = 20;
+  renderString(lightsButton.x - 5, lightsButton.y + stringY, "F4: Luci");
+  stringY/=2;
+  renderString(shadowsButton.x - 5, shadowsButton.y + stringY, "F5: Ombre");
+  stringY/=2;
+  renderString(mapButton.x - 5, mapButton.y + stringY, "F6: Mappa");
 }
 
 /* Esegue il Rendering della scena */
@@ -557,6 +574,16 @@ void rendering(SDL_Window *win) {
   drawPista(); // disegna la pista
 
   car.Render(); // disegna la macchina
+
+// Disegno triangolo
+//   glBegin(GL_TRIANGLES);
+// glColor3f(1, 1, 1);
+// glVertex3f(0, 0, 0);
+// glVertex3f(10, 10, 0);
+// glVertex3f(-10, 10, 0);
+// glEnd();
+
+  drawCircle(0, 10);
 
   std::string cameraText = "";
   switch (cameraType) {
