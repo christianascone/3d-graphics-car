@@ -58,9 +58,44 @@ Mesh billboard_face2((char *)"obj/billboard/face2.obj");
 Mesh billboard_internal((char *)"obj/billboard/internal.obj");
 Mesh billboard_lightsupport((char *)"obj/billboard/light_support.obj");
 
+struct GoalCircle {
+  float x, y, z;
+  float r;
+  bool done;
+  GoalCircle() {
+
+  }
+  GoalCircle(float x, float y, float z, float r) {
+    this->x = x;
+    this->y = y;
+    this->z = z;
+    this->r = r;
+    this->done = false;
+  }
+};
+
 extern bool useEnvmap; // var globale esterna: per usare l'evnrionment mapping
 extern bool useHeadlight; // var globale esterna: per usare i fari
 extern bool useShadow; // var globale esterna: per generare l'ombra
+
+const int goalsNumber = 4;
+GoalCircle goals[goalsNumber];
+
+void setupGoals() {
+
+  for (int i = 0; i < goalsNumber; i++) {
+    goals[i] = GoalCircle(i * 50, 10, 50 * i, 10);
+  }
+
+  for (int i = 0; i < goalsNumber; i++) {
+    GoalCircle goal = goals[i];
+    printf("Goal %d %f\n", i, goal.x);
+    printf("Goal %d %f\n", i, goal.y);
+    printf("Goal %d %f\n", i, goal.z);
+    printf("Goal %d %f\n", i, goal.r);
+    printf("\n");
+  }
+}
 
 // da invocare quando e' stato premuto/rilasciato il tasto numero "keycode"
 void Controller::EatKey(int keycode, int* keymap, bool pressed_or_released)
@@ -337,6 +372,39 @@ void drawBillboard () {
   glDisable(GL_TEXTURE_2D);
   glPopMatrix();
 }
+
+// Disegna un cerchio con coordinate x e y
+// e raggio r
+void drawCircle(int x, int y, float z, int r) {
+  glBegin(GL_LINE_STRIP);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glColor4f (0.5, 0.5, 0.5, 0.3);
+  int n = 100;
+  float t = 0;
+  float dt = 0.1;
+  for (int i = 0; i <= n; i++, t += dt) {
+    glVertex3f(x + r * cos(t), y + r * sin(t), z);
+  }
+  glEnd();
+}
+
+// Disegna un "obiettivo" per lo score, con 3 cerchi
+void drawGoalCircle(float x, float y, float z, float r) {
+  drawCircle(x, y, z, r);
+  drawCircle(x, y, z, r / 1.5);
+  drawCircle(x, y, z, r / 4);
+}
+
+void drawGoals() {
+  for (int i = 0; i < goalsNumber; i++) {
+    GoalCircle goal = goals[i];
+    if (!goal.done) {
+      drawGoalCircle(goal.x, goal.y, goal.z, goal.r);
+    }
+  }
+}
+
 
 void Controller::Init() {
   for (int i = 0; i < NKEYS; i++) key[i] = false;
@@ -635,13 +703,24 @@ void Car::Render(bool allParts) const {
   // sono nello spazio mondo
   // CHECK COLLISION EX
 
-  // 10/2 perché mi assicuro di essere all'interno del cerchio e non a lato
-  bool isInBoundX = px < 10 / 3 && px > -10 / 3;
-  bool isInBoundZ = pz < 1 && pz > -1;
+  for (int i = 0; i < goalsNumber; i++) {
+    GoalCircle goal = goals[i];
+    if(goal.done){
+      continue;
+    }
 
-  if (isInBoundX && isInBoundZ) {
-    printf("collision\n");
+    // 10/2 perché mi assicuro di essere all'interno del cerchio e non a lato
+    bool isInBoundX = px < goal.x +3 && px > -goal.x - 3;
+    bool isInBoundZ = pz < goal.z+1 && pz > goal.z-1;
+
+    if (isInBoundX && isInBoundZ) {
+      printf("collision %d\n", i);
+      goal.done = true;
+      goals[i] = goal;
+    }
+
   }
+
   printf("px %f\n", px);
   printf("pz %f\n", pz);
 

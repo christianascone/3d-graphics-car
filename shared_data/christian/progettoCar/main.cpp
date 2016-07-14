@@ -44,9 +44,12 @@ float fps = 0; // valore di fps dell'intervallo precedente
 int fpsNow = 0; // quanti fotogrammi ho disegnato fin'ora nell'intervallo attuale
 Uint32 timeLastInterval = 0; // quando e' cominciato l'ultimo intervallo
 
+extern void setupGoals();
+
 extern void drawPista();
 extern void drawTree();
 extern void drawBillboard();
+extern void drawGoals();
 
 struct MenuButton {
   int x, y;
@@ -173,27 +176,6 @@ void drawMenu() {
   drawButton(lightsButton);
   drawButton(shadowsButton);
   drawButton(mapButton);
-}
-
-// Disegna un cerchio con coordinate x e y
-// e raggio r
-void drawCircle(int x, int y, int r) {
-  glBegin(GL_LINE_STRIP);
-  glColor3f(0.1, 0.2, 0.3);
-  int n = 100;
-  float t = 0;
-  float dt = 0.1;
-  for (int i = 0; i <= n; i++, t += dt) {
-    glVertex2f(x + r * cos(t), y + r * sin(t));
-  }
-  glEnd();
-}
-
-// Disegna un "obiettivo" per lo score, con 3 cerchi
-void drawGoalCircle(int x, int y, int r) {
-  drawCircle(x, y, r);
-  drawCircle(x, y, r / 1.5);
-  drawCircle(x, y, r / 4);
 }
 
 void drawSphere(double r, int lats, int longs) {
@@ -584,17 +566,7 @@ void rendering(SDL_Window *win) {
 
   car.Render(); // disegna la macchina
 
-// Disegno triangolo
-//   glBegin(GL_TRIANGLES);
-// glColor3f(1, 1, 1);
-// glVertex3f(0, 0, 0);
-// glVertex3f(10, 10, 0);
-// glVertex3f(-10, 10, 0);
-// glEnd();
-  int x = 0;
-  int y = 10;
-  int r = 10;
-  drawGoalCircle(x, y, r);
+  drawGoals();
 
   std::string cameraText = "";
   switch (cameraType) {
@@ -707,6 +679,8 @@ int main(int argc, char* argv[])
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 
+  setupGoals();
+  
   bool done = 0;
   while (!done) {
 
