@@ -205,8 +205,12 @@ void SetupWheelTexture(Point3 min, Point3 max) {
 }
 
 // Setup della texture con la foto
-void SetupPhotoTexture(Point3 min, Point3 max) {
-  glBindTexture(GL_TEXTURE_2D, 9);
+void SetupPhotoTexture(Point3 min, Point3 max, bool winner) {
+  if (!winner) {
+    glBindTexture(GL_TEXTURE_2D, 9);
+  } else {
+    glBindTexture(GL_TEXTURE_2D, 14);
+  }
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_TEXTURE_GEN_S);
   glEnable(GL_TEXTURE_GEN_T);
@@ -220,7 +224,7 @@ void SetupPhotoTexture(Point3 min, Point3 max) {
   glTexGeni(GL_R, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
 
 
-  float sx = 1.0 / (min.X() - max.X()); // Inverto per flip sx - dx
+  float sx = 1.0 / (max.X() - min.X()); // Inverto per flip sx - dx
   float ty = 1.0 / (min.Y() - max.Y()); // Inverto per flip up - down
   float rz = 1.0 / (max.Z() - min.Z());
 
@@ -332,7 +336,7 @@ void drawTree () {
 }
 
 // Disegna il cartellone pubblicitario con l'immagine
-void drawBillboard () {
+void drawBillboard (bool winner) {
   bool usecolor = true;
   glPushMatrix();
   glTranslatef(30, 0, 0);
@@ -365,7 +369,7 @@ void drawBillboard () {
   }
   else {
     if (usecolor) glColor3f(1, 1, 1);   // colore rosso, da usare con Lighting
-    if (usecolor) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax);
+    if (usecolor) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax, winner);
   }
   billboard_face1.RenderNxV();
   billboard_face2.RenderNxV();
@@ -417,6 +421,8 @@ void Controller::Init() {
 }
 
 void Car::Init() {
+  goalsReached = 0;
+  totalGoals = goalsNumber;
   // inizializzo lo stato della macchina
   px = pz = facing = 0; // posizione e orientamento
   py = 0.0;
@@ -663,34 +669,12 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
   glPopMatrix();
 }
 
-void checkCollision(float px, float pz) {
-  for (int i = 0; i < goalsNumber; i++) {
-    GoalCircle goal = goals[i];
-    if (goal.done) {
-      continue;
-    }
-
-    // 10/2 perché mi assicuro di essere all'interno del cerchio e non a lato
-    bool isInBoundX = px < goal.x + 3 && px > goal.x - 3;
-    bool isInBoundZ = pz < goal.z + 3 && pz > goal.z - 3;
-
-    if (isInBoundX && isInBoundZ) {
-      printf("collision %d\n", i);
-      goal.done = true;
-      goals[i] = goal;
-    }
-  }
-}
-
 void Car::Render() const {
   Car::Render(true);
 }
 // disegna a schermo
 void Car::Render(bool allParts) const {
   // sono nello spazio mondo
-  // CHECK COLLISION EX
-
-  checkCollision(px, pz);
 
   printf("px %f\n", px);
   printf("pz %f\n", pz);
@@ -722,4 +706,37 @@ void Car::Render(bool allParts) const {
   glPopMatrix();
 
   glPopMatrix();
+}
+
+void Car::checkCollision(float px, float pz) {
+  int reached = 0;
+
+  for (int i = 0; i < goalsNumber; i++) {
+    GoalCircle goal = goals[i];
+    if (goal.done) {
+      continue;
+    }
+
+    // 10/2 perché mi assicuro di essere all'interno del cerchio e non a lato
+    bool isInBoundX = px < goal.x + 3 && px > goal.x - 3;
+    bool isInBoundZ = pz < goal.z + 3 && pz > goal.z - 3;
+
+    if (isInBoundX && isInBoundZ) {
+      printf("collision %d\n", i);
+      goal.done = true;
+      goals[i] = goal;
+      reached++;
+    }
+  }
+
+  goalsReached += reached;
+}
+
+void Car::resetScore() {
+  goalsReached = 0;
+  for (int i = 0; i < totalGoals; i++) {
+    GoalCircle goal = goals[i];
+    goal.done = false;
+    goals[i] = goal;
+  }
 }

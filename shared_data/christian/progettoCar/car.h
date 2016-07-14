@@ -22,6 +22,8 @@ public:
   void Render(bool allParts) const; // disegna a schermo
   void DoStep(); // computa un passo del motore fisico
   Car(){Init();} // costruttore
+  void checkCollision(float px, float pz);
+  void resetScore();
  
   Controller controller;  
   
@@ -30,6 +32,8 @@ public:
   float px,py,pz,facing; // posizione e orientamento
   float mozzoA, mozzoP, sterzo; // stato interno
   float vx,vy,vz; // velocita' attuale
+  int goalsReached;
+  int totalGoals;
   
   // STATS DELLA MACCHINA
   // (di solito rimangono costanti)

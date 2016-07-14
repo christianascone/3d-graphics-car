@@ -1,5 +1,6 @@
 #include <math.h>
 #include <string>
+#include <sstream>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -48,7 +49,7 @@ extern void setupGoals();
 
 extern void drawPista();
 extern void drawTree();
-extern void drawBillboard();
+extern void drawBillboard(bool winner);
 extern void drawGoals();
 
 struct MenuButton {
@@ -70,6 +71,15 @@ MenuButton lightsButton (5 * 2 + MENU_BUTTON_WIDTH, 5, MENU_BUTTON_WIDTH, MENU_B
 MenuButton shadowsButton (5 * 2 + MENU_BUTTON_WIDTH, (MENU_BUTTON_HEIGHT + 5) + 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
 MenuButton mapButton (5 * 2 + MENU_BUTTON_WIDTH, (MENU_BUTTON_HEIGHT + 5) * 2 + 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
 
+MenuButton resetScoreButton (scrW - MENU_BUTTON_WIDTH - 5, 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
+
+std::string intToString(int num) {
+  std::ostringstream ostr; //output string stream
+  ostr << num;
+  std::string punteggio = ostr.str();
+
+  return punteggio;
+}
 // setta le matrici di trasformazione in modo
 // che le coordinate in spazio oggetto siano le coord
 // del pixel sullo schemo
@@ -176,6 +186,8 @@ void drawMenu() {
   drawButton(lightsButton);
   drawButton(shadowsButton);
   drawButton(mapButton);
+
+  drawButton(resetScoreButton);
 }
 
 void drawSphere(double r, int lats, int longs) {
@@ -498,6 +510,9 @@ void printCommands() {
   renderString(shadowsButton.x - 5, shadowsButton.y + stringY, "F5: Ombre");
   stringY /= 2;
   renderString(mapButton.x - 5, mapButton.y + stringY, "F6: Mappa");
+
+  stringY = 20;
+  renderString(resetScoreButton.x - resetScoreButton.w / 2, resetScoreButton.y + stringY, "Reset Score");
 }
 
 /* Esegue il Rendering della scena */
@@ -561,33 +576,25 @@ void rendering(SDL_Window *win) {
   drawFloor(false); // disegna il suolo
 
   drawTree(); // disegna la pista
-  drawBillboard(); // disegna il cartellone
+
+  car.checkCollision(car.px, car.pz);
+
+  bool winner = false;
+  if (car.goalsReached == car.totalGoals) {
+    winner = true;
+  }
+
+  drawBillboard(winner); // disegna il cartellone
   drawPista(); // disegna la pista
 
   car.Render(); // disegna la macchina
 
   drawGoals();
 
-  std::string cameraText = "";
-  switch (cameraType) {
-  case CAMERA_BACK_CAR:
-    cameraText = "CAMERA: Back Car";
-    break;
-  case CAMERA_TOP_FIXED:
-    cameraText = "CAMERA: Top";
-    break;
-  case CAMERA_TOP_CAR:
-    cameraText = "CAMERA: Top Car";
-    break;
-  case CAMERA_PILOT:
-    cameraText = "CAMERA: Pilot";
-    break;
-  case CAMERA_MOUSE:
-    cameraText = "CAMERA: Mouse";
-    break;
-  }
-
-  renderString(scrW / 3, 20, cameraText);
+  std::stringstream ss;
+  ss << "Score: " << car.goalsReached << "/" << car.totalGoals;
+  std::string score = ss.str();
+  renderString(scrW / 3, 20, score);
 
   // attendiamo la fine della rasterizzazione di
   // tutte le primitive mandate
@@ -675,12 +682,13 @@ int main(int argc, char* argv[])
   if (!LoadTexture(11, (char *)"texture/road2.jpg")) return 0;
   if (!LoadTexture(12, (char *)"texture/grass.jpg")) return 0;
   if (!LoadTexture(13, (char *)"texture/button.jpg")) return 0;
+  if (!LoadTexture(14, (char *)"texture/winner.jpg")) return 0;
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 
   setupGoals();
-  
+
   bool done = 0;
   while (!done) {
 
@@ -755,7 +763,7 @@ int main(int argc, char* argv[])
           int y = e.button.y;
 
           // Check di ogni bottone
-          MenuButton buttons[] = {cameraButton, wireframeButton, textureButton, lightsButton, shadowsButton, mapButton};
+          MenuButton buttons[] = {cameraButton, wireframeButton, textureButton, lightsButton, shadowsButton, mapButton, resetScoreButton};
 
           for (int index = 0; index < (sizeof(buttons) / sizeof(*buttons)); index++) {
             if (x > buttons[index].x & x < buttons[index].x + buttons[index].w & y > buttons[index].y & y < buttons[index].y + buttons[index].h) {
@@ -771,6 +779,8 @@ int main(int argc, char* argv[])
                 useShadow = !useShadow;
               } else if (index == 5) {
                 useMap = !useMap;
+              } else if (index == 6) {
+                car.resetScore();
               }
             }
           }
