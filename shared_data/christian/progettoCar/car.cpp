@@ -83,9 +83,10 @@ GoalCircle goals[goalsNumber];
 
 void setupGoals() {
 
-  for (int i = 0; i < goalsNumber; i++) {
-    goals[i] = GoalCircle(i * 50, 10, 50 * i, 10);
-  }
+  goals[0] = GoalCircle(6, 10, -47, 10);
+  goals[1] = GoalCircle(-66, 10, -37, 10);
+  goals[2] = GoalCircle(-21, 10, 48, 10);
+  goals[3] = GoalCircle(26, 10, 30, 10);
 
   for (int i = 0; i < goalsNumber; i++) {
     GoalCircle goal = goals[i];
@@ -375,27 +376,32 @@ void drawBillboard () {
 
 // Disegna un cerchio con coordinate x e y
 // e raggio r
-void drawCircle(int x, int y, float z, int r) {
+void drawCircle(int x, int y, float z, int r, bool rotate) {
   glBegin(GL_LINE_STRIP);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glColor4f (0.5, 0.5, 0.5, 0.3);
   int n = 100;
-  float t = 0;
+  float t = 30;
   float dt = 0.1;
   for (int i = 0; i <= n; i++, t += dt) {
-    glVertex3f(x + r * cos(t), y + r * sin(t), z);
+    if (rotate) {
+      glVertex3f(x + r * cos(t), y + r * sin(t), z);
+    } else {
+      glVertex3f(x, y + r * sin(t), z + r * cos(t));
+    }
   }
   glEnd();
 }
 
 // Disegna un "obiettivo" per lo score, con 3 cerchi
 void drawGoalCircle(float x, float y, float z, float r) {
-  drawCircle(x, y, z, r);
-  drawCircle(x, y, z, r / 1.5);
-  drawCircle(x, y, z, r / 4);
+  drawCircle(x, y, z, r, false);
+  drawCircle(x, y, z, r / 1.5, false);
+  drawCircle(x, y, z, r / 4, false);
 }
 
+// Disegna la lista di obiettivi
 void drawGoals() {
   for (int i = 0; i < goalsNumber; i++) {
     GoalCircle goal = goals[i];
@@ -653,46 +659,27 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
       wheelBR2.RenderNxV();
       glPopMatrix();
     }
-    /*
-      // modo vecchio: disegno le ruote senza usare le mesh
-      // ruota posteriore D
-      glPushMatrix();
-      glTranslatef( 0.58,+raggioRuotaP-0.28,+0.8);
-      glRotatef(mozzoP,1,0,0);
-      // SONO NELLO SPAZIO RUOTA
-      glScalef(0.1, raggioRuotaP, raggioRuotaP);
-      drawWheel();
-      glPopMatrix();
-
-      // ruota posteriore S
-      glPushMatrix();
-      glTranslatef(-0.58,+raggioRuotaP-0.28,+0.8);
-      glRotatef(mozzoP,1,0,0);
-      glScalef(0.1, raggioRuotaP, raggioRuotaP);
-      drawWheel();
-      glPopMatrix();
-
-      // ruota anteriore D
-      glPushMatrix();
-      glTranslatef( 0.58,+raggioRuotaA-0.28,-0.55);
-      glRotatef(sterzo,0,1,0);
-      glRotatef(mozzoA,1,0,0);
-      glScalef(0.08, raggioRuotaA, raggioRuotaA);
-      drawWheel();
-      glPopMatrix();
-
-      // ruota anteriore S
-      glPushMatrix();
-      glTranslatef(-0.58,+raggioRuotaA-0.28,-0.55);
-      glRotatef(sterzo,0,1,0);
-      glRotatef(mozzoA,1,0,0);
-      drawAxis();
-      glScalef(0.08, raggioRuotaA, raggioRuotaA);
-      drawWheel();
-      glPopMatrix();
-      */
   }
   glPopMatrix();
+}
+
+void checkCollision(float px, float pz) {
+  for (int i = 0; i < goalsNumber; i++) {
+    GoalCircle goal = goals[i];
+    if (goal.done) {
+      continue;
+    }
+
+    // 10/2 perché mi assicuro di essere all'interno del cerchio e non a lato
+    bool isInBoundX = px < goal.x + 3 && px > goal.x - 3;
+    bool isInBoundZ = pz < goal.z + 3 && pz > goal.z - 3;
+
+    if (isInBoundX && isInBoundZ) {
+      printf("collision %d\n", i);
+      goal.done = true;
+      goals[i] = goal;
+    }
+  }
 }
 
 void Car::Render() const {
@@ -703,23 +690,7 @@ void Car::Render(bool allParts) const {
   // sono nello spazio mondo
   // CHECK COLLISION EX
 
-  for (int i = 0; i < goalsNumber; i++) {
-    GoalCircle goal = goals[i];
-    if(goal.done){
-      continue;
-    }
-
-    // 10/2 perché mi assicuro di essere all'interno del cerchio e non a lato
-    bool isInBoundX = px < goal.x +3 && px > -goal.x - 3;
-    bool isInBoundZ = pz < goal.z+1 && pz > goal.z-1;
-
-    if (isInBoundX && isInBoundZ) {
-      printf("collision %d\n", i);
-      goal.done = true;
-      goals[i] = goal;
-    }
-
-  }
+  checkCollision(px, pz);
 
   printf("px %f\n", px);
   printf("pz %f\n", pz);
