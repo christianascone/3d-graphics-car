@@ -636,7 +636,7 @@ void Car::Render(bool allParts) const {
   // CHECK COLLISION EX
 
   // 10/2 perché mi assicuro di essere all'interno del cerchio e non a lato
-  bool isInBoundX = px < 10/3 && px > -10/3;
+  bool isInBoundX = px < 10 / 3 && px > -10 / 3;
   bool isInBoundZ = pz < 1 && pz > -1;
 
   if (isInBoundX && isInBoundZ) {
