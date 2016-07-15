@@ -675,10 +675,6 @@ void Car::Render() const {
 // disegna a schermo
 void Car::Render(bool allParts) const {
   // sono nello spazio mondo
-
-  printf("px %f\n", px);
-  printf("pz %f\n", pz);
-
   //drawAxis(); // disegno assi spazio mondo
   glPushMatrix();
 

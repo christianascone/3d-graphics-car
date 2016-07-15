@@ -27,7 +27,7 @@ using namespace std;
 
 float viewAlpha = 20, viewBeta = 40; // angoli che definiscono la vista
 float eyeDist = 5.0; // distanza dell'occhio dall'origine
-int scrH = 750, scrW = 750; // altezza e larghezza viewport (in pixels)
+int scrH = 750, scrW = 1050; // altezza e larghezza viewport (in pixels)
 bool useWireframe = false;
 bool useEnvmap = true;
 bool useHeadlight = false;
@@ -187,6 +187,7 @@ void drawMenu() {
   drawButton(shadowsButton);
   drawButton(mapButton);
 
+  resetScoreButton.x = scrW - MENU_BUTTON_WIDTH - 5;
   drawButton(resetScoreButton);
 }
 
@@ -398,7 +399,7 @@ void renderString(float x, float y, std::string text)
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  glOrtho(0.0, 640, 480, 0.0, -1.0f, 1.0f);
+  glOrtho(0.0, scrW, scrH, 0.0, -1.0f, 1.0f);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
@@ -497,22 +498,17 @@ void showMap() {
 // Stampa i comandi possibili sullo schermo
 void printCommands() {
   // Stampo i comandi
-  int stringY = 20;
+  float stringY = 20;
   renderString(cameraButton.x + 5, cameraButton.y + stringY, "F1: Camera");
-  stringY /= 2;
   renderString(wireframeButton.x + 5, wireframeButton.y + stringY, "F2: Wireframe");
-  stringY /= 2;
   renderString(textureButton.x + 5, textureButton.y + stringY, "F3: Texture");
 
-  stringY = 20;
-  renderString(lightsButton.x - 5, lightsButton.y + stringY, "F4: Luci");
-  stringY /= 2;
-  renderString(shadowsButton.x - 5, shadowsButton.y + stringY, "F5: Ombre");
-  stringY /= 2;
-  renderString(mapButton.x - 5, mapButton.y + stringY, "F6: Mappa");
 
-  stringY = 20;
-  renderString(resetScoreButton.x - resetScoreButton.w / 2, resetScoreButton.y + stringY, "Reset Score");
+  renderString(lightsButton.x + 5, lightsButton.y + stringY, "F4: Luci");
+  renderString(shadowsButton.x + 5, shadowsButton.y + stringY, "F5: Ombre");
+  renderString(mapButton.x + 5, mapButton.y + stringY, "F6: Mappa");
+
+  renderString(resetScoreButton.x + 5, resetScoreButton.y + stringY, "Reset Score");
 }
 
 /* Esegue il Rendering della scena */
@@ -594,7 +590,7 @@ void rendering(SDL_Window *win) {
   std::stringstream ss;
   ss << "Score: " << car.goalsReached << "/" << car.totalGoals;
   std::string score = ss.str();
-  renderString(scrW / 3, 20, score);
+  renderString(scrW / 2, 20, score);
 
   // attendiamo la fine della rasterizzazione di
   // tutte le primitive mandate
