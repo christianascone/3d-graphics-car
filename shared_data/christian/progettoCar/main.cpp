@@ -1,6 +1,7 @@
 #include <math.h>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -44,6 +45,10 @@ const int fpsSampling = 3000; // lunghezza intervallo di calcolo fps
 float fps = 0; // valore di fps dell'intervallo precedente
 int fpsNow = 0; // quanti fotogrammi ho disegnato fin'ora nell'intervallo attuale
 Uint32 timeLastInterval = 0; // quando e' cominciato l'ultimo intervallo
+
+long timerInMillisec = 0;
+long lastCheckTimer = 0;
+
 
 extern void setupGoals();
 
@@ -230,7 +235,7 @@ void drawFloor(bool map)
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
   }
-  if(map){
+  if (map) {
     S = 150;
   }
   glDisable(GL_LIGHTING);
@@ -514,11 +519,28 @@ void printCommands() {
   renderString(resetScoreButton.x + 5, resetScoreButton.y + stringY, "Reset Score");
 }
 
+void printTimer(long time){
+  float mins = time/(60.*1000.);
+  int minsToPrint = (int)mins;
+  float seconds = (mins - minsToPrint)*60.;
+  int secondsToPrint = (int)seconds;
+  printf("Time %d:%d\n", minsToPrint, secondsToPrint);
+}
+
 /* Esegue il Rendering della scena */
 void rendering(SDL_Window *win) {
 
   // un frame in piu'!!!
   fpsNow++;
+
+  time_t now = time(0);
+
+  //TODO
+  long newTime = now;
+  long difference = (newTime - lastCheckTimer)*1000;
+  timerInMillisec -= difference;
+  printTimer(timerInMillisec);
+  lastCheckTimer = newTime;
 
   glLineWidth(3); // linee larghe
 
@@ -687,6 +709,17 @@ int main(int argc, char* argv[])
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 
   setupGoals();
+
+// current date/time based on current system
+  time_t now = time(0);
+
+  cout << "Number of sec since January 1,1970:" << now << endl;
+
+  //TODO
+  //Salvo come tempo iniziale
+  timerInMillisec = 1000 * 60 * 10;
+  lastCheckTimer = now;
+  printTimer(timerInMillisec);
 
   bool done = 0;
   while (!done) {
