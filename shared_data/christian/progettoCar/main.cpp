@@ -220,7 +220,7 @@ void drawSphere(double r, int lats, int longs) {
 
 void drawFloor(bool map)
 {
-  const float S = 100; // size
+  float S = 100; // size
   const float H = 0; // altezza
   const int K = 150; //disegna K x K quads
 
@@ -229,6 +229,9 @@ void drawFloor(bool map)
     glEnable(GL_TEXTURE_2D);
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+  }
+  if(map){
+    S = 150;
   }
   glDisable(GL_LIGHTING);
   glColor3f(1, 1, 1);
@@ -435,7 +438,7 @@ void drawFps() {
 
 void showMap() {
   // settiamo il viewport
-  glViewport(0, 5, 100, 100);
+  glViewport(0, 5, 100, 80);
 
   // colore sfondo = bianco
   glClearColor(1, 1, 1, 1);
@@ -445,7 +448,7 @@ void showMap() {
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
   gluPerspective( 70, //fovy,
-                  ((float)scrW) / scrH,//aspect Y/X,
+                  ((float)100) / 80,//aspect Y/X,
                   0.2,//distanza del NEAR CLIPPING PLANE in coordinate vista
                   1000  //distanza del FAR CLIPPING PLANE in coordinate vista
                 );
