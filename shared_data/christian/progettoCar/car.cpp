@@ -276,7 +276,7 @@ void Car::DoStep() {
       freno = 45;
     }
     // Applico maggiore attrito
-    vzm *= 0.8;
+    vzm *= 0.9;
     vxm *= 0.8;
     vym *= 1.0;
   } else {
