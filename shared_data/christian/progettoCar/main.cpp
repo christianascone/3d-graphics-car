@@ -85,6 +85,15 @@ std::string intToString(int num) {
 
   return punteggio;
 }
+
+void resetTimer() {
+  // current date/time based on current system
+  time_t now = time(0);
+
+  //Salvo come tempo iniziale
+  timerInMillisec = 1000 * 60 * 0.5;
+  lastCheckTimer = now;
+}
 // setta le matrici di trasformazione in modo
 // che le coordinate in spazio oggetto siano le coord
 // del pixel sullo schemo
@@ -516,7 +525,7 @@ void printCommands() {
   renderString(shadowsButton.x + 5, shadowsButton.y + stringY, "F5: Ombre");
   renderString(mapButton.x + 5, mapButton.y + stringY, "F6: Mappa");
 
-  renderString(resetScoreButton.x + 5, resetScoreButton.y + stringY, "Reset Score");
+  renderString(resetScoreButton.x + 5, resetScoreButton.y + stringY, "Reset");
 }
 
 std::string timeToString(long time) {
@@ -538,7 +547,10 @@ std::string timeToString(long time) {
 
 /* Esegue il Rendering della scena */
 void rendering(SDL_Window *win) {
-
+  int min = -90;
+  int max = 90;
+  int output = min + (rand() % (int)(max - min + 1));
+  printf("rand %d\n", output);
   // un frame in piu'!!!
   fpsNow++;
 
@@ -723,16 +735,7 @@ int main(int argc, char* argv[])
 
   setupGoals();
 
-// current date/time based on current system
-  time_t now = time(0);
-
-  cout << "Number of sec since January 1,1970:" << now << endl;
-
-  //TODO
-  //Salvo come tempo iniziale
-  timerInMillisec = 1000 * 60 * 0.5;
-  lastCheckTimer = now;
-  timeToString(timerInMillisec);
+  resetTimer();
 
   bool done = 0;
   while (!done) {
@@ -826,6 +829,7 @@ int main(int argc, char* argv[])
                 useMap = !useMap;
               } else if (index == 6) {
                 car.resetScore();
+                resetTimer();
               }
             }
           }
