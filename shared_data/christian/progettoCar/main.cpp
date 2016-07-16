@@ -254,7 +254,7 @@ void drawFloor(bool map)
   const int K = 150; //disegna K x K quads
 
   glPushMatrix();
-  if (!map && useEnvmap) {
+  if (!map && useEnvmap && !useWireframe) {
     glBindTexture(GL_TEXTURE_2D, 12);
     glEnable(GL_TEXTURE_2D);
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
@@ -265,9 +265,9 @@ void drawFloor(bool map)
   }
   glDisable(GL_LIGHTING);
 
-  if(!useEnvmap && !map){
+  if (!useEnvmap && !map) {
     glColor3f(0.0f, 0.4f, 0.0f);//Forest Green
-  }else{
+  } else {
     glColor3f(1, 1, 1);
   }
   // disegna KxK quads
@@ -634,7 +634,7 @@ void rendering(SDL_Window *win) {
     car.updateDifficultyLevel();
     resetTimer();
     timerInMillisec *= 1.3;
-  }else if(timerInMillisec <= 0){
+  } else if (timerInMillisec <= 0) {
     loser = true;
   }
 
