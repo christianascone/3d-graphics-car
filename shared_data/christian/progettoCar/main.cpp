@@ -692,7 +692,7 @@ int main(int argc, char* argv[])
   SDL_GLContext mainContext;
   Uint32 windowID;
   SDL_Joystick *joystick;
-  static int keymap[Controller::NKEYS] = {SDLK_a, SDLK_d, SDLK_w, SDLK_s};
+  static int keymap[Controller::NKEYS] = {SDLK_a, SDLK_d, SDLK_w, SDLK_s, SDLK_x};
 
   // inizializzazione di SDL
   SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);

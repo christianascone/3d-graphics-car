@@ -270,10 +270,22 @@ void Car::DoStep() {
   if (controller.key[Controller::ACC]) vzm -= accMax; // accelerazione in avanti
   if (controller.key[Controller::DEC]) vzm += accMax; // accelerazione indietro
 
-  // attirti (semplificando)
-  vxm *= attritoX;
-  vym *= attritoY;
-  vzm *= attritoZ;
+  if (controller.key[Controller::BRAKE]) {
+    freno += velFreno;
+    if (freno > 45) {
+      freno = 45;
+    }
+    // Applico maggiore attrito
+    vzm *= 0.8;
+    vxm *= 0.8;
+    vym *= 1.0;
+  } else {
+    // attirti (semplificando)
+    vzm *= attritoZ;
+    vxm *= attritoX;
+    vym *= attritoY;
+  }
+  freno *= velRitornoFreno;
 
   // l'orientamento della macchina segue quello dello sterzo
   // (a seconda della velocita' sulla z)
@@ -441,6 +453,8 @@ void Car::Init() {
   //velSterzo=3.4;         // A
   velSterzo = 2.4;       // A
   velRitornoSterzo = 0.93; // B, sterzo massimo = A*B / (1-B)
+  velFreno = 4.4;       // A
+  velRitornoFreno = 0.93; // B, sterzo massimo = A*B / (1-B)
 
   accMax = 0.0011;
 
@@ -538,9 +552,18 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     glPopMatrix();
 
     glPushMatrix();
+
+    if (controller.key[Controller::BRAKE]) {
+      glTranslate(  asta_brake.bbmin );
+      glRotatef( 1 * -freno, 1, 0, 0);
+      glTranslate( -asta_brake.bbmin );
+    }
+    asta_brake.RenderNxV();
+    glPopMatrix();
+
+    glPushMatrix();
     glColor3f(0, 0, 0);
     brake_block.RenderNxV();
-    asta_brake.RenderNxV();
     antenna.RenderNxV();
     glPopMatrix();
 
