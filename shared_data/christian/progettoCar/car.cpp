@@ -318,7 +318,7 @@ void drawTree () {
   // Setup della texture dei tronchi
   if (!useEnvmap)
   {
-    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+    if (usecolor) glColor3f(0.1f, 0.0f, 0.0f);//Brown
   }
   else {
     if (usecolor) SetupEnvmapTextureTree();
@@ -330,7 +330,7 @@ void drawTree () {
   // Setup della texture per le foglie dell'albero
   if (!useEnvmap)
   {
-    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+    if (usecolor) glColor3f(0, 1, 0);   
   }
   else {
     if (usecolor) SetupEnvmapTextureLeaf();
@@ -348,10 +348,10 @@ void drawBillboard (bool loser) {
   glTranslatef(30, 0, 0);
   if (!useEnvmap)
   {
-    if (usecolor) glColor3f(0.5, 0.5, 0.5);   // colore nero, da usare con Lighting
+    if (usecolor) glColor3f(0.1f, 0.1f, 0.1f);
   }
   else {
-    if (usecolor) glColor3f(0.5, 0.5, 0.5);   // colore rosso, da usare con Lighting
+    if (usecolor) glColor3f(0.5, 0.5, 0.5);
 
     // Applico la texture della parte "metallica" del cartellone
     glBindTexture(GL_TEXTURE_2D, 10);
@@ -371,10 +371,10 @@ void drawBillboard (bool loser) {
 
   if (!useEnvmap)
   {
-    if (usecolor) glColor3f(1, 1, 1);   // colore rosso, da usare con Lighting
+    if (usecolor) glColor3f(1, 1, 1);   
   }
   else {
-    if (usecolor) glColor3f(1, 1, 1);   // colore rosso, da usare con Lighting
+    if (usecolor) glColor3f(1, 1, 1);   
     if (usecolor) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax, loser);
   }
   billboard_face1.RenderNxV();
@@ -505,7 +505,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
   if (!useEnvmap)
   {
-    if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+    if (usecolor) glColor3f(1, 0, 0);   
   }
   else {
     if (usecolor) SetupEnvmapTextureRed();
@@ -534,7 +534,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
     if (!useEnvmap)
     {
-      if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+      if (usecolor) glColor3f(1, 0, 0);   
     }
     else {
       if (usecolor) SetupEnvmapTextureRed();
@@ -555,7 +555,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
     if (!useEnvmap)
     {
-      if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+      if (usecolor) glColor3f(1, 0, 0);   
     }
     else {
       if (usecolor) SetupEnvmapTextureBrown();
@@ -565,7 +565,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
     if (!useEnvmap)
     {
-      if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+      if (usecolor) glColor3f(1, 0, 0);   
     }
     else {
       if (usecolor) SetupEnvmapTextureGlass();
@@ -577,7 +577,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
     if (!useEnvmap)
     {
-      if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+      if (usecolor) glColor3f(1, 0, 0);   
     }
     else {
       if (usecolor) SetupEnvmapTextureLightLeather();
@@ -588,7 +588,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
     if (!useEnvmap)
     {
-      if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
+      if (usecolor) glColor3f(1, 0, 0);   
     }
     else {
       if (usecolor) SetupEnvmapTextureDarkLeather();
