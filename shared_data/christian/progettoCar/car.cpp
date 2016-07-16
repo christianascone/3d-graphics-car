@@ -210,9 +210,9 @@ void SetupWheelTexture(Point3 min, Point3 max) {
 }
 
 // Setup della texture con la foto
-void SetupPhotoTexture(Point3 min, Point3 max, bool winner) {
-  // Seleziono la texture in base a "winner"
-  if (!winner) {
+void SetupPhotoTexture(Point3 min, Point3 max, bool loser) {
+  // Seleziono la texture in base a "loser"
+  if (!loser) {
     glBindTexture(GL_TEXTURE_2D, 9);
   } else {
     glBindTexture(GL_TEXTURE_2D, 14);
@@ -342,7 +342,7 @@ void drawTree () {
 }
 
 // Disegna il cartellone pubblicitario con l'immagine
-void drawBillboard (bool winner) {
+void drawBillboard (bool loser) {
   bool usecolor = true;
   glPushMatrix();
   glTranslatef(30, 0, 0);
@@ -375,7 +375,7 @@ void drawBillboard (bool winner) {
   }
   else {
     if (usecolor) glColor3f(1, 1, 1);   // colore rosso, da usare con Lighting
-    if (usecolor) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax, winner);
+    if (usecolor) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax, loser);
   }
   billboard_face1.RenderNxV();
   billboard_face2.RenderNxV();

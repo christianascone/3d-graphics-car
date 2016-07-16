@@ -55,7 +55,7 @@ extern void setupGoals();
 
 extern void drawPista();
 extern void drawTree();
-extern void drawBillboard(bool winner);
+extern void drawBillboard(bool loser);
 extern void drawGoals(int num);
 
 // Struct che rappresenta un bottone del pannello di controllo
@@ -622,15 +622,16 @@ void rendering(SDL_Window *win) {
 
   car.checkCollision(car.px, car.pz);
 
-  bool winner = false;
+  bool loser = false;
   if (timerInMillisec > 0 && car.goalsReached == car.totalGoals) {
-    winner = true;
     car.updateDifficultyLevel();
     resetTimer();
     timerInMillisec *= 1.3;
+  }else if(timerInMillisec <= 0){
+    loser = true;
   }
 
-  drawBillboard(winner); // disegna il cartellone
+  drawBillboard(loser); // disegna il cartellone
   drawPista(); // disegna la pista
 
   car.Render(); // disegna la macchina
@@ -732,7 +733,7 @@ int main(int argc, char* argv[])
   if (!LoadTexture(11, (char *)"texture/road2.jpg")) return 0;
   if (!LoadTexture(12, (char *)"texture/grass.jpg")) return 0;
   if (!LoadTexture(13, (char *)"texture/button.jpg")) return 0;
-  if (!LoadTexture(14, (char *)"texture/winner.jpg")) return 0;
+  if (!LoadTexture(14, (char *)"texture/lose.jpg")) return 0;
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
