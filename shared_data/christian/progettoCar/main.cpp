@@ -519,12 +519,21 @@ void printCommands() {
   renderString(resetScoreButton.x + 5, resetScoreButton.y + stringY, "Reset Score");
 }
 
-void printTimer(long time){
+std::string timeToString(long time){
   float mins = time/(60.*1000.);
   int minsToPrint = (int)mins;
   float seconds = (mins - minsToPrint)*60.;
   int secondsToPrint = (int)seconds;
-  printf("Time %d:%d\n", minsToPrint, secondsToPrint);
+
+  std::stringstream ss;
+  ss << minsToPrint << ":";
+  if(secondsToPrint >= 10){
+   ss << secondsToPrint;
+  }else{
+    ss << "0" << secondsToPrint;
+  }
+  std::string timeString = ss.str();
+  return timeString;
 }
 
 /* Esegue il Rendering della scena */
@@ -539,8 +548,11 @@ void rendering(SDL_Window *win) {
   long newTime = now;
   long difference = (newTime - lastCheckTimer)*1000;
   timerInMillisec -= difference;
-  printTimer(timerInMillisec);
+  if(timerInMillisec <= 0){
+    timerInMillisec = 0;
+  }
   lastCheckTimer = newTime;
+  std::string timeString = timeToString(timerInMillisec);
 
   glLineWidth(3); // linee larghe
 
@@ -612,10 +624,11 @@ void rendering(SDL_Window *win) {
 
   drawGoals();
 
+  renderString(scrW / 2, 20, timeString);
   std::stringstream ss;
   ss << "Score: " << car.goalsReached << "/" << car.totalGoals;
   std::string score = ss.str();
-  renderString(scrW / 2, 20, score);
+  renderString(scrW / 2, 40, score);
 
   // attendiamo la fine della rasterizzazione di
   // tutte le primitive mandate
@@ -717,9 +730,9 @@ int main(int argc, char* argv[])
 
   //TODO
   //Salvo come tempo iniziale
-  timerInMillisec = 1000 * 60 * 10;
+  timerInMillisec = 1000 * 60 * 0.5;
   lastCheckTimer = now;
-  printTimer(timerInMillisec);
+  timeToString(timerInMillisec);
 
   bool done = 0;
   while (!done) {
