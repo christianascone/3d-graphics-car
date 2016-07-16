@@ -270,6 +270,7 @@ void Car::DoStep() {
   if (controller.key[Controller::ACC]) vzm -= accMax; // accelerazione in avanti
   if (controller.key[Controller::DEC]) vzm += accMax; // accelerazione indietro
 
+  // Attrito per il freno
   if (controller.key[Controller::BRAKE]) {
     freno += velFreno;
     if (freno > 45) {
