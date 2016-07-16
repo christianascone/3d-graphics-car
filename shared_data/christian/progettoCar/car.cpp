@@ -330,7 +330,7 @@ void drawTree () {
   // Setup della texture per le foglie dell'albero
   if (!useEnvmap)
   {
-    if (usecolor) glColor3f(0, 1, 0);   
+    if (usecolor) glColor3f(0, 1, 0);
   }
   else {
     if (usecolor) SetupEnvmapTextureLeaf();
@@ -371,10 +371,10 @@ void drawBillboard (bool loser) {
 
   if (!useEnvmap)
   {
-    if (usecolor) glColor3f(1, 1, 1);   
+    if (usecolor) glColor3f(1, 1, 1);
   }
   else {
-    if (usecolor) glColor3f(1, 1, 1);   
+    if (usecolor) glColor3f(1, 1, 1);
     if (usecolor) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax, loser);
   }
   billboard_face1.RenderNxV();
@@ -505,7 +505,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
   if (!useEnvmap)
   {
-    if (usecolor) glColor3f(1, 0, 0);   
+    if (usecolor) glColor3f(1, 0, 0);
   }
   else {
     if (usecolor) SetupEnvmapTextureRed();
@@ -534,7 +534,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
     if (!useEnvmap)
     {
-      if (usecolor) glColor3f(1, 0, 0);   
+      if (usecolor) glColor3f(1, 0, 0);
     }
     else {
       if (usecolor) SetupEnvmapTextureRed();
@@ -555,7 +555,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
     if (!useEnvmap)
     {
-      if (usecolor) glColor3f(1, 0, 0);   
+      if (usecolor) glColor3f(0.1f, 0.0f, 0.0f);//Brown
     }
     else {
       if (usecolor) SetupEnvmapTextureBrown();
@@ -563,21 +563,18 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     bars.RenderNxV();
     if (usecolor) glEnable(GL_LIGHTING);
 
-    if (!useEnvmap)
+    if (useEnvmap)
     {
-      if (usecolor) glColor3f(1, 0, 0);   
-    }
-    else {
       if (usecolor) SetupEnvmapTextureGlass();
+      glasses.RenderNxV();
+      mirrors.RenderNxV();
+      if (usecolor) glEnable(GL_LIGHTING);
     }
-    glasses.RenderNxV();
-    mirrors.RenderNxV();
-    if (usecolor) glEnable(GL_LIGHTING);
 
 
     if (!useEnvmap)
     {
-      if (usecolor) glColor3f(1, 0, 0);   
+      if (usecolor) glColor3f(0.1f, 0.1f, 0.1f);
     }
     else {
       if (usecolor) SetupEnvmapTextureLightLeather();
@@ -588,7 +585,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
     if (!useEnvmap)
     {
-      if (usecolor) glColor3f(1, 0, 0);   
+      if (usecolor) glColor3f(0.0f, 0.0f, 0.0f);
     }
     else {
       if (usecolor) SetupEnvmapTextureDarkLeather();
