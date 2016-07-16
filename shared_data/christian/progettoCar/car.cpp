@@ -306,7 +306,7 @@ void drawPista () {
   glColor3f(0.5, 0.5, 0.5);
   glScalef(0.70, 0.9, 0.70);
   glTranslatef(0, 0.01, 0);
-  pista.RenderNxV();
+  pista.RenderNxF();
   glPopMatrix();
 }
 
@@ -526,6 +526,18 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     glPopMatrix();
 
     glPushMatrix();
+    if (usecolor) glColor3f(0.1f, 0.1f, 0.1f);
+    lateral.RenderNxV();
+    bottomsits.RenderNxV();
+    marmitta.RenderNxV();
+    //if (usecolor) glEnable(GL_LIGHTING);
+
+    if (usecolor) glColor3f(0.0f, 0.0f, 0.0f);
+    backsits.RenderNxV();
+    //if (usecolor) glEnable(GL_LIGHTING);
+    glPopMatrix();
+
+    glPushMatrix();
     glColor3f(0, 0, 0);
     brake_block.RenderNxV();
     asta_brake.RenderNxV();
@@ -545,7 +557,6 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     interni.RenderNxV();
 
     lights.RenderNxV();
-    marmitta.RenderNxV();
     parafango.RenderNxV();
     piruli.RenderNxV();
     portapacchi_piruli.RenderNxV();
@@ -570,29 +581,6 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
       mirrors.RenderNxV();
       if (usecolor) glEnable(GL_LIGHTING);
     }
-
-
-    if (!useEnvmap)
-    {
-      if (usecolor) glColor3f(0.1f, 0.1f, 0.1f);
-    }
-    else {
-      if (usecolor) SetupEnvmapTextureLightLeather();
-    }
-    lateral.RenderNxV();
-    bottomsits.RenderNxV();
-    if (usecolor) glEnable(GL_LIGHTING);
-
-    if (!useEnvmap)
-    {
-      if (usecolor) glColor3f(0.0f, 0.0f, 0.0f);
-    }
-    else {
-      if (usecolor) SetupEnvmapTextureDarkLeather();
-    }
-    backsits.RenderNxV();
-    if (usecolor) glEnable(GL_LIGHTING);
-
 
 
     for (int i = 0; i < 2; i++) {

@@ -253,7 +253,8 @@ void drawFloor(bool map)
   const float H = 0; // altezza
   const int K = 150; //disegna K x K quads
 
-  if (!map) {
+  glPushMatrix();
+  if (!map && useEnvmap) {
     glBindTexture(GL_TEXTURE_2D, 12);
     glEnable(GL_TEXTURE_2D);
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
@@ -263,7 +264,12 @@ void drawFloor(bool map)
     S = 150;
   }
   glDisable(GL_LIGHTING);
-  glColor3f(1, 1, 1);
+
+  if(!useEnvmap && !map){
+    glColor3f(0.0f, 0.4f, 0.0f);//Forest Green
+  }else{
+    glColor3f(1, 1, 1);
+  }
   // disegna KxK quads
   glBegin(GL_QUADS);
   //glColor3f(0.6, 0.6, 0.6); // colore uguale x tutti i quads
@@ -289,6 +295,7 @@ void drawFloor(bool map)
   glDisable(GL_TEXTURE_GEN_T);
   glDisable(GL_TEXTURE_2D);
   glEnable(GL_LIGHTING);
+  glPopMatrix();
 }
 
 // Setup della camera da utilizzare per la visualizzazione della mappa
