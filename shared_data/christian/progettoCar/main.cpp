@@ -627,6 +627,7 @@ void rendering(SDL_Window *win) {
     winner = true;
     car.updateDifficultyLevel();
     resetTimer();
+    timerInMillisec *= 1.3;
   }
 
   drawBillboard(winner); // disegna il cartellone

@@ -59,6 +59,7 @@ Mesh billboard_face2((char *)"obj/billboard/face2.obj");
 Mesh billboard_internal((char *)"obj/billboard/internal.obj");
 Mesh billboard_lightsupport((char *)"obj/billboard/light_support.obj");
 
+// Struct che rappresenta un cerchio Goal
 struct GoalCircle {
   float x, y, z;
   float r;
@@ -79,9 +80,11 @@ extern bool useEnvmap; // var globale esterna: per usare l'evnrionment mapping
 extern bool useHeadlight; // var globale esterna: per usare i fari
 extern bool useShadow; // var globale esterna: per generare l'ombra
 
+// Goals iniziali
 const int goalsNumber = 4;
 GoalCircle goals[goalsNumber];
 
+// Setup iniziale dei goals
 void setupGoals() {
   goals[goalsNumber];
   goals[0] = GoalCircle(6, 10, -47, 10);
@@ -147,9 +150,10 @@ void SetupEnvmapTextureGlass()
   glEnable(GL_TEXTURE_GEN_T);
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_SPHERE_MAP); // Env map
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_SPHERE_MAP);
+  // Abilito la trasparenza
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glColor4f (0.5, 0.5, 0.5, 0.3);
+  glColor4f (0.5, 0.5, 0.5, 0.3); // fattore alpha 0.3
   glDisable(GL_LIGHTING); // disabilito il lighting OpenGL standard (lo faccio con la texture)
 }
 
@@ -207,6 +211,7 @@ void SetupWheelTexture(Point3 min, Point3 max) {
 
 // Setup della texture con la foto
 void SetupPhotoTexture(Point3 min, Point3 max, bool winner) {
+  // Seleziono la texture in base a "winner"
   if (!winner) {
     glBindTexture(GL_TEXTURE_2D, 9);
   } else {
@@ -295,7 +300,7 @@ void Car::DoStep() {
 //void drawCube(); // questa e' definita altrove (quick hack)
 void drawAxis(); // anche questa
 
-// Disegno la pista con la mesh pista
+// Disegno la pista con la mesh
 void drawPista () {
   glPushMatrix();
   glColor3f(0.5, 0.5, 0.5);
@@ -497,7 +502,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
   // disegna la carliga con una mesh
   glPushMatrix();
   glScalef(-0.05, 0.05, -0.05); // patch: riscaliamo la mesh di 1/10
-  
+
   if (!useEnvmap)
   {
     if (usecolor) glColor3f(1, 0, 0);   // colore rosso, da usare con Lighting
@@ -695,6 +700,7 @@ void Car::Render(bool allParts) const {
   glPopMatrix();
 }
 
+// Verifica la collisione tra l'oggetto car e tutti goals
 void Car::checkCollision(float px, float pz) {
   int reached = 0;
 
@@ -704,9 +710,9 @@ void Car::checkCollision(float px, float pz) {
       continue;
     }
 
-    // 10/2 perché mi assicuro di essere all'interno del cerchio e non a lato
-    bool isInBoundX = px < goal.x + 3 && px > goal.x - 3;
-    bool isInBoundZ = pz < goal.z + 3 && pz > goal.z - 3;
+    int tolerance = 3;
+    bool isInBoundX = px < goal.x + tolerance && px > goal.x - tolerance;
+    bool isInBoundZ = pz < goal.z + tolerance && pz > goal.z - tolerance;
 
     if (isInBoundX && isInBoundZ) {
       printf("collision %d\n", i);
@@ -719,6 +725,8 @@ void Car::checkCollision(float px, float pz) {
   goalsReached += reached;
 }
 
+// Reset dello score e dei goals.
+// Ritorna alla situazione iniziale
 void Car::resetScore() {
   setupGoals();
   totalGoals = goalsNumber;
@@ -730,8 +738,9 @@ void Car::resetScore() {
   }
 }
 
+// Aggiorna la difficoltà
 void Car::updateDifficultyLevel() {
-  totalGoals *= 1.5;
+  totalGoals *= 1.7;
   goalsReached = 0;
   goals[totalGoals];
 
