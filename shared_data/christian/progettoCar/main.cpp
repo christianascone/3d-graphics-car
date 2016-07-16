@@ -13,7 +13,6 @@
 #include <GL/freeglut.h>
 
 
-
 #define CAMERA_BACK_CAR 0
 #define CAMERA_TOP_FIXED 1
 #define CAMERA_TOP_CAR 2
@@ -46,7 +45,9 @@ float fps = 0; // valore di fps dell'intervallo precedente
 int fpsNow = 0; // quanti fotogrammi ho disegnato fin'ora nell'intervallo attuale
 Uint32 timeLastInterval = 0; // quando e' cominciato l'ultimo intervallo
 
+// Timer in millisecondi per il countdown
 long timerInMillisec = 0;
+// Ultimo tempo (in millisecondi) raccolto
 long lastCheckTimer = 0;
 
 
@@ -57,6 +58,7 @@ extern void drawTree();
 extern void drawBillboard(bool winner);
 extern void drawGoals(int num);
 
+// Struct che rappresenta un bottone del pannello di controllo
 struct MenuButton {
   int x, y;
   int w, h;
@@ -68,6 +70,9 @@ struct MenuButton {
   }
 };
 
+/**
+* Lista di bottoni per il pannello di controllo
+*/
 MenuButton cameraButton (5, 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
 MenuButton wireframeButton (5, (MENU_BUTTON_HEIGHT + 5) + 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
 MenuButton textureButton (5, (MENU_BUTTON_HEIGHT + 5) * 2 + 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
@@ -78,6 +83,7 @@ MenuButton mapButton (5 * 2 + MENU_BUTTON_WIDTH, (MENU_BUTTON_HEIGHT + 5) * 2 + 
 
 MenuButton resetScoreButton (scrW - MENU_BUTTON_WIDTH - 5, 5, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
 
+// Converte un intero in stringa
 std::string intToString(int num) {
   std::ostringstream ostr; //output string stream
   ostr << num;
@@ -86,14 +92,18 @@ std::string intToString(int num) {
   return punteggio;
 }
 
+// Effettua il reset del countdown a 40 secondi
 void resetTimer() {
   // current date/time based on current system
   time_t now = time(0);
 
+  int second = 1000;
+  int countdownSeconds = 40;
   //Salvo come tempo iniziale
-  timerInMillisec = 1000 * 40;
+  timerInMillisec = second * countdownSeconds;
   lastCheckTimer = now;
 }
+
 // setta le matrici di trasformazione in modo
 // che le coordinate in spazio oggetto siano le coord
 // del pixel sullo schemo
@@ -161,6 +171,8 @@ void drawAxis() {
 
 }
 
+// Disegna un bottone a schermo utilizzando la struct
+// menuButton passata come parametro
 void drawButton(MenuButton menuButton) {
 
   glMatrixMode(GL_PROJECTION);
@@ -193,7 +205,8 @@ void drawButton(MenuButton menuButton) {
   glDisable(GL_TEXTURE_2D);
 }
 
-void drawMenu() {
+// Disegna l'intero pannello di controllo
+void drawControlPanel() {
   drawButton(cameraButton);
   drawButton(wireframeButton);
   drawButton(textureButton);
@@ -201,6 +214,8 @@ void drawMenu() {
   drawButton(shadowsButton);
   drawButton(mapButton);
 
+  // Aggiorna la posizione del bottone in base alla width
+  // dello schermo
   resetScoreButton.x = scrW - MENU_BUTTON_WIDTH - 5;
   drawButton(resetScoreButton);
 }
@@ -276,7 +291,7 @@ void drawFloor(bool map)
   glEnable(GL_LIGHTING);
 }
 
-
+// Setup della camera da utilizzare per la visualizzazione della mappa
 void setCameraMap() {
 
   double px = 0;
@@ -361,16 +376,6 @@ void setCamera() {
     glTranslatef(0, 0, -eyeDist);
     glRotatef(viewBeta,  1, 0, 0);
     glRotatef(viewAlpha, 0, 1, 0);
-    /*
-    printf("%f %f %f\n",viewAlpha,viewBeta,eyeDist);
-                    ex=eyeDist*cos(viewAlpha)*sin(viewBeta);
-                    ey=eyeDist*sin(viewAlpha)*sin(viewBeta);
-                    ez=eyeDist*cos(viewBeta);
-                    cx = px - camd*sinf;
-                    cy = py + camh;
-                    cz = pz - camd*cosf;
-                    gluLookAt(ex,ey,ez,cx,cy,cz,0.0,1.0,0.0);
-    */
     break;
   }
 }
@@ -450,6 +455,7 @@ void drawFps() {
   glEnd();
 }
 
+// Renderizza la mappa su schermo con viewport dedicata
 void showMap() {
   // settiamo il viewport
   glViewport(0, 5, 100, 80);
@@ -479,11 +485,6 @@ void showMap() {
   float tmpv[4] = {0, 1, 2,  0}; // ultima comp=0 => luce direzionale
   glLightfv(GL_LIGHT0, GL_POSITION, tmpv );
 
-
-  // settiamo matrice di vista
-  //glTranslatef(0,0,-eyeDist);
-  //glRotatef(viewBeta,  1,0,0);
-  //glRotatef(viewAlpha, 0,1,0);
   setCameraMap();
 
   static float tmpcol[4] = {1, 1, 1,  1};
@@ -492,14 +493,8 @@ void showMap() {
 
   glEnable(GL_LIGHTING);
 
-  // settiamo matrice di modellazione
-  //drawAxis(); // disegna assi frame OGGETTO
-  //drawCubeWire();
-
   drawFloor(true); // disegna il suolo
   drawPista(); // disegna la pista
-  //drawTree(); // disegna la pista
-  //drawBillboard(); // disegna il cartellone
 
   car.Render(false); // disegna la macchina
 
@@ -528,6 +523,7 @@ void printCommands() {
   renderString(resetScoreButton.x + 5, resetScoreButton.y + stringY, "Reset");
 }
 
+// Dato un time, si ottiene una stringa con formato mm:ss
 std::string timeToString(long time) {
   float mins = time / (60.*1000.);
   int minsToPrint = (int)mins;
@@ -535,7 +531,12 @@ std::string timeToString(long time) {
   int secondsToPrint = (int)seconds;
 
   std::stringstream ss;
-  ss << minsToPrint << ":";
+  if (minsToPrint >= 10) {
+    ss << minsToPrint << ":";
+  } else {
+    ss << "0" << minsToPrint << ":";
+  }
+
   if (secondsToPrint >= 10) {
     ss << secondsToPrint;
   } else {
@@ -552,11 +553,15 @@ void rendering(SDL_Window *win) {
 
   time_t now = time(0);
 
-  //TODO
+  // Calcolo la differenza tra il tempo attuale e quello
+  // registrato nell'ultimo render
   long newTime = now;
   long difference = (newTime - lastCheckTimer) * 1000;
+
+  // Rimuovo la differenza dal tempo del countdown e lo setto
+  // a 0 se negativo
   timerInMillisec -= difference;
-  if (timerInMillisec <= 0) {
+  if (timerInMillisec < 0) {
     timerInMillisec = 0;
   }
   lastCheckTimer = newTime;
@@ -594,9 +599,6 @@ void rendering(SDL_Window *win) {
 
 
   // settiamo matrice di vista
-  //glTranslatef(0,0,-eyeDist);
-  //glRotatef(viewBeta,  1,0,0);
-  //glRotatef(viewAlpha, 0,1,0);
   setCamera();
 
 
@@ -648,7 +650,7 @@ void rendering(SDL_Window *win) {
 
   //drawFps();
 
-  drawMenu();
+  drawControlPanel();
   printCommands();
 
   if (useMap) {
@@ -712,6 +714,9 @@ int main(int argc, char* argv[])
   // rasterizzazione poligoni
   glPolygonOffset(1, 1);            // indietro di 1
 
+  /*
+  * Carico le texture
+  */
   if (!LoadTexture(0, (char *)"logo.jpg")) return 0;
   if (!LoadTexture(1, (char *)"texture/red.jpg")) return 0;
   if (!LoadTexture(2, (char *)"sky_ok.jpg")) return -1;
