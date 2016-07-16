@@ -519,17 +519,17 @@ void printCommands() {
   renderString(resetScoreButton.x + 5, resetScoreButton.y + stringY, "Reset Score");
 }
 
-std::string timeToString(long time){
-  float mins = time/(60.*1000.);
+std::string timeToString(long time) {
+  float mins = time / (60.*1000.);
   int minsToPrint = (int)mins;
-  float seconds = (mins - minsToPrint)*60.;
+  float seconds = (mins - minsToPrint) * 60.;
   int secondsToPrint = (int)seconds;
 
   std::stringstream ss;
   ss << minsToPrint << ":";
-  if(secondsToPrint >= 10){
-   ss << secondsToPrint;
-  }else{
+  if (secondsToPrint >= 10) {
+    ss << secondsToPrint;
+  } else {
     ss << "0" << secondsToPrint;
   }
   std::string timeString = ss.str();
@@ -546,9 +546,9 @@ void rendering(SDL_Window *win) {
 
   //TODO
   long newTime = now;
-  long difference = (newTime - lastCheckTimer)*1000;
+  long difference = (newTime - lastCheckTimer) * 1000;
   timerInMillisec -= difference;
-  if(timerInMillisec <= 0){
+  if (timerInMillisec <= 0) {
     timerInMillisec = 0;
   }
   lastCheckTimer = newTime;
