@@ -12,6 +12,7 @@
 #include "car.h"
 #include "point3.h"
 #include "mesh.h"
+#include <SDL2/SDL.h>
 
 /**
 ** Inizializzazione mesh
@@ -82,7 +83,7 @@ const int goalsNumber = 4;
 GoalCircle goals[goalsNumber];
 
 void setupGoals() {
-
+  goals[goalsNumber];
   goals[0] = GoalCircle(6, 10, -47, 10);
   goals[1] = GoalCircle(-66, 10, -37, 10);
   goals[2] = GoalCircle(-21, 10, 48, 10);
@@ -406,8 +407,8 @@ void drawGoalCircle(float x, float y, float z, float r) {
 }
 
 // Disegna la lista di obiettivi
-void drawGoals() {
-  for (int i = 0; i < goalsNumber; i++) {
+void drawGoals(int num) {
+  for (int i = 0; i < num; i++) {
     GoalCircle goal = goals[i];
     if (!goal.done) {
       drawGoalCircle(goal.x, goal.y, goal.z, goal.r);
@@ -707,7 +708,7 @@ void Car::Render(bool allParts) const {
 void Car::checkCollision(float px, float pz) {
   int reached = 0;
 
-  for (int i = 0; i < goalsNumber; i++) {
+  for (int i = 0; i < totalGoals; i++) {
     GoalCircle goal = goals[i];
     if (goal.done) {
       continue;
@@ -729,9 +730,28 @@ void Car::checkCollision(float px, float pz) {
 }
 
 void Car::resetScore() {
+  setupGoals();
+  totalGoals = goalsNumber;
   goalsReached = 0;
   for (int i = 0; i < totalGoals; i++) {
     GoalCircle goal = goals[i];
+    goal.done = false;
+    goals[i] = goal;
+  }
+}
+
+void Car::updateDifficultyLevel() {
+  totalGoals *= 1.5;
+  goalsReached = 0;
+  goals[totalGoals];
+
+  const int MIN = -90;
+  const int MAX = 90;
+
+  for (int i = 0; i < totalGoals; i++) {
+    int ranX = MIN + (rand() % (int)(MAX - MIN + 1));
+    int ranZ = MIN + (rand() % (int)(MAX - MIN + 1));
+    GoalCircle goal = GoalCircle(ranX, 10, ranZ, 10);
     goal.done = false;
     goals[i] = goal;
   }

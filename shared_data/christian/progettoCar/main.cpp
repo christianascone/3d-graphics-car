@@ -55,7 +55,7 @@ extern void setupGoals();
 extern void drawPista();
 extern void drawTree();
 extern void drawBillboard(bool winner);
-extern void drawGoals();
+extern void drawGoals(int num);
 
 struct MenuButton {
   int x, y;
@@ -91,7 +91,7 @@ void resetTimer() {
   time_t now = time(0);
 
   //Salvo come tempo iniziale
-  timerInMillisec = 1000 * 60 * 0.5;
+  timerInMillisec = 1000 * 40;
   lastCheckTimer = now;
 }
 // setta le matrici di trasformazione in modo
@@ -547,10 +547,6 @@ std::string timeToString(long time) {
 
 /* Esegue il Rendering della scena */
 void rendering(SDL_Window *win) {
-  int min = -90;
-  int max = 90;
-  int output = min + (rand() % (int)(max - min + 1));
-  printf("rand %d\n", output);
   // un frame in piu'!!!
   fpsNow++;
 
@@ -625,8 +621,10 @@ void rendering(SDL_Window *win) {
   car.checkCollision(car.px, car.pz);
 
   bool winner = false;
-  if (car.goalsReached == car.totalGoals) {
+  if (timerInMillisec > 0 && car.goalsReached == car.totalGoals) {
     winner = true;
+    car.updateDifficultyLevel();
+    resetTimer();
   }
 
   drawBillboard(winner); // disegna il cartellone
@@ -634,7 +632,7 @@ void rendering(SDL_Window *win) {
 
   car.Render(); // disegna la macchina
 
-  drawGoals();
+  drawGoals(car.totalGoals);
 
   renderString(scrW / 2, 20, timeString);
   std::stringstream ss;
