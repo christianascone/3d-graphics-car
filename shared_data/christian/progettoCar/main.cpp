@@ -726,7 +726,7 @@ int main(int argc, char* argv[])
   /*
   * Carico le texture
   */
-  if (!LoadTexture(0, (char *)"logo.jpg")) return 0;
+  if (!LoadTexture(0, (char *)"texture/wheel.jpg")) return 0;
   if (!LoadTexture(1, (char *)"texture/red.jpg")) return 0;
   if (!LoadTexture(2, (char *)"sky_ok.jpg")) return -1;
   if (!LoadTexture(3, (char *)"texture/brown.jpg")) return 0;
