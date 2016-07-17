@@ -689,7 +689,7 @@ void Car::Render(bool allParts) const {
   // sono nello spazio MACCHINA
   //  drawAxis(); // disegno assi spazio macchina
 
-  DrawHeadlight(0, 2.2, -1, 0, useHeadlight); // accendi faro centrale
+  DrawHeadlight(0, 1.2, -1, 0, useHeadlight); // accendi faro centrale
 
   RenderAllParts(true, allParts);
 
