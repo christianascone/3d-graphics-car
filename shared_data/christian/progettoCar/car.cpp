@@ -545,6 +545,8 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     lateral.RenderNxV();
     bottomsits.RenderNxV();
     marmitta.RenderNxV();
+    piruli.RenderNxV();
+    portapacchi_piruli.RenderNxV();
     //if (usecolor) glEnable(GL_LIGHTING);
 
     if (usecolor) glColor3f(0.0f, 0.0f, 0.0f);
@@ -582,8 +584,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
     lights.RenderNxV();
     parafango.RenderNxV();
-    piruli.RenderNxV();
-    portapacchi_piruli.RenderNxV();
+    
     shades.RenderNxV();
     if (usecolor) glEnable(GL_LIGHTING);
 
@@ -689,7 +690,7 @@ void Car::Render(bool allParts) const {
   // sono nello spazio MACCHINA
   //  drawAxis(); // disegno assi spazio macchina
 
-  DrawHeadlight(0, 1.2, -1, 0, useHeadlight); // accendi faro centrale
+  DrawHeadlight(0, 0.2, -1, 0, useHeadlight); // accendi faro centrale
 
   RenderAllParts(true, allParts);
 
