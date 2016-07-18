@@ -527,7 +527,7 @@ void printCommands() {
   renderString(shadowsButton.x + 5, shadowsButton.y + stringY, "F5: Ombre");
   renderString(mapButton.x + 5, mapButton.y + stringY, "F6: Mappa");
 
-  renderString(resetScoreButton.x + 5, resetScoreButton.y + stringY, "Reset");
+  renderString(resetScoreButton.x + 5, resetScoreButton.y + stringY, "F7: Reset");
 }
 
 // Dato un time, si ottiene una stringa con formato mm:ss
@@ -766,6 +766,7 @@ int main(int argc, char* argv[])
         if (e.key.keysym.sym == SDLK_F4) useHeadlight = !useHeadlight;
         if (e.key.keysym.sym == SDLK_F5) useShadow = !useShadow;
         if (e.key.keysym.sym == SDLK_F6) useMap = !useMap;
+        if (e.key.keysym.sym == SDLK_F7) {car.resetScore(); resetTimer();}
         break;
       case SDL_KEYUP:
         car.controller.EatKey(e.key.keysym.sym, keymap , false);

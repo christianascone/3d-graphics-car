@@ -1,8 +1,8 @@
-# Project: progettoCar4
+# Project: progettoCar
 
 CPP  = g++
 CC   = gcc
-BIN  = progettoCar4
+BIN  = progettoCar
 
 OBJ  = main.o car.o mesh.o
 LINKOBJ  = main.o car.o mesh.o
