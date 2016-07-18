@@ -24,7 +24,7 @@
           <ul class="docs-nav">
             <li><a href="#introduction" class="cc-active">Introduzione</a></li>
             <li><a href="#videogame" class="cc-active">Videogame</a></li>
-            <li><a href="#opengl" class="cc-active">OpenGL</a></li>
+            <li><a href="#grafica" class="cc-active">Grafica</a></li>
             <li class="separator"></li>
           </ul>
           <div class="docs-content">
@@ -45,29 +45,38 @@
             <p>Nel caso in cui si fallisca, raggiungendo lo scadere del tempo senza aver raggiunto tutti i checkpoint, il cartellone mostrerà un messaggio e sarà possibile riavviare il gioco premendo sul bottone <b>Reset</b>.</p>
             
             <h4>Comandi di gioco</h4>
-            <p>Nel pannello di controllo a schermo è possibile vedere i bottoni per alcuni comandi, mentre per il movimento del veicolo è necessario l'utilizzo della tastiera WASD.</p>
-            Il veicolo si può muovere avanti e indietro rispettivamente con <b>W</b> e <b>S</b>, ed è possibile sterzare con i tasti <b>A</b> e <b>D</b>.
-            <br>
-          E' inoltre possibile utilizzare il freno a mano mediante il tasto <b>X</b>.</p>
-          <h3 id="opengl">OpenGL</h3>
-          
+            <p>Nel pannello di controllo a schermo è possibile vedere i bottoni per alcuni comandi, mentre per il movimento del veicolo è necessario l'utilizzo della tastiera <b>WASD</b>.</p>
+            <p>Il veicolo si può muovere avanti e indietro rispettivamente con <b>W</b> e <b>S</b>, ed è possibile sterzare con i tasti <b>A</b> e <b>D</b>.</p>
+            <p>E' inoltre possibile utilizzare il freno a mano mediante il tasto <b>X</b>.</p>
+            
+            <h3 id="grafica">Grafica</h3>
+            <h4>Texture</h4>
+            <p>Le texture sono state utilizzate per il veicolo, il terreno, il cielo, gli alberi e il cartellone.</p>
+            <p>Le texture applicate dando le coordinate riguardano le ruote del veicolo e una foto personale applicata sul cartellone pubblicitario. In questo caso sono stati utilizzati i vertici bbmin e bbmax per applicare la texture su una faccia di una mesh.</p>
+            <p>Nella renderizzazione del terreno di gioco, la texture viene applicata su ogni "riquadro".</p>
+            <p>Le restanti texture sono state mappate in maniera automatica e applicate sulle componenti del veicolo, sul corpo del cartellone e sugli alberi.</p>
+
+            <h4>Pannello di controllo</h4>
+            <h4>Mappa</h4>
+            <h4>Advanced rendering</h4>
+            
+          </div>
         </div>
-      </div>
-    </section>
-    <section class="vibrant centered">
-      <div class="">
-        <h4>Documentazione del progetto di Grafica 3D per l'anno accademico 2015/2016.</h4>
-      </div>
-    </section>
-    <footer>
-      <div class="">
-        <p>Christian Ascone - Matricola 739491</p>
-      </div>
-    </footer>
-  </div>
-  <script src="js/jquery.min.js"></script>
-  <script type="text/javascript" src="js/prettify/prettify.js"></script>
-  <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=css&skin=sunburst"></script>
-  <script src="js/layout.js"></script>
-</body>
+      </section>
+      <section class="vibrant centered">
+        <div class="">
+          <h4>Documentazione del progetto di Grafica 3D per l'anno accademico 2015/2016.</h4>
+        </div>
+      </section>
+      <footer>
+        <div class="">
+          <p>Christian Ascone - Matricola 739491</p>
+        </div>
+      </footer>
+    </div>
+    <script src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/prettify/prettify.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=css&skin=sunburst"></script>
+    <script src="js/layout.js"></script>
+  </body>
 </html>
