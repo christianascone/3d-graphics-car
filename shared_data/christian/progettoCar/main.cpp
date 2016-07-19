@@ -54,8 +54,8 @@ long lastCheckTimer = 0;
 extern void setupGoals();
 
 extern void drawPista();
-extern void drawTree();
-extern void drawBillboard(bool loser);
+extern void drawTree(bool shadow);
+extern void drawBillboard(bool shadow, bool loser);
 extern void drawGoals(int num);
 
 // Struct che rappresenta un bottone del pannello di controllo
@@ -625,7 +625,7 @@ void rendering(SDL_Window *win) {
 
   drawFloor(false); // disegna il suolo
 
-  drawTree(); // disegna la pista
+  drawTree(true); // disegna la pista
 
   car.checkCollision(car.px, car.pz);
 
@@ -638,12 +638,27 @@ void rendering(SDL_Window *win) {
     loser = true;
   }
 
-  drawBillboard(loser); // disegna il cartellone
+  drawBillboard(true, loser); // disegna il cartellone
   drawPista(); // disegna la pista
 
   car.Render(); // disegna la macchina
 
   drawGoals(car.totalGoals);
+
+  if (useShadow)
+  {
+    glPushMatrix();
+    glColor3f(0.3, 0.3, 0.3); // colore fisso
+    glTranslatef(0, 0.01, -2); // alzo l'ombra di un epsilon per evitare z-fighting con il pavimento
+    glScalef(1.01, 0, 1.01); // appiattisco sulla Y, ingrandisco dell'1% sulla Z e sulla X
+    glDisable(GL_LIGHTING); // niente lighing per l'ombra
+    
+    drawTree(false); // disegna la pista
+    drawBillboard(false, loser); // disegna il cartellone
+
+    glEnable(GL_LIGHTING);
+    glPopMatrix();
+  }
 
   renderString(scrW / 2, 20, timeString);
   std::stringstream ss;

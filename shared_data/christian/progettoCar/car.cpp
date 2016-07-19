@@ -227,15 +227,20 @@ void SetupPhotoTexture(Point3 min, Point3 max, bool loser) {
   // in modo che la texture sia "attaccata" all'oggetto, e non "proiettata" su esso
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
-  
+  glTexGeni(GL_R, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
+
+
   float sx = 1.0 / (max.X() - min.X()); // Inverto per flip sx - dx
   float ty = 1.0 / (min.Y() - max.Y()); // Inverto per flip up - down
-  
+  float rz = 1.0 / (max.Z() - min.Z());
+
   float s[4] = {sx, 0, 0,  - min.X()*sx };
   float t[4] = {0, ty, 0,  - min.Y()*ty };
-  
+  float r[4] = {0, 0, rz,  - min.Z()*rz };
+
   glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
   glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
+  glTexGenfv(GL_R, GL_OBJECT_PLANE, r);
 }
 
 // DoStep: facciamo un passo di fisica (a delta_t costante)
@@ -319,47 +324,46 @@ void drawPista () {
 }
 
 // Disegno l'albero
-void drawTree () {
-  bool usecolor = true;
+void drawTree (bool shadow) {
   glPushMatrix();
 
   // Setup della texture dei tronchi
   if (!useEnvmap)
   {
-    if (usecolor) glColor3f(0.1f, 0.0f, 0.0f);//Brown
+    if (shadow) glColor3f(0.1f, 0.0f, 0.0f);//Brown
   }
   else {
-    if (usecolor) SetupEnvmapTextureTree();
+    if (shadow) SetupEnvmapTextureTree();
   }
   tree1.RenderNxV();
   tree3.RenderNxV();
-  //if (usecolor) glEnable(GL_LIGHTING);
+  //if (shadow) glEnable(GL_LIGHTING);
 
   // Setup della texture per le foglie dell'albero
   if (!useEnvmap)
   {
-    if (usecolor) glColor3f(0, 1, 0);
+    if (shadow) glColor3f(0, 1, 0);
   }
   else {
-    if (usecolor) SetupEnvmapTextureLeaf();
+    if (shadow) SetupEnvmapTextureLeaf();
   }
   tree2.RenderNxV();
-  //if (usecolor) glEnable(GL_LIGHTING);
+  //if (shadow) glEnable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
   glPopMatrix();
+
 }
 
 // Disegna il cartellone pubblicitario con l'immagine
-void drawBillboard (bool loser) {
-  bool usecolor = true;
+void drawBillboard (bool shadow, bool loser) {
   glPushMatrix();
   glTranslatef(30, 0, 0);
   if (!useEnvmap)
   {
-    if (usecolor) glColor3f(0.1f, 0.1f, 0.1f);
+    if (shadow) glColor3f(0.1f, 0.1f, 0.1f);
   }
   else {
-    if (usecolor) glColor3f(0.5, 0.5, 0.5);
+    if (shadow) glColor3f(0.5, 0.5, 0.5);
 
     // Applico la texture della parte "metallica" del cartellone
     glBindTexture(GL_TEXTURE_2D, 10);
@@ -375,19 +379,19 @@ void drawBillboard (bool loser) {
   billboard_base.RenderNxV();
   billboard_internal.RenderNxV();
   billboard_lightsupport.RenderNxV();
-  //if (usecolor) glEnable(GL_LIGHTING);
+  //if (shadow) glEnable(GL_LIGHTING);
 
   if (!useEnvmap)
   {
-    if (usecolor) glColor3f(1, 1, 1);
+    if (shadow) glColor3f(1, 1, 1);
   }
   else {
-    if (usecolor) glColor3f(1, 1, 1);
-    if (usecolor) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax, loser);
+    if (shadow) glColor3f(1, 1, 1);
+    if (shadow) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax, loser);
   }
   billboard_face1.RenderNxV();
   billboard_face2.RenderNxV();
-  //if (usecolor) glEnable(GL_LIGHTING);
+  //if (shadow) glEnable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
   glPopMatrix();
 }
@@ -540,8 +544,6 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     lateral.RenderNxV();
     bottomsits.RenderNxV();
     marmitta.RenderNxV();
-    piruli.RenderNxV();
-    portapacchi_piruli.RenderNxV();
     //if (usecolor) glEnable(GL_LIGHTING);
 
     if (usecolor) glColor3f(0.0f, 0.0f, 0.0f);
@@ -579,7 +581,8 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
     lights.RenderNxV();
     parafango.RenderNxV();
-    
+    piruli.RenderNxV();
+    portapacchi_piruli.RenderNxV();
     shades.RenderNxV();
     if (usecolor) glEnable(GL_LIGHTING);
 
@@ -685,7 +688,7 @@ void Car::Render(bool allParts) const {
   // sono nello spazio MACCHINA
   //  drawAxis(); // disegno assi spazio macchina
 
-  DrawHeadlight(0, 0.2, -1, 0, useHeadlight); // accendi faro centrale
+  DrawHeadlight(0, 1.2, -1, 0, useHeadlight); // accendi faro centrale
 
   RenderAllParts(true, allParts);
 
