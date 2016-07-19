@@ -55,39 +55,55 @@
             <p>Le texture applicate dando le coordinate riguardano le ruote del veicolo e una foto personale applicata sul cartellone pubblicitario. In questo caso sono stati utilizzati i vertici bbmin e bbmax per applicare la texture su una faccia di una mesh.</p>
             <p>Nella renderizzazione del terreno di gioco, la texture viene applicata su ogni "riquadro".</p>
             <p>Le restanti texture sono state mappate in maniera automatica e applicate sulle componenti del veicolo, sul corpo del cartellone e sugli alberi.</p>
-
             <h4>Pannello di controllo</h4>
             <p>Il pannello di controllo comprende alcuni bottoni a schermo per modificare la visualizzazione di alcune componenti grafiche. Di seguito i possibili comandi:
-            <ul>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-            </ul></p>
+              <ul>
+                <li>Camera</li>
+                <li>Wireframe</li>
+                <li>Texture</li>
+                <li>Luci</li>
+                <li>Ombre</li>
+                <li>Mappa</li>
+                <li>Reset</li>
+              </ul></p>
+              <h5>Camera</h5>
+              <p>Sono presenti 4 tipi differenti di camera che si distinguono per altezza e angolo rispetto al veicolo, mentre una quinta è manipolabile direttamente con il mouse. In questo caso la posizione della camera rimane fissa sul punto <b>0,0</b>, mentre l'altezza e l'angolo del punto di vista vengono modificati con il mouse.</p>
+              
+              <h5>Wireframe</h5>
+              <p>Tramite questo comando è possibile abilitare e disabilitare la visualizzazione del wireframe, renderizzando anche le linee e le superfici che normalmente vengono nascoste in base al View Point.</p>
+              <h5>Texture</h5>
+              <p>Oltre al wireframe è possibile abilitare e disabilitare anche la visualizzazione delle texture. In questo caso, vengono meno le texture applicate sulle superfici e vengono applicati solamente dei colori tramite il comando <b>glColor</b>.</p>
+              <h5>Luci</h5>
+              <p>Le luci possono essere accese e spente grazie a questo comando. Una volta accese è possibile vederle osservando la parte anteriore del veicolo.</p>
+              <h5>Ombre</h5>
+              <p>Ogni oggetto 3D dispone di una sua ombra che viene renderizzata sul terreno, se abilitata.</p><p>Per ogni oggetto 3D, si effettuano due renderizzazioni: la prima per avere la mesh 3D sull'ambiente, la seconda per una renderizzazione appiattita che rappresenta l'ombra.</p>
+              <h5>Mappa</h5>
+              <p>Sullo schermo è possibile vedere una mappa in cui sono visibili il circuito e il veicolo.</p><p>Tale mappa è realizzata grazie ad una viewport dedicata, in cui vengono renderizzati il veicolo e la pista, con una camera dedicata, per permettere di vedere l'ambiente di gioco dall'alto.</p>
+              
+              <h5>Reset</h5>
+              <p>Il pulsante di Reset ha lo scopo di resettare completamente lo stato di gioco.</p>
+              <p>Il reset azzera il timer, riporta a 0 i checkpoint raggiunti e ridispone quelli iniziali.</p>
 
-            <h4>Mappa</h4>
-            <h4>Advanced rendering</h4>
-            
+              <h4>Mappa</h4>
+              <h4>Advanced rendering</h4>
+              
+            </div>
           </div>
-        </div>
-      </section>
-      <section class="vibrant centered">
-        <div class="">
-          <h4>Documentazione del progetto di Grafica 3D per l'anno accademico 2015/2016.</h4>
-        </div>
-      </section>
-      <footer>
-        <div class="">
-          <p>Christian Ascone - Matricola 739491</p>
-        </div>
-      </footer>
-    </div>
-    <script src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/prettify/prettify.js"></script>
-    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=css&skin=sunburst"></script>
-    <script src="js/layout.js"></script>
-  </body>
-</html>
+        </section>
+        <section class="vibrant centered">
+          <div class="">
+            <h4>Documentazione del progetto di Grafica 3D per l'anno accademico 2015/2016.</h4>
+          </div>
+        </section>
+        <footer>
+          <div class="">
+            <p>Christian Ascone - Matricola 739491</p>
+          </div>
+        </footer>
+      </div>
+      <script src="js/jquery.min.js"></script>
+      <script type="text/javascript" src="js/prettify/prettify.js"></script>
+      <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=css&skin=sunburst"></script>
+      <script src="js/layout.js"></script>
+    </body>
+  </html>
