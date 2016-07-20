@@ -25,6 +25,7 @@
             <li><a href="#introduction" class="cc-active">Introduzione</a></li>
             <li><a href="#videogame" class="cc-active">Videogame</a></li>
             <li><a href="#grafica" class="cc-active">Grafica</a></li>
+            <li><a href="#pannellocontrollo" class="cc-active">Pannello di controllo</a></li>
             <li class="separator"></li>
           </ul>
           <div class="docs-content">
@@ -55,7 +56,26 @@
             <p>Le texture applicate dando le coordinate riguardano le ruote del veicolo e una foto personale applicata sul cartellone pubblicitario. In questo caso sono stati utilizzati i vertici bbmin e bbmax per applicare la texture su una faccia di una mesh.</p>
             <p>Nella renderizzazione del terreno di gioco, la texture viene applicata su ogni "riquadro".</p>
             <p>Le restanti texture sono state mappate in maniera automatica e applicate sulle componenti del veicolo, sul corpo del cartellone e sugli alberi.</p>
-            <h4>Pannello di controllo</h4>
+            
+            <h4>Mappa</h4>
+            <p>La mappa è visibile su schermo nell'angolo in basso a sinistra.
+            Può essere utilizzata come riferimento per la posizione del veicolo rispetto al circuito e all'intero ambiente.</p>
+            <p>Le renderizzazione della mappa avviene mediante una viewport e una camera dedicate. Nello specifico, viene utilizzata una viewport nell'angolo in basso a sinistra della Window, con una camera posizionata perpendicolarmente al terreno.</p>
+            <p>In seguito all'inizializzazione delle suddette componenti, vengono renderizzati la pista e il veicolo, poiché sono gli unici elementi realmente utili nella mappa e i restanti (terreno, alberi e cartellone) potrebbero appesantire inutilmente la fase di rendering.</p>
+            <h4>Advanced rendering</h4>
+            <p>Nel progetto sono state implementate due tecniche di advanced rendering:
+              <ul>
+                <li>Ombre</li>
+                <li>Trasparenza</li>
+              </ul>
+            </p>
+            <h5>Ombre</h5>
+            <p>Per ogni oggetto 3D, si effettuano due renderizzazioni: la prima per avere la mesh 3D sull'ambiente, la seconda per una renderizzazione appiattita che rappresenta l'ombra.</p>
+
+            <h5>Trasparenza</h5>
+            <p></p>
+            
+            <h3 id="pannellocontrollo">Pannello di controllo</h3>
             <p>Il pannello di controllo comprende alcuni bottoni a schermo per modificare la visualizzazione di alcune componenti grafiche. Di seguito i possibili comandi:
               <ul>
                 <li>Camera</li>
@@ -66,32 +86,25 @@
                 <li>Mappa</li>
                 <li>Reset</li>
               </ul></p>
-              <h5>Camera</h5>
+              <h4>Camera</h4>
               <p>Sono presenti 4 tipi differenti di camera che si distinguono per altezza e angolo rispetto al veicolo, mentre una quinta è manipolabile direttamente con il mouse. In questo caso la posizione della camera rimane fissa sul punto <b>0,0</b>, mentre l'altezza e l'angolo del punto di vista vengono modificati con il mouse.</p>
               
-              <h5>Wireframe</h5>
+              <h4>Wireframe</h4>
               <p>Tramite questo comando è possibile abilitare e disabilitare la visualizzazione del wireframe, renderizzando anche le linee e le superfici che normalmente vengono nascoste in base al View Point.</p>
-              <h5>Texture</h5>
+              <h4>Texture</h4>
               <p>Oltre al wireframe è possibile abilitare e disabilitare anche la visualizzazione delle texture. In questo caso, vengono meno le texture applicate sulle superfici e vengono applicati solamente dei colori tramite il comando <b>glColor</b>.</p>
-              <h5>Luci</h5>
+              <h4>Luci</h4>
               <p>Le luci possono essere accese e spente grazie a questo comando. Una volta accese è possibile vederle osservando la parte anteriore del veicolo.</p>
-              <h5>Ombre</h5>
-              <p>Ogni oggetto 3D dispone di una sua ombra che viene renderizzata sul terreno, se abilitata.</p><p>Per ogni oggetto 3D, si effettuano due renderizzazioni: la prima per avere la mesh 3D sull'ambiente, la seconda per una renderizzazione appiattita che rappresenta l'ombra.</p>
-              <h5>Mappa</h5>
+              <h4>Ombre</h4>
+              <p>Ogni oggetto 3D dispone di una sua ombra che viene renderizzata sul terreno, se abilitata. Con il pulsante è possibile disabilitarle (di default sono abilitate) e abilitarle.</p>
+              <h4>Mappa</h4>
               <p>Sullo schermo è possibile vedere una mappa in cui sono visibili il circuito e il veicolo.</p><p>Grazie al pannello di controllo, la mappa, che di default è visibile, può essere disabilitata e abilitata.</p>
               
-              <h5>Reset</h5>
+              <h4>Reset</h4>
               <p>Il pulsante di Reset ha lo scopo di resettare completamente lo stato di gioco.</p>
               <p>Il reset azzera il timer, riporta a 0 i checkpoint raggiunti e ridispone quelli iniziali.
-              Tramite il reset è quindi possibile riavviare il gioco dal punto di partenza.
+                Tramite il reset è quindi possibile riavviare il gioco dal punto di partenza.
               </p>
-
-              <h4>Mappa</h4>
-
-              <p>La mappa è visibile su schermo nell'angolo in basso a sinistra.
-              Può essere utilizzata come riferimento per la posizione del veicolo rispetto al circuito e all'intero ambiente.</p>
-              
-              <h4>Advanced rendering</h4>
               
             </div>
           </div>
