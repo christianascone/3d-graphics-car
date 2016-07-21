@@ -648,7 +648,7 @@ void rendering(SDL_Window *win) {
   if (useShadow)
   {
     glPushMatrix();
-    glColor3f(0.3, 0.3, 0.3); // colore fisso
+    glColor3f(0.1, 0.1, 0.1); // colore fisso
     glTranslatef(0, 0.01, -2); // alzo l'ombra di un epsilon per evitare z-fighting con il pavimento
     glScalef(1.01, 0, 1.01); // appiattisco sulla Y, ingrandisco dell'1% sulla Z e sulla X
     glDisable(GL_LIGHTING); // niente lighing per l'ombra

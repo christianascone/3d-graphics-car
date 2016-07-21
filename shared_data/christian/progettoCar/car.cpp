@@ -525,6 +525,11 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     if (usecolor) SetupEnvmapTextureRed();
   }
   carlinga.RenderNxV(); // rendering delle mesh carlinga usando normali per vertice
+  backpiruli.RenderNxV();
+  lights.RenderNxV();
+  parafango.RenderNxV();
+  shades.RenderNxV();
+  glDisable(GL_TEXTURE_2D);
   if (usecolor) glEnable(GL_LIGHTING);
 
   // Se all parts è false non disegno tutto perché sto facendo la mappa
@@ -539,7 +544,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     asta.RenderNxV();
     glPopMatrix();
 
-    glPushMatrix();
+
     if (usecolor) glColor3f(0.1f, 0.1f, 0.1f);
     lateral.RenderNxV();
     bottomsits.RenderNxV();
@@ -549,10 +554,10 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     if (usecolor) glColor3f(0.0f, 0.0f, 0.0f);
     backsits.RenderNxV();
     //if (usecolor) glEnable(GL_LIGHTING);
-    glPopMatrix();
+
+
 
     glPushMatrix();
-
     if (controller.key[Controller::BRAKE]) {
       glTranslate(  asta_brake.bbmin );
       glRotatef( 1 * -freno, 1, 0, 0);
@@ -561,29 +566,27 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     asta_brake.RenderNxV();
     glPopMatrix();
 
-    glPushMatrix();
+
     glColor3f(0, 0, 0);
     brake_block.RenderNxV();
     antenna.RenderNxV();
-    glPopMatrix();
+    portapacchi_piruli.RenderNxV();
 
-    if (!useEnvmap)
-    {
-      if (usecolor) glColor3f(1, 0, 0);
-    }
-    else {
-      if (usecolor) SetupEnvmapTextureRed();
-    }
 
-    backpiruli.RenderNxV();
+
+    if (usecolor) glColor3f(0.3, 0.3, 0.3);
     board.RenderNxV();
     interni.RenderNxV();
 
-    lights.RenderNxV();
-    parafango.RenderNxV();
+
+    if (!useEnvmap)
+    {
+      if (usecolor) glColor3f(0, 0, 0);
+    }
+    else {
+      if (usecolor) SetupEnvmapTextureDarkLeather();
+    }
     piruli.RenderNxV();
-    portapacchi_piruli.RenderNxV();
-    shades.RenderNxV();
     if (usecolor) glEnable(GL_LIGHTING);
 
 
