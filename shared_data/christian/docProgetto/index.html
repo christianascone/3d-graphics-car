@@ -70,11 +70,14 @@
               </ul>
             </p>
             <h5>Ombre</h5>
-            <p>Per ogni oggetto 3D, si effettuano due renderizzazioni: la prima per avere la mesh 3D sull'ambiente, la seconda per una renderizzazione appiattita che rappresenta l'ombra.</p>
+            <p>Per ogni oggetto 3D, si effettuano due renderizzazioni: la prima per avere la mesh 3D sull'ambiente, la seconda per una renderizzazione appiattita della medesima mesh, che rappresenta l'ombra.</p>
 
             <h5>Trasparenza</h5>
-            <p></p>
-            
+            <p>La trasparenza è stata applicata mediante i comandi <b>glEnable(GL_BLEND)</b> e <b>glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)</b></p>
+            <p>In base al parametro <i>useTransparency</i>, modificabile da pannello di controllo, i due 
+            comandi precedenti vengono abilitati prima di applicare la texture sui due oggetti relativi ai vetri, permettendo di indicare il valore del canale alfa.</p>
+            <p>Nello specifico, i valori di colore e trasparenza sono indicati con <b>glColor4f (0.5, 0.5, 0.5, 0.3)</b> che utilizza un grigio con 0.3 di trasparenza.</p>
+
             <h3 id="pannellocontrollo">Pannello di controllo</h3>
             <p>Il pannello di controllo comprende alcuni bottoni a schermo per modificare la visualizzazione di alcune componenti grafiche. Di seguito i possibili comandi:
               <ul>
@@ -93,8 +96,8 @@
               <p>Tramite questo comando è possibile abilitare e disabilitare la visualizzazione del wireframe, renderizzando anche le linee e le superfici che normalmente vengono nascoste in base al View Point.</p>
               <h4>Texture</h4>
               <p>Oltre al wireframe è possibile abilitare e disabilitare anche la visualizzazione delle texture. In questo caso, vengono meno le texture applicate sulle superfici e vengono applicati solamente dei colori tramite il comando <b>glColor</b>.</p>
-              <h4>Luci</h4>
-              <p>Le luci possono essere accese e spente grazie a questo comando. Una volta accese è possibile vederle osservando la parte anteriore del veicolo.</p>
+              <h4>Trasparenza</h4>
+              <p>La trasparenza del parabrezza e del lunotto posteriore, che è attiva di default, può essere disattivata e attivata, utilizzando una texture completamente visibile.</p>
               <h4>Ombre</h4>
               <p>Ogni oggetto 3D dispone di una sua ombra che viene renderizzata sul terreno, se abilitata. Con il pulsante è possibile disabilitarle (di default sono abilitate) e abilitarle.</p>
               <h4>Mappa</h4>

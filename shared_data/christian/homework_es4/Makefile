@@ -17,7 +17,10 @@ LDLIBGL = -L/usr/X11R6/lib -lX11 -lSDL2 -lSDL2_ttf -lSDL2_image -lGL -lGLU -lm
 SRC1= persp_zbuffer.c $(GCGDIR)$(GCGLib).c $(GCGDIR)$(GCGLib).h
 OBJ1= persp_zbuffer.o $(GCGDIR)$(GCGLib).o
 
-BIN= persp_zbuffer
+SRC2= scan_conv.c $(GCGDIR)$(GCGLib).c $(GCGDIR)$(GCGLib).h
+OBJ2= scan_conv.o $(GCGDIR)$(GCGLib).o
+
+BIN= persp_zbuffer scan_conv
 
 all:$(BIN) 
 
@@ -25,12 +28,18 @@ all:$(BIN)
 persp_zbuffer:$(OBJ1)
 	$(CC) $(OBJ1) $(LDLIB) -o $@
 
+scan_conv:$(OBJ2)
+	$(CC) $(OBJ2) $(LDLIB) -o $@
+
 $(GCGDIR)$(GCGLib).o: $(GCGDIR)$(GCGLib).c $(GCGDIR)$(GCGLib).h
 	$(CC) $(CFLAGS) $(GCGDIR)$(GCGLib).c -o$@
 
 
 persp_zbuffer.o:$(SRC1)
 	$(CC) $(CDEB) $(CFLAGS) persp_zbuffer.c
+
+scan_conv.o:$(SRC1)
+	$(CC) $(CDEB) $(CFLAGS) scan_conv.c
 
 .c.o:
 	$(CC) $(CFLAGS) *.c
