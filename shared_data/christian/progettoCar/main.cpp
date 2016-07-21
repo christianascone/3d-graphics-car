@@ -30,7 +30,7 @@ float eyeDist = 5.0; // distanza dell'occhio dall'origine
 int scrH = 750, scrW = 1050; // altezza e larghezza viewport (in pixels)
 bool useWireframe = false;
 bool useEnvmap = true;
-bool useHeadlight = false;
+bool useTransparency = true;
 bool useShadow = true;
 bool useMap = true;
 int cameraType = 0;
@@ -523,7 +523,7 @@ void printCommands() {
   renderString(textureButton.x + 5, textureButton.y + stringY, "F3: Texture");
 
 
-  renderString(lightsButton.x + 5, lightsButton.y + stringY, "F4: Luci");
+  renderString(lightsButton.x + 5, lightsButton.y + stringY, "F4: Trasparenza");
   renderString(shadowsButton.x + 5, shadowsButton.y + stringY, "F5: Ombre");
   renderString(mapButton.x + 5, mapButton.y + stringY, "F6: Mappa");
 
@@ -778,7 +778,7 @@ int main(int argc, char* argv[])
         if (e.key.keysym.sym == SDLK_F1) cameraType = (cameraType + 1) % CAMERA_TYPE_MAX;
         if (e.key.keysym.sym == SDLK_F2) useWireframe = !useWireframe;
         if (e.key.keysym.sym == SDLK_F3) useEnvmap = !useEnvmap;
-        if (e.key.keysym.sym == SDLK_F4) useHeadlight = !useHeadlight;
+        if (e.key.keysym.sym == SDLK_F4) useTransparency = !useTransparency;
         if (e.key.keysym.sym == SDLK_F5) useShadow = !useShadow;
         if (e.key.keysym.sym == SDLK_F6) useMap = !useMap;
         if (e.key.keysym.sym == SDLK_F7) {car.resetScore(); resetTimer();}
@@ -850,7 +850,7 @@ int main(int argc, char* argv[])
               } else if (index == 2) {
                 useEnvmap = !useEnvmap;
               } else if (index == 3) {
-                useHeadlight = !useHeadlight;
+                useTransparency = !useTransparency;
               } else if (index == 4) {
                 useShadow = !useShadow;
               } else if (index == 5) {

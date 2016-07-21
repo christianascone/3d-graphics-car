@@ -77,7 +77,7 @@ struct GoalCircle {
 };
 
 extern bool useEnvmap; // var globale esterna: per usare l'evnrionment mapping
-extern bool useHeadlight; // var globale esterna: per usare i fari
+extern bool useTransparency; // var globale esterna: per usare i fari
 extern bool useShadow; // var globale esterna: per generare l'ombra
 
 // Goals iniziali
@@ -150,10 +150,13 @@ void SetupEnvmapTextureGlass()
   glEnable(GL_TEXTURE_GEN_T);
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_SPHERE_MAP); // Env map
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_SPHERE_MAP);
-  // Abilito la trasparenza
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glColor4f (0.5, 0.5, 0.5, 0.3); // fattore alpha 0.3
+
+  if (useTransparency) {
+    // Abilito la trasparenza
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f (0.5, 0.5, 0.5, 0.3); // fattore alpha 0.3
+  }
   glDisable(GL_LIGHTING); // disabilito il lighting OpenGL standard (lo faccio con la texture)
 }
 
@@ -474,35 +477,6 @@ void Car::Init() {
 }
 
 
-// attiva una luce di openGL per simulare un faro della macchina
-void Car::DrawHeadlight(float x, float y, float z, int lightN, bool useHeadlight) const {
-  int usedLight = GL_LIGHT1 + lightN;
-
-  if (useHeadlight)
-  {
-    glEnable(usedLight);
-    float col0[4] = {0.8, 0.8, 0.0,  1};
-    glLightfv(usedLight, GL_DIFFUSE, col0);
-
-    float col1[4] = {0.5, 0.5, 0.0,  1};
-    glLightfv(usedLight, GL_AMBIENT, col1);
-
-    float tmpPos[4] = {x, y, z,  1}; // ultima comp=1 => luce posizionale
-    glLightfv(usedLight, GL_POSITION, tmpPos );
-
-    float tmpDir[4] = {0, 0, -1,  0}; // ultima comp=1 => luce posizionale
-    glLightfv(usedLight, GL_SPOT_DIRECTION, tmpDir );
-
-    glLightf (usedLight, GL_SPOT_CUTOFF, 30);
-    glLightf (usedLight, GL_SPOT_EXPONENT, 1);
-
-    glLightf(usedLight, GL_CONSTANT_ATTENUATION, 0);
-    glLightf(usedLight, GL_LINEAR_ATTENUATION, 1);
-  }
-  else
-    glDisable(usedLight);
-}
-
 
 // funzione che disegna tutti i pezzi della macchina
 // (carlinga, + 4 route)
@@ -691,7 +665,6 @@ void Car::Render(bool allParts) const {
   // sono nello spazio MACCHINA
   //  drawAxis(); // disegno assi spazio macchina
 
-  DrawHeadlight(0, 1.2, -1, 0, useHeadlight); // accendi faro centrale
 
   RenderAllParts(true, allParts);
 
