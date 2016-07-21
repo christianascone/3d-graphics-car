@@ -698,7 +698,7 @@ void Car::Render(bool allParts) const {
   // ombra!
   if (useShadow)
   {
-    glColor3f(0.4, 0.4, 0.4); // colore fisso
+    glColor3f(0.1, 0.1, 0.1); // colore fisso
     glTranslatef(0, 0.01, 0); // alzo l'ombra di un epsilon per evitare z-fighting con il pavimento
     glScalef(1.01, 0, 1.01); // appiattisco sulla Y, ingrandisco dell'1% sulla Z e sulla X
     glDisable(GL_LIGHTING); // niente lighing per l'ombra
