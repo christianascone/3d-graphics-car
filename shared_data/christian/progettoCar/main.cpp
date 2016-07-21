@@ -20,7 +20,7 @@
 #define CAMERA_MOUSE 4
 #define CAMERA_TYPE_MAX 5
 
-#define MENU_BUTTON_WIDTH 130
+#define MENU_BUTTON_WIDTH 140
 #define MENU_BUTTON_HEIGHT 40
 
 using namespace std;
