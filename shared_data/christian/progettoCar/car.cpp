@@ -499,7 +499,6 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     if (usecolor) SetupEnvmapTextureRed();
   }
   carlinga.RenderNxV(); // rendering delle mesh carlinga usando normali per vertice
-  backpiruli.RenderNxV();
   lights.RenderNxV();
   parafango.RenderNxV();
   shades.RenderNxV();
@@ -523,6 +522,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     lateral.RenderNxV();
     bottomsits.RenderNxV();
     marmitta.RenderNxV();
+    mirrors.RenderNxV();
     //if (usecolor) glEnable(GL_LIGHTING);
 
     if (usecolor) glColor3f(0.0f, 0.0f, 0.0f);
@@ -561,6 +561,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
       if (usecolor) SetupEnvmapTextureDarkLeather();
     }
     piruli.RenderNxV();
+    backpiruli.RenderNxV();
     if (usecolor) glEnable(GL_LIGHTING);
 
 
@@ -578,7 +579,6 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     {
       if (usecolor) SetupEnvmapTextureGlass();
       glasses.RenderNxV();
-      mirrors.RenderNxV();
       if (usecolor) glEnable(GL_LIGHTING);
     }
 
