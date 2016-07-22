@@ -265,6 +265,14 @@ nav #menu-toggle {
     padding: 0 16px;
 }
 
+blockquote { 
+    background-color: #1C262B; 
+}
+
+code {
+    color: #6E94FF;
+}
+
 
 @media only screen and (min-width: 680px) {
     nav, nav #menu {

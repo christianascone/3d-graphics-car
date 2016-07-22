@@ -57,6 +57,19 @@
             <p>Nella renderizzazione del terreno di gioco, la texture viene applicata su ogni "riquadro".</p>
             <p>Le restanti texture sono state mappate in maniera automatica e applicate sulle componenti del veicolo, sul corpo del cartellone e sugli alberi.</p>
             
+            <h4>Rendering di testo</h4>
+            <p>Il rendering di stringhe di testo è stata realizzata grazie a Freeglut, implementazione open source di GLUT.</p>
+            <p>
+              Dopo aver indicato le coordinate con <b>glRasterPos2f(x, y)</b>, la stampa avviene grazie a <b> glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char *)charArray)</b>.
+            </p>
+            <blockquote>
+              <code>
+              glRasterPos2f(x, y);<br>
+              //...<br>
+              glutBitmapString(GLUT_BITMAP_HELVETICA_18, <br>
+              (const unsigned char *)charArray);
+              </code>
+            </blockquote>
             <h4>Mappa</h4>
             <p>La mappa è visibile su schermo nell'angolo in basso a sinistra.
             Può essere utilizzata come riferimento per la posizione del veicolo rispetto al circuito e all'intero ambiente.</p>
@@ -71,12 +84,19 @@
             </p>
             <h5>Ombre</h5>
             <p>Per ogni oggetto 3D, si effettuano due renderizzazioni: la prima per avere la mesh 3D sull'ambiente, la seconda per una renderizzazione appiattita della medesima mesh, che rappresenta l'ombra.</p>
-
             <h5>Trasparenza</h5>
             <p>La trasparenza è stata applicata mediante i comandi <b>glEnable(GL_BLEND)</b> e <b>glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)</b></p>
-            <p>In base al parametro <i>useTransparency</i>, modificabile da pannello di controllo, i due 
+            <p>In base al parametro <i>useTransparency</i>, modificabile da pannello di controllo, i due
             comandi precedenti vengono abilitati prima di applicare la texture sui due oggetti relativi ai vetri, permettendo di indicare il valore del canale alfa.</p>
             <p>Nello specifico, i valori di colore e trasparenza sono indicati con <b>glColor4f (0.5, 0.5, 0.5, 0.3)</b> che utilizza un grigio con 0.3 di trasparenza.</p>
+
+            <blockquote>
+              <code>
+              glEnable(GL_BLEND);<br>
+              glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);<br>
+              glColor4f (0.5, 0.5, 0.5, 0.3);
+              </code>
+            </blockquote>
 
             <h3 id="pannellocontrollo">Pannello di controllo</h3>
             <p>Il pannello di controllo comprende alcuni bottoni a schermo per modificare la visualizzazione di alcune componenti grafiche. Di seguito i possibili comandi:

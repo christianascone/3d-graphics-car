@@ -7,8 +7,6 @@
 #define MAXFACE (100)
 #define DEFAULT_PTSIZE  12
 
-#define AREA_ZBUFFER 594
-
 /* Dati per visualizzare un oggetto definito solo da vertici e lati*/
 float   x[MAXVERT], y[MAXVERT], z[MAXVERT];     /* coordinate vertici */
 int     edge[MAXEDGE][2];                       /* lista lati */
@@ -45,106 +43,87 @@ struct RECT
 RECT  menu[15];
 int   done = 0;
 
-/*added variables for scanline and z-buffer */
-float z_observer[MAXVERT];    /*coordinate z spazio dell'osservatore */
-float z_prosp_corr[MAXVERT];   /* coordinate con correzione prospettica */
-typedef float rvector[4];
-rvector yymax, yymin, xa, dx;
-rvector za, dz;
-int edges, startedge, endedge, scandec;
-float scan;
-
-float near = 20; // near plane
-float far = 30;  // far plane
-float B_correction;
-float A_correction;
-int polx[4], poly[4];
-float polz[4];
-float polz_e[4], polx_e[4], poly_e[4];
-float z_buffer[AREA_ZBUFFER][AREA_ZBUFFER];
-
-int xim0, yim0, xim1, yim1, xim2, yim2;
-SDL_Surface *tux;
 
 /* inizializzazione menu */
-void init_menu(SDL_Renderer *ren, RECT menu[], float teta, float fi) {
+void init_menu(SDL_Renderer *ren, RECT menu[], float teta, float fi)
+{
 
   menu[0].rect.x = 605;
   menu[0].rect.y = 550;
   menu[0].rect.w = 100;
   menu[0].rect.h = 30;
   strcpy(menu[0].text, "QUIT");
-  // finewin = 0;
+//finewin = 0;
 
   menu[1].rect.x = 605;
   menu[1].rect.y = 20;
   menu[1].rect.w = 100;
   menu[1].rect.h = 100;
   strcpy(menu[1].text, "THETA");
-  // tetawin=1;
+//tetawin=1;
 
   menu[2].rect.x = 605;
   menu[2].rect.y = 150;
   menu[2].rect.w = 100;
   menu[2].rect.h = 100;
   strcpy(menu[2].text, "PHI");
-  // fiwin = 2;
+//fiwin = 2;
 
   menu[3].rect.x = 602;
   menu[3].rect.y = 280;
   menu[3].rect.w = 50;
   menu[3].rect.h = 30;
   strcpy(menu[3].text, "ZoomI");
-  // ziwin = 3;
+//ziwin = 3;
 
   menu[4].rect.x = 662;
   menu[4].rect.y = 280;
   menu[4].rect.w = 50;
   menu[4].rect.h = 30;
   strcpy(menu[4].text, "ZoomO");
-  // zowin = 4;
+//zowin = 4;
 
   menu[5].rect.x = 602;
   menu[5].rect.y = 320;
   menu[5].rect.w = 50;
   menu[5].rect.h = 30;
   strcpy(menu[5].text, "DZoomI");
-  // Dziwin = 5;
+//Dziwin = 5;
 
   menu[6].rect.x = 662;
   menu[6].rect.y = 320;
   menu[6].rect.w = 50;
   menu[6].rect.h = 30;
   strcpy(menu[6].text, "DZoomO");
-  // Dzowin = 6;
+//Dzowin = 6;
 
   menu[7].rect.x = 662;
   menu[7].rect.y = 400;
   menu[7].rect.w = 50;
   menu[7].rect.h = 30;
   strcpy(menu[7].text, "RIGHT");
-  // rightwin = 7;
+//rightwin = 7;
 
   menu[8].rect.x = 602;
   menu[8].rect.y = 400;
   menu[8].rect.w = 50;
   menu[8].rect.h = 30;
   strcpy(menu[8].text, "LEFT");
-  // leftwin = 8;
+//leftwin = 8;
 
   menu[9].rect.x = 631;
   menu[9].rect.y = 360;
   menu[9].rect.w = 50;
   menu[9].rect.h = 30;
   strcpy(menu[9].text, "UP");
-  // upwin = 9;
+//upwin = 9;
 
   menu[10].rect.x = 631;
   menu[10].rect.y = 440;
   menu[10].rect.w = 50;
   menu[10].rect.h = 30;
   strcpy(menu[10].text, "DOWN");
-  //downwin = 10;
+//downwin = 10;
 
   SDL_RenderDrawLine(ren, menu[1].rect.x + menu[1].rect.w / 2, menu[1].rect.y + menu[1].rect.h / 2,
                      (int)(menu[1].rect.w / 2)*cos(teta) + menu[1].rect.x + menu[1].rect.w / 2,
@@ -206,11 +185,25 @@ void copy_trasl(int nv, int *nvert, float x[], float y[], float z[],
   *nedge += ne;
 }
 
+/* Calcola la normale ad una faccia */
+void compute_face_normal(int k)
+{
+  int i1, i2, i3;
+  float v[3], w[3];
 
+  i1 = face[k][0]; i2 = face[k][1]; i3 = face[k][2];
+  v[0] = x[i2] - x[i1]; v[1] = y[i2] - y[i1]; v[2] = z[i2] - z[i1];
+  w[0] = x[i3] - x[i2]; w[1] = y[i3] - y[i2]; w[2] = z[i3] - z[i2];
+  nx[k] = v[1] * w[2] - v[2] * w[1];
+  ny[k] = v[2] * w[0] - v[0] * w[2];
+  nz[k] = v[0] * w[1] - v[1] * w[0];
+//  printf("%d %f %f %f \n",k,nx[k],ny[k],nz[k]);
+}
 
 /* funzione che definisce l'oggetto mesh */
 void define_object()
 {
+  int k;
 
   /* Determino le coordinate dei vertici dell'oggetto */
   nvert = 8;
@@ -249,7 +242,9 @@ void define_object()
   face[4][0] = 4; face[4][1] = 5; face[4][2] = 6; face[4][3] = 7;
   face[5][0] = 3; face[5][1] = 2; face[5][2] = 1; face[5][3] = 0;
 
-
+  /*Determino la normale alle facce */
+  for (k = 0; k < nface; k++)
+    compute_face_normal(k);
 
   /*Definisco coordinate texture dell'immagine */
   flag_texture[0] = 1;
@@ -276,9 +271,8 @@ void define_object()
 //copy_trasl(8,&nvert,x,y,z,13,&nedge,edge,2.0,0.0,0.0);
 }
 
-
 /* trasformazione prospettica a tre punti di fuga (generico punto di vista) */
-void trasf_prosp_gen(int k, int *init, float x, float y, float z,
+void trasf_prosp_gen(int *init, float x, float y, float z,
                      float *xe, float *ye, float *ze)
 {
   static float steta, cteta, cfi, sfi;
@@ -292,21 +286,10 @@ void trasf_prosp_gen(int k, int *init, float x, float y, float z,
     cfi = cos(fi);
   }
 
-
   /* trasformazione in coordinate del sistema osservatore */
   *xe = -steta * x + y * cteta;
   *ye = -cteta * cfi * x - y * steta * cfi + z * sfi;
-
-  // Osservatore Z
-  z_observer[k] = *ze = -x * cteta * sfi - y * steta * sfi - z * cfi + D;
-
-  /* scala piramide di vista */
-  *xe = *xe / tan(alpha);
-  *ye = *ye / tan(alpha);
-  /* correzione prospettica */
-  *xe = *xe / *ze;
-  *ye = *ye / *ze;
-  *ze = A_correction + B_correction / *ze;
+  *ze = -x * cteta * sfi - y * steta * sfi - z * cfi + D;
 }
 
 /* funzione che determina i fattori di scala */
@@ -348,9 +331,7 @@ void define_view() {
      angolare iniziale */
   alpha = atan(s / D);
   /* printf("\nApertura angolare: %f \n",alpha);*/
-  /* valori per correzione prospettica */
-  A_correction = far / (far - near);
-  B_correction = -(near * far) / (far - near);
+
 }
 
 void conv(unsigned long m, int b, int a[])
@@ -367,7 +348,6 @@ void conv(unsigned long m, int b, int a[])
   }
 }
 
-
 int max(int a, int b, int c)
 {
   int m;
@@ -376,348 +356,179 @@ int max(int a, int b, int c)
   if (c > m) m = c;
   return m;
 }
-int min(int a, int b, int c) {
+int min(int a, int b, int c)
+{
   int m;
   m = a;
-  if (b < m)
-    m = b;
-  if (c < m)
-    m = c;
+  if (b < m) m = b;
+  if (c < m) m = c;
   return m;
 }
-
 
 float f01(float x0, float y0, float x1, float y1, float x, float y)
 {
   return (y0 - y1) * x + (x1 - x0) * y + x0 * y1 - x1 * y0;
 }
 
-
-void clear_zbuffer() {
-  for (int i = 0; i < AREA_ZBUFFER; i++) {
-    for (int j = 0; j < AREA_ZBUFFER; j++) {
-      // 2 serve perché pulisco z, visto che il range è tra 0 e 1
-      z_buffer[i][j] = 2.0;
-    }
-  }
-}
-
-/*                                                                    */
-/*                          POLYINSERT                                */
-/*                                                                    */
-/*  Questa procedura ordina i lati del poligono e memorizza le infor- */
-/*  mazioni del nuovo lato;e" un ordinamento ad inserzione.           */
-/*  DATI IN INGRESSO                                                  */
-/*    x21 , y21 , x22 , y22 : coordinate degli estremi del lato.      */
-/*                                                                    */
-void polyinsert(int edges, float x21, float y21, float x22, float y22,
-                float z21, float z22) {
-  int j1;
-  float ym;
-  j1 = edges;
-  if (y21 > y22) {
-    ym = y21;
-  } else {
-    ym = y22;
-  }
-  while ((j1 != 1) && (yymax[j1 - 1] < ym)) {
-    yymax[j1] = yymax[j1 - 1];
-    yymin[j1] = yymin[j1 - 1];
-    dx[j1] = dx[j1 - 1];
-    xa[j1] = xa[j1 - 1];
-    dz[j1] = dz[j1 - 1];
-    za[j1] = za[j1 - 1];
-    j1 = j1 - 1;
-  }
-  yymax[j1] = ym;
-  dx[j1] = (x22 - x21) / (y22 - y21);
-  dz[j1] = (z22 - z21) / (y22 - y21);
-  if (y21 > y22) {
-    yymin[j1] = y22;
-    xa[j1] = x21;
-    za[j1] = z21;
-  } else {
-    yymin[j1] = y21;
-    xa[j1] = x22;
-    za[j1] = z22;
-  }
-}
-
-/*                                                                    */
-/*                             LOADPOL                                */
-/*                                                                    */
-/*  Questa procedura ordina i lati del poligono secondo il valore del-*/
-/*  le ordinate piu" grande.Inoltre memorizza e recupera delle infor- */
-/*  mazioni relative ai lati eccetto quelli orrizontali.              */
-/*                                                                    */
-void loadpol(int n) {
-  float x1, x2, y1, y2, z1, z2;
-  int k;
-  x1 = polx[n];
-  y1 = poly[n];
-  z1 = polz[n];
-  edges = 0;
-  for (k = 1; k <= n; k++) {
-    x2 = polx[k];
-    y2 = poly[k];
-    z2 = polz[k];
-    if (y1 == y2) {
-      x1 = x2;
-      z1 = z2;
-    } else {
-      edges = edges + 1;
-      polyinsert(edges, x1, y1, x2, y2, z1, z2);
-      x1 = x2;
-      y1 = y2;
-      z1 = z2;
-    }
-  }
-}
-
-/*                                                                    */
-/*                            INCLUDE                                 */
-/*                                                                    */
-/*  Questa procedura aggiunge nuovi lati al gruppo che si sta conside-*/
-/*  rando.                                                            */
-/*                                                                    */
-void includ() {
-  while ((endedge <= edges) && (yymax[endedge] >= scan)) {
-    dx[endedge] = dx[endedge] * (-scandec);
-    dz[endedge] = dz[endedge] * (-scandec);
-    endedge = endedge + 1;
-  }
-}
-
-void xchange(float *a, float *b) {
-  float t;
-
-  t = *a;
-  *a = *b;
-  *b = t;
-}
-
-/*                                                                    */
-/*                           XSORT                                    */
-/*                                                                    */
-/*  Questa procedura mette un elemento nella posizione corretta usando*/
-/*  un algoritmo a bolla.                                             */
-/*                                                                    */
-void xsort(int kk) {
-  int l;
-  l = kk;
-  while ((l > startedge) && (xa[l] < xa[l - 1])) {
-    xchange(&yymin[l], &yymin[l - 1]);
-    xchange(&xa[l], &xa[l - 1]);
-    xchange(&dx[l], &dx[l - 1]);
-    xchange(&za[l], &za[l - 1]);
-    xchange(&dz[l], &dz[l - 1]);
-    l = l - 1;
-  }
-}
-
-/*                                                                    */
-/*                        UPDATEXVALUES                               */
-/*                                                                    */
-/*  Questa procedura rimuove i lati che non devono essere piu" consi- */
-/*  derati;inoltre determina i punti di intersezione dei restanti lati*/
-/*  con la scanline.                                                  */
-/*                                                                    */
-void updatevalues() {
-  int stopedge, beginedge, k, i;
-
-  stopedge = endedge - 1;
-  beginedge = startedge;
-  for (k = beginedge; k <= stopedge; k++) {
-    if (yymin[k] < scan) {
-      xa[k] = xa[k] + dx[k];
-      za[k] = za[k] + dz[k];
-      xsort(k);
-    } else {
-      startedge = startedge + 1;
-      if (startedge <= k)
-        for (i = k; i >= startedge; i--) {
-          yymin[i] = yymin[i - 1];
-          xa[i] = xa[i - 1];
-          dx[i] = dx[i - 1];
-          za[i] = za[i - 1];
-          dz[i] = dz[i - 1];
-        }
-    }
-  }
-}
-
-/*                                                                    */
-/*                               FILLSCAN                             */
-/*                                                                    */
-/*  Questa procedura disegna i segmenti individuati dalle intersezioni*/
-/*  trovate con la procedura updatexvalues.                           */
-/*                                                                    */
-void fillscan(SDL_Renderer *ren) {
-  int aa, bb;
-  float fx, fy;
-  float fz;
-  int y, x1, x2;
-  float z1, z2, dz;
-  float alpha, beta, gamma;
-  int pix[3], pix1[3], pix2[3], pix3[3], pix4[3];
-  int i, j;
-
-  if (xa[startedge + 1] - xa[startedge] >= 0.5) {
-    y = (int)scan;
-    x1 = (int)(xa[startedge] + 0.5);
-    x2 = (int)(xa[startedge + 1] + 0.5);
-    z1 = za[startedge];
-    z2 = za[startedge + 1];
-    dz = (z2 - z1) / (x2 - x1);
-    while (x1 <= x2) {
-      if (z1 < z_buffer[y][x1]) {
-        z_buffer[y][x1] = z1;
-        alpha = f01(polx[1], poly[1], polx[2], poly[2], x1, y) /
-                f01(polx[1], poly[1], polx[2], poly[2], polx[0], poly[0]);
-        beta = f01(polx[2], poly[2], polx[0], poly[0], x1, y) /
-               f01(polx[2], poly[2], polx[0], poly[0], polx[1], poly[1]);
-        gamma = f01(polx[0], poly[0], polx[1], poly[1], x1, y) /
-                f01(polx[0], poly[0], polx[1], poly[1], polx[2], poly[2]);
-        fz = alpha / polz_e[0] + beta / polz_e[1] + gamma / polz_e[2];
-        alpha = alpha / polz_e[0] / fz;
-        beta = beta / polz_e[1] / fz;
-        gamma = gamma / polz_e[2] / fz;
-        // if (alpha >= 0 && beta >= 0 && gamma >= 0) {
-        fx = alpha * xim0 + beta * xim1 + gamma * xim2;
-        fy = alpha * yim0 + beta * yim1 + gamma * yim2;
-        j = (int)fx;
-        i = (int)fy;
-        aa = fx - j;
-        bb = fy - i;
-        if ((j + 1) <= tux->w && (i + 1) <= tux->h && i >= 0 && j >= 0) {
-          conv(GC_GetPixelImage(tux, j, i), 256, pix1);
-          conv(GC_GetPixelImage(tux, j + 1, i), 256, pix2);
-          conv(GC_GetPixelImage(tux, j, i + 1), 256, pix3);
-          conv(GC_GetPixelImage(tux, j + 1, i + 1), 256, pix4);
-          pix[0] =
-            (int)((1 - aa) * (1 - bb) * pix1[0] + aa * (1 - bb) * pix2[0] +
-                  bb * (1 - aa) * pix3[0] + aa * bb * pix4[0]);
-          pix[1] =
-            (int)((1 - aa) * (1 - bb) * pix1[1] + aa * (1 - bb) * pix2[1] +
-                  bb * (1 - aa) * pix3[1] + aa * bb * pix4[1]);
-          pix[2] =
-            (int)((1 - aa) * (1 - bb) * pix1[2] + aa * (1 - bb) * pix2[2] +
-                  bb * (1 - aa) * pix3[2] + aa * bb * pix4[2]);
-          SDL_SetRenderDrawColor(ren, pix[2], pix[1], pix[0], 255);
-          SDL_RenderDrawPoint(ren, x1, y);
-          // }
-        }
-      }
-      x1++;
-      z1 += dz;
-    }
-  }
-}
-
-/*                             SCANCONV                               */
-/*                                                                    */
-/*  Questa procedura fa lo scan conversion di un poligono.            */
-/*  DATI IN INGRESSO                                                  */
-/*    n     : numero dei vertici del poligono.                        */
-/*    polx  : vettori contenenti le ascisse e le ordinate dei vertici */
-/*    poly    del poligono.                                           */
-/*                                                                    */
-void scanconv(SDL_Renderer *ren, int n) {
-  scandec = 1;
-  loadpol(n);
-  if (edges > 1) {
-    scan = yymax[1] - 0.5;
-    startedge = 1;
-    endedge = 1;
-    includ();
-    while (endedge != startedge) {
-      fillscan(ren);
-      scan = scan - scandec;
-      includ();
-      updatevalues();
-    }
-  }
-}
-
-void draw_texture(SDL_Renderer *ren, int kf, int i1, int i2, int i3, int i4) {
+void draw_texture(SDL_Renderer *ren, SDL_Surface *tux, int kf, int i1, int i2, int i3, int i4)
+{
   int x0, y0, x1, y1, x2, y2;
-  float z0, z1, z2;
+  float z0, z1, z2, fz;
+  int xmin, xmax, ymin, ymax;
+  int ix, iy;
+  float alpha, beta, gamma;
+  int k;
+  int xim0, yim0, xim1, yim1, xim2, yim2;
+  float fx, fy, aa, bb;
+  int i, j;
+  int pix[3], pix1[3], pix2[3], pix3[3], pix4[3];
 
   /*ogni faccia quadrata viene divisa in due triangoli */
-  for (int k = 0; k < 2; k++) {
-    if (k == 0) {
+  for (k = 0; k < 2; k++)
+  {
+    if (k == 0)
+    {
       /*triangolo immagine con cui texturare il triangolo schermo */
       xim0 = tx[kf][3]; yim0 = ty[kf][3];
       xim1 = tx[kf][2]; yim1 = ty[kf][2];
       xim2 = tx[kf][0]; yim2 = ty[kf][0];
-
       /*triangolo schermo*/
-      x0 = xs[i4]; y0 = ys[i4]; z0 = z_prosp_corr[i4];
-      x1 = xs[i3]; y1 = ys[i3]; z1 = z_prosp_corr[i3];
-      x2 = xs[i1]; y2 = ys[i1]; z2 = z_prosp_corr[i1];
-
-      polz_e[0] = z_observer[i4];
-      polz_e[1] = z_observer[i3];
-      polz_e[2] = z_observer[i1];
-      polz_e[3] = z_observer[i4];
-    } else {
+      x0 = xs[i4]; y0 = ys[i4]; z0 = zeye[i4];
+      x1 = xs[i3]; y1 = ys[i3]; z1 = zeye[i3];
+      x2 = xs[i1]; y2 = ys[i1]; z2 = zeye[i1];
+    }
+    else
+    {
       /*triangolo immagine con cui texturare il triangolo schermo */
       xim0 = tx[kf][2]; yim0 = ty[kf][2];
       xim1 = tx[kf][1]; yim1 = ty[kf][1];
       xim2 = tx[kf][0]; yim2 = ty[kf][0];
-
       /*triangolo schermo*/
-      x0 = xs[i3]; y0 = ys[i3]; z0 = z_prosp_corr[i3];
-      x1 = xs[i2]; y1 = ys[i2]; z1 = z_prosp_corr[i2];
-      x2 = xs[i1]; y2 = ys[i1]; z2 = z_prosp_corr[i1];
-
-      polz_e[0] = z_observer[i3];
-      polz_e[1] = z_observer[i2];
-      polz_e[2] = z_observer[i1];
-      polz_e[3] = z_observer[i3];
+      x0 = xs[i3]; y0 = ys[i3]; z0 = zeye[i3];
+      x1 = xs[i2]; y1 = ys[i2]; z1 = zeye[i2];
+      x2 = xs[i1]; y2 = ys[i1]; z2 = zeye[i1];
     }
-    polx[0] = x0;
-    polx[1] = x1;
-    polx[2] = x2;
-    polx[3] = x0;
+    /*extent triangolo schermo*/
+    xmin = min(x0, x1, x2);
+    xmax = max(x0, x1, x2);
+    ymin = min(y0, y1, y2);
+    ymax = max(y0, y1, y2);
+    for (ix = xmin; ix <= xmax; ix++)
+      for (iy = ymin; iy <= ymax; iy++)
+      {
+        alpha = f01(x1, y1, x2, y2, ix, iy) / f01(x1, y1, x2, y2, x0, y0);
+        beta = f01(x2, y2, x0, y0, ix, iy) / f01(x2, y2, x0, y0, x1, y1);
+        gamma = f01(x0, y0, x1, y1, ix, iy) / f01(x0, y0, x1, y1, x2, y2);
+        if (alpha >= 0 && beta >= 0 && gamma >= 0)
+        {
+          /*corregge il parametro per il triangolo 3D con il quale si puo' risalire
+           all'immagine; se commentiamo queste 4 linee si avra' un problema sull'
+           immagine proiettata */
+          /**/
+          fz = alpha / z0 + beta / z1 + gamma / z2;
+          alpha = alpha / z0 / fz;
+          beta = beta / z1 / fz;
+          gamma = gamma / z2 / fz;
+          /**/
+          fx = alpha * xim0 + beta * xim1 + gamma * xim2;
+          fy = alpha * yim0 + beta * yim1 + gamma * yim2;
+          j = (int)fx;
+          i = (int)fy;
+          aa = fx - j;
+          bb = fy - i;
+          conv(GC_GetPixelImage(tux, j, i), 256, pix1);
+          conv(GC_GetPixelImage(tux, j + 1, i), 256, pix2);
+          conv(GC_GetPixelImage(tux, j, i + 1), 256, pix3);
+          conv(GC_GetPixelImage(tux, j + 1, i + 1), 256, pix4);
 
-    poly[0] = y0;
-    poly[1] = y1;
-    poly[2] = y2;
-    poly[3] = y0;
-
-    polz[0] = z0;
-    polz[1] = z1;
-    polz[2] = z2;
-    polz[3] = z0;
-    scanconv(ren, 3);
+          pix[0] = (int)((1 - aa) * (1 - bb) * pix1[0] + aa * (1 - bb) * pix2[0] + bb * (1 - aa) * pix3[0] + aa * bb * pix4[0]);
+          pix[1] = (int)((1 - aa) * (1 - bb) * pix1[1] + aa * (1 - bb) * pix2[1] + bb * (1 - aa) * pix3[1] + aa * bb * pix4[1]);
+          pix[2] = (int)((1 - aa) * (1 - bb) * pix1[2] + aa * (1 - bb) * pix2[2] + bb * (1 - aa) * pix3[2] + aa * bb * pix4[2]);
+//               ic=pix[2]*256*256+pix[1]*256+pix[0];
+//                     conv(XGetPixel(ImageOrig,ix,iy),256,pix);
+//                     ic=pix[2]*256*256+pix[1]*256+pix[0];
+          SDL_SetRenderDrawColor(ren, pix[2], pix[1], pix[0], 255);
+          SDL_RenderDrawPoint(ren, ix, iy);
+        }
+      }
   }
 }
 
 void draw_mesh(SDL_Renderer *ren, SDL_Surface *tux)
 {
-  int init;
-  float xe, ye, ze; /* coord. dell'osservatore */
+  int t, u, k, init;
+  float xe, ye, ze;  /* coord. dell'osservatore */
+  int i;
+  float vd[3], vp[3];
+
+  /* si ricalcola il semilato della window in base a D e ad alpha */
+  s = D * tan(alpha);
+  xwmin = -s ;
+  xwmax = s;
+  ywmin = -s;
+  ywmax = s;
+
+  /* fattori di scala per trasf. Window-Viewport */
+  Sx = ((float)(xvmax) - (float)(xvmin)) / (xwmax - xwmin);
+  Sy = ((float)(yvmax) - (float)(yvmin)) / (ywmax - ywmin);
+
+  /* il piano di proiezione viene aggiornato a passare per l'origine */
+  di = D;
   init = 1;
-  for (int k = 0; k < nvert; k++)
+  for (k = 0; k < nvert; k++)
   {
-    trasf_prosp_gen(k, &init, x[k] - csx, y[k] - csy, z[k] - csz, &xe, &ye, &ze);
+    trasf_prosp_gen(&init, x[k] - csx, y[k] - csy, z[k] - csz, &xe, &ye, &ze);
     /* proiezione e trasformazione in coordinate schermo */
-    xs[k] = (int)(Sx * (xe - xwmin) + xvmin + 0.5);
-    ys[k] = (int)(Sy * (ywmin - ye) + yvmax + 0.5);
-    z_prosp_corr[k] = ze;
+    xs[k] = (int)(Sx * ((di * xe) / ze - xwmin) + xvmin + 0.5);
+    ys[k] = (int)(Sy * (ywmin - (di * ye) / ze) + yvmax + 0.5);
+    zeye[k] = ze;
   }
-  clear_zbuffer();
-  SDL_SetRenderDrawColor(ren, 100, 0, 0, 255);
-  for (int k = 0; k < nface; k++) {
-    draw_texture(ren, k, face[k][0], face[k][1], face[k][2], face[k][3]);
+
+  /*direzione di vista per poter applicare il back face culling */
+  vp[0] = D * sin(fi) * cos(teta);
+  vp[1] = D * sin(fi) * sin(teta);
+  vp[2] = D * cos(fi);
+
+  /* disegno facce visibili */
+  for (k = 0; k < nface ; k++)
+  {
+    t = face[k][0];
+    vd[0] = x[t] - vp[0];
+    vd[1] = y[t] - vp[1];
+    vd[2] = z[t] - vp[2];
+    if (nx[k]*vd[0] + ny[k]*vd[1] + nz[k]*vd[2] < 0)
+      draw_texture(ren, tux, k, face[k][0], face[k][1], face[k][2], face[k][3]);
   }
+
+  SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+  /* disegno lati di ogni faccia visibile */
+  for (k = 0; k < nface ; k++)
+  {
+    t = face[k][0];
+    vd[0] = x[t] - vp[0];
+    vd[1] = y[t] - vp[1];
+    vd[2] = z[t] - vp[2];
+    if (nx[k]*vd[0] + ny[k]*vd[1] + nz[k]*vd[2] < 0)
+    {
+      t = face[k][3];
+      u = face[k][0];
+      for (i = 0; i < 4; i++)
+      {
+        SDL_RenderDrawLine(ren, xs[t], ys[t], xs[u], ys[u]);
+        t = face[k][i];
+        u = face[k][i + 1];
+      }
+    }
+  }
+  /*printf("\n [D,teta,fi]= %f %f %f",D,teta,fi);*/
   SDL_RenderPresent(ren);
 }
 
-int main() {
+int main()
+{
   SDL_Window *win;
   SDL_Renderer *ren;
+  SDL_Surface *tux;
   SDL_Rect sub_v, v, bsub_v;
   TTF_Font *font;
   SDL_Event myevent;
@@ -725,26 +536,29 @@ int main() {
   int choice, done = 0;
 
   /* load an image by file */
-  // tux = GC_LoadImage("grid.ppm", &res);
+//  tux = GC_LoadImage("grid.ppm",&res);
   tux = GC_LoadImage("ganesha.ppm", &res);
   if (res == 0)
     return 1;
 
-  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    fprintf(stderr, "Couldn't init video: %s\n", SDL_GetError());
+  if (SDL_Init (SDL_INIT_VIDEO) < 0)
+  {
+    fprintf (stderr, "Couldn't init video: %s\n", SDL_GetError ());
     return (1);
   }
 
   /* Initialize the TTF library */
-  if (TTF_Init() < 0) {
-    fprintf(stderr, "Couldn't initialize TTF: %s\n", SDL_GetError());
-    SDL_Quit();
+  if (TTF_Init () < 0)
+  {
+    fprintf (stderr, "Couldn't initialize TTF: %s\n", SDL_GetError ());
+    SDL_Quit ();
     return (2);
   }
 
-  font = TTF_OpenFont("FreeSans.ttf", DEFAULT_PTSIZE);
-  if (font == NULL) {
-    fprintf(stderr, "Couldn't load font\n");
+  font = TTF_OpenFont ("FreeSans.ttf", DEFAULT_PTSIZE);
+  if (font == NULL)
+  {
+    fprintf (stderr, "Couldn't load font\n");
   }
 
   v.x = 0;
@@ -766,16 +580,14 @@ int main() {
   wim = tux->w;
   him = tux->h;
 
-  win =
-    SDL_CreateWindow("View Cube Model", 0, 0, v.w, v.h, SDL_WINDOW_RESIZABLE);
+  win = SDL_CreateWindow("View Cube Model", 0, 0, v.w, v.h, SDL_WINDOW_RESIZABLE);
   if (win == NULL) {
     fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
     SDL_Quit();
     return 1;
   }
 
-  ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED |
-                           SDL_RENDERER_PRESENTVSYNC);
+  ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   if (ren == NULL) {
     SDL_DestroyWindow(win);
     fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
@@ -783,54 +595,45 @@ int main() {
     return 1;
   }
 
-  /* clear z-buffer */
-  clear_zbuffer();
-
-  /* compute parameters */
-  xwmin = -1;
-  xwmax = 1;
-  ywmin = -1;
-  ywmax = 1;
-
-  /* fattori di scala per trasf. Window-Viewport */
-  Sx = ((float)(xvmax) - (float)(xvmin)) / (xwmax - xwmin);
-  Sy = ((float)(yvmax) - (float)(yvmin)) / (ywmax - ywmin);
-
-  // Set color
+//Set color
   SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-  // Clear back buffer
+//Clear back buffer
   SDL_RenderClear(ren);
-  // Swap back and front buffer
+//Swap back and front buffer
   SDL_RenderPresent(ren);
 
   SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-  // GC_DrawRect(ren,sub_v.x-2,sub_v.y-2,sub_v.w+4,sub_v.h+4);
+  //GC_DrawRect(ren,sub_v.x-2,sub_v.y-2,sub_v.w+4,sub_v.h+4);
   SDL_RenderDrawRect(ren, &bsub_v);
 
   init_menu(ren, menu, teta, fi);
   draw_menu(menu, ren, font);
-  define_object(); /* determinazione mesh oggetto */
+  define_object();   /* determinazione mesh oggetto */
   define_view();
   draw_mesh(ren, tux);
 
-  // Disegnare tutte le volte, anche per eventi intermedi,
-  // rallenta tutto senza dare un contributo all'immagine finale.
-  // Gli eventi si possono scremare in questo modo:
-  // viene usata la costante 0xff perchè nel codice sorgente delle SDL è usato
-  // come costante all'interno delle funzioni che accettano interi 8 bit come
-  // input
-  // per rappresentare SDL_ALLEVENTS (che invece e' a 32 bit)
+//Disegnare tutte le volte, anche per eventi intermedi,
+//rallenta tutto senza dare un contributo all'immagine finale.
+//Gli eventi si possono scremare in questo modo:
+//viene usata la costante 0xff perchè nel codice sorgente delle SDL è usato
+//come costante all'interno delle funzioni che accettano interi 8 bit come input
+//per rappresentare SDL_ALLEVENTS (che invece e' a 32 bit)
 
-  while (done == 0) {
-    if (SDL_PollEvent(&myevent)) {
-      //  SDL_EventState(0xff, SDL_IGNORE); //0xff is all events
+  while (done == 0)
+  {
+    if (SDL_PollEvent(&myevent))
+    {
+//  SDL_EventState(0xff, SDL_IGNORE); //0xff is all events
       SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
-      switch (myevent.type) {
+      switch (myevent.type)
+      {
       case SDL_MOUSEMOTION:
-        if (myevent.motion.state == 1) {
+        if (myevent.motion.state == 1)
+        {
           opt_menu(menu, 11, myevent.motion.x, myevent.motion.y, &choice);
-          switch (choice) {
-          case 1: // choice==tetawin
+          switch (choice)
+          {
+          case 1: //choice==tetawin
             tmpx = myevent.motion.x - (menu[1].rect.x + menu[1].rect.w / 2);
             tmpy = myevent.motion.y - (menu[1].rect.y + menu[1].rect.h / 2);
             teta = atan2(tmpy, tmpx);
@@ -839,17 +642,16 @@ int main() {
             SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
             GC_DrawText(ren, font, 0, 0, 0, 0, 255, 255, 255, 0, menu[1].text,
                         menu[1].rect.x, menu[1].rect.y, shaded);
-            // GC_DrawRect(ren,menu[1].rect.x,menu[1].rect.y,menu[1].rect.w,menu[1].rect.h);
+            //GC_DrawRect(ren,menu[1].rect.x,menu[1].rect.y,menu[1].rect.w,menu[1].rect.h);
             SDL_RenderDrawRect(ren, &(menu[1].rect));
             SDL_RenderDrawLine(ren, myevent.motion.x, myevent.motion.y,
-                               menu[1].rect.x + menu[1].rect.w / 2,
-                               menu[1].rect.y + menu[1].rect.h / 2);
+                               menu[1].rect.x + menu[1].rect.w / 2, menu[1].rect.y + menu[1].rect.h / 2);
             draw_menu(menu, ren, font);
             SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
             SDL_RenderFillRect(ren, &sub_v);
             draw_mesh(ren, tux);
             break;
-          case 2: // choice==fiwin
+          case 2: //choice==fiwin
             tmpx = myevent.motion.x - (menu[2].rect.x + menu[2].rect.w / 2);
             tmpy = myevent.motion.y - (menu[2].rect.y + menu[2].rect.h / 2);
             SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
@@ -857,11 +659,10 @@ int main() {
             SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
             GC_DrawText(ren, font, 0, 0, 0, 0, 255, 255, 255, 0, menu[2].text,
                         menu[2].rect.x, menu[2].rect.y, shaded);
-            // GC_DrawRect(ren,menu[2].rect.x,menu[2].rect.y,menu[2].rect.w,menu[2].rect.h);
+            //GC_DrawRect(ren,menu[2].rect.x,menu[2].rect.y,menu[2].rect.w,menu[2].rect.h);
             SDL_RenderDrawRect(ren, &(menu[2].rect));
-            SDL_RenderDrawLine(ren, myevent.motion.x, myevent.motion.y,
-                               menu[2].rect.x + menu[2].rect.w / 2,
-                               menu[2].rect.y + menu[2].rect.h / 2);
+            SDL_RenderDrawLine (ren, myevent.motion.x, myevent.motion.y,
+                                menu[2].rect.x + menu[2].rect.w / 2, menu[2].rect.y + menu[2].rect.h / 2);
             draw_menu(menu, ren, font);
             SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
             SDL_RenderFillRect(ren, &sub_v);
@@ -873,13 +674,15 @@ int main() {
         break;
 
       case SDL_MOUSEBUTTONDOWN:
-        if (myevent.button.button == 1) {
+        if (myevent.button.button == 1)
+        {
           opt_menu(menu, 11, myevent.button.x, myevent.button.y, &choice);
-          switch (choice) {
-          case 0: // choice == finewin
+          switch (choice)
+          {
+          case 0: //choice == finewin
             done = 1;
             break;
-          case 7: // choice == rightwin
+          case 7: //choice == rightwin
             SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
             SDL_RenderFillRect(ren, &sub_v);
             ssx = -sin(teta);
@@ -888,7 +691,7 @@ int main() {
             csy -= sr * ssy;
             draw_mesh(ren, tux);
             break;
-          case 8: // choice == leftwin
+          case 8: //choice == leftwin
             SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
             SDL_RenderFillRect(ren, &sub_v);
             ssx = -sin(teta);
@@ -897,7 +700,7 @@ int main() {
             csy += sr * ssy;
             draw_mesh(ren, tux);
             break;
-          case 9: // choice == upwin
+          case 9: //choice == upwin
             SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
             SDL_RenderFillRect(ren, &sub_v);
             ssx = -cos(fi) * cos(teta);
@@ -908,7 +711,7 @@ int main() {
             csz += sr * ssz;
             draw_mesh(ren, tux);
             break;
-          case 10: // choice == downwin
+          case 10: //choice == downwin
             SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
             SDL_RenderFillRect(ren, &sub_v);
             ssx = -cos(fi) * cos(teta);
@@ -919,28 +722,28 @@ int main() {
             csz -= sr * ssz;
             draw_mesh(ren, tux);
             break;
-          case 3: // choice == ziwin
+          case 3: //choice == ziwin
             if (alpha - salpha > 0)
               alpha -= salpha;
             SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
             SDL_RenderFillRect(ren, &sub_v);
             draw_mesh(ren, tux);
             break;
-          case 4: // choice == zowin
+          case 4: //choice == zowin
             if (alpha + salpha < 1.57)
               alpha += salpha;
             SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
             SDL_RenderFillRect(ren, &sub_v);
             draw_mesh(ren, tux);
             break;
-          case 5: // choice == Dziwin
+          case 5: //choice == Dziwin
             if (D - Dstep > 0)
               D -= Dstep;
             SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
             SDL_RenderFillRect(ren, &sub_v);
             draw_mesh(ren, tux);
             break;
-          case 6: // choice == Dzowin
+          case 6: //choice == Dzowin
             D += Dstep;
             SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
             SDL_RenderFillRect(ren, &sub_v);
@@ -953,17 +756,18 @@ int main() {
         if (myevent.key.keysym.sym == SDLK_ESCAPE)
           done = 1;
         break;
-      } /* fine switch */
-      //   SDL_EventState(0xff, SDL_ENABLE);
+      }/* fine switch */
+//   SDL_EventState(0xff, SDL_ENABLE);
       SDL_EventState(SDL_MOUSEMOTION, SDL_ENABLE);
     }
   } /* fine while */
 
-  TTF_CloseFont(font);
-  TTF_Quit();
+  TTF_CloseFont (font);
+  TTF_Quit ();
   SDL_DestroyRenderer(ren);
   SDL_DestroyWindow(win);
-  SDL_Quit();
+  SDL_Quit ();
   return (0);
 
 } /* fine main */
+
