@@ -47,7 +47,7 @@ int   done = 0;
 
 /*added variables for scanline and z-buffer */
 float z_observer[MAXVERT];    /*coordinate z spazio dell'osservatore */
-float z_corrected[MAXVERT];   /* coordinate con correzione prospettica */
+float z_prosp_corr[MAXVERT];   /* coordinate con correzione prospettica */
 typedef float rvector[4];
 rvector yymax, yymin, xa, dx;
 rvector za, dz;
@@ -296,6 +296,8 @@ void trasf_prosp_gen(int k, int *init, float x, float y, float z,
   /* trasformazione in coordinate del sistema osservatore */
   *xe = -steta * x + y * cteta;
   *ye = -cteta * cfi * x - y * steta * cfi + z * sfi;
+
+  // Osservatore Z
   z_observer[k] = *ze = -x * cteta * sfi - y * steta * sfi - z * cfi + D;
 
   /* scala piramide di vista */
@@ -392,10 +394,10 @@ float f01(float x0, float y0, float x1, float y1, float x, float y)
 
 
 void clear_zbuffer() {
-  /* we fill it with 2 because the z range is [0,1]*/
   for (int i = 0; i < AREA_ZBUFFER; i++) {
     for (int j = 0; j < AREA_ZBUFFER; j++) {
-      z_buffer[i][j] = -1;
+      // 2 serve perché pulisco z, visto che il range è tra 0 e 1
+      z_buffer[i][j] = 2.0;
     }
   }
 }
@@ -645,44 +647,30 @@ void draw_texture(SDL_Renderer *ren, int kf, int i1, int i2, int i3, int i4) {
   for (int k = 0; k < 2; k++) {
     if (k == 0) {
       /*triangolo immagine con cui texturare il triangolo schermo */
-      xim0 = tx[kf][3];
-      yim0 = ty[kf][3];
-      xim1 = tx[kf][2];
-      yim1 = ty[kf][2];
-      xim2 = tx[kf][0];
-      yim2 = ty[kf][0];
+      xim0 = tx[kf][3]; yim0 = ty[kf][3];
+      xim1 = tx[kf][2]; yim1 = ty[kf][2];
+      xim2 = tx[kf][0]; yim2 = ty[kf][0];
+
       /*triangolo schermo*/
-      x0 = xs[i4];
-      y0 = ys[i4];
-      z0 = z_corrected[i4];
-      x1 = xs[i3];
-      y1 = ys[i3];
-      z1 = z_corrected[i3];
-      x2 = xs[i1];
-      y2 = ys[i1];
-      z2 = z_corrected[i1];
+      x0 = xs[i4]; y0 = ys[i4]; z0 = z_prosp_corr[i4];
+      x1 = xs[i3]; y1 = ys[i3]; z1 = z_prosp_corr[i3];
+      x2 = xs[i1]; y2 = ys[i1]; z2 = z_prosp_corr[i1];
+
       polz_e[0] = z_observer[i4];
       polz_e[1] = z_observer[i3];
       polz_e[2] = z_observer[i1];
       polz_e[3] = z_observer[i4];
     } else {
       /*triangolo immagine con cui texturare il triangolo schermo */
-      xim0 = tx[kf][2];
-      yim0 = ty[kf][2];
-      xim1 = tx[kf][1];
-      yim1 = ty[kf][1];
-      xim2 = tx[kf][0];
-      yim2 = ty[kf][0];
+      xim0 = tx[kf][2]; yim0 = ty[kf][2];
+      xim1 = tx[kf][1]; yim1 = ty[kf][1];
+      xim2 = tx[kf][0]; yim2 = ty[kf][0];
+
       /*triangolo schermo*/
-      x0 = xs[i3];
-      y0 = ys[i3];
-      z0 = z_corrected[i3];
-      x1 = xs[i2];
-      y1 = ys[i2];
-      z1 = z_corrected[i2];
-      x2 = xs[i1];
-      y2 = ys[i1];
-      z2 = z_corrected[i1];
+      x0 = xs[i3]; y0 = ys[i3]; z0 = z_prosp_corr[i3];
+      x1 = xs[i2]; y1 = ys[i2]; z1 = z_prosp_corr[i2];
+      x2 = xs[i1]; y2 = ys[i1]; z2 = z_prosp_corr[i1];
+
       polz_e[0] = z_observer[i3];
       polz_e[1] = z_observer[i2];
       polz_e[2] = z_observer[i1];
@@ -692,10 +680,12 @@ void draw_texture(SDL_Renderer *ren, int kf, int i1, int i2, int i3, int i4) {
     polx[1] = x1;
     polx[2] = x2;
     polx[3] = x0;
+
     poly[0] = y0;
     poly[1] = y1;
     poly[2] = y2;
     poly[3] = y0;
+    
     polz[0] = z0;
     polz[1] = z1;
     polz[2] = z2;
@@ -704,7 +694,8 @@ void draw_texture(SDL_Renderer *ren, int kf, int i1, int i2, int i3, int i4) {
   }
 }
 
-void draw_mesh(SDL_Renderer *ren, SDL_Surface *tux) {
+void draw_mesh(SDL_Renderer *ren, SDL_Surface *tux) 
+{
   int init;
   float xe, ye, ze; /* coord. dell'osservatore */
   init = 1;
@@ -714,7 +705,7 @@ void draw_mesh(SDL_Renderer *ren, SDL_Surface *tux) {
     /* proiezione e trasformazione in coordinate schermo */
     xs[k] = (int)(Sx * (xe - xwmin) + xvmin + 0.5);
     ys[k] = (int)(Sy * (ywmin - ye) + yvmax + 0.5);
-    z_corrected[k] = ze;
+    z_prosp_corr[k] = ze;
   }
   clear_zbuffer();
   SDL_SetRenderDrawColor(ren, 100, 0, 0, 255);
