@@ -7,7 +7,7 @@
 #define MAXFACE (100)
 #define DEFAULT_PTSIZE  12
 
-#define AREA_ZBUFFER 594
+#define AREA_ZBUFFER 600
 
 /* Dati per visualizzare un oggetto definito solo da vertici e lati*/
 float   x[MAXVERT], y[MAXVERT], z[MAXVERT];     /* coordinate vertici */

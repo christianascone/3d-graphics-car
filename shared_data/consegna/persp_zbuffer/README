@@ -1,0 +1,23 @@
+README
+
+include:
+File sorgente dell'homework
+GCGraLib2
+questo README
+Makefile
+FreeSans.ttf
+ganesha.ppm
+
+Homework #4 - persp_zbuffer
+
+Per la compilazione è sufficiente il comando make, da eseguire all’interno della directory dell’homework.
+
+All'interno è presente la GCGraLib2.
+All’avvio, verrà renderizzato un cubo con applicata l’immagine ganesha.ppm.
+
+Ogni faccia del cubo è stata suddivisa in due triangoli, ed è stata applicata una rasterizzazione specializzata nei triangoli, utilizzando l’algoritmo di scan_conv.c limitando a tre il numero di vertici.
+
+Lo Z-buffer è stato implementato con una matrice binomiale, utilizzata nella funzione fillscan.
+Nella funzione draw_texture, sono state indicate, inoltre, le coordinate immagine relative alla faccia su cui renderizzare l’immagine.
+
+Per muovere la mesh si può utilizzare il mouse sulla mesh stessa oppure è anche possibile modificare i parametri mediante gli appositi bottoni a schermo.
