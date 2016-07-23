@@ -40,6 +40,7 @@
               </ul>
             </p>
             <p>Nelle sezioni successive vengono indicate nel dettaglio le dinamiche e le modalità di gioco, le funzionalità di OpenGL utilizzate.</p>
+            <hr>
             <h3 id="videogame">Videogame</h3>
             <p>Il gioco non ha un obiettivo finale, si tratta di un endless game, con obiettivi incrementali.</p>
             <p>L'obiettivo del gioco consiste nel raggiungere un numero determinato di checkpoint entro un tempo limite. Al raggiungimento di tutti i checkpoint, verranno aumentati e collocati casualmente sul terreno, aumentando anche il tempo e si ricomincerà la "cattura".</p>
@@ -49,11 +50,21 @@
             <p>Nel pannello di controllo a schermo è possibile vedere i bottoni per alcuni comandi, mentre per il movimento del veicolo è necessario l'utilizzo della tastiera <b>WASD</b>.</p>
             <p>Il veicolo si può muovere avanti e indietro rispettivamente con <b>W</b> e <b>S</b>, ed è possibile sterzare con i tasti <b>A</b> e <b>D</b>.</p>
             <p>E' inoltre possibile utilizzare il freno a mano mediante il tasto <b>X</b>.</p>
-            
+            <hr>
             <h3 id="grafica">Grafica</h3>
             <h4>Texture</h4>
             <p>Le texture sono state utilizzate per il veicolo, il terreno, il cielo, gli alberi e il cartellone.</p>
             <p>Le texture applicate dando le coordinate riguardano le ruote del veicolo e una foto personale applicata sul cartellone pubblicitario. In questo caso sono stati utilizzati i vertici bbmin e bbmax per applicare la texture su una faccia di una mesh.</p>
+            <blockquote><code>
+              glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);<br>
+              glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);<br>
+              float sx = 1.0 / (max.X() - min.X());<br>
+              float ty = 1.0 / (min.Y() - max.Y());<br>
+              float s[4] = {sx, 0, 0,  - min.X()*sx };<br>
+              float t[4] = {0, ty, 0,  - min.Y()*ty };<br>
+              glTexGenfv(GL_S, GL_OBJECT_PLANE, s);<br>
+              glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
+            </code></blockquote>
             <p>Nella renderizzazione del terreno di gioco, la texture viene applicata su ogni "riquadro".</p>
             <p>Le restanti texture sono state mappate in maniera automatica e applicate sulle componenti del veicolo, sul corpo del cartellone e sugli alberi.</p>
             
@@ -89,7 +100,6 @@
             <p>In base al parametro <i>useTransparency</i>, modificabile da pannello di controllo, i due
             comandi precedenti vengono abilitati prima di applicare la texture sui due oggetti relativi ai vetri, permettendo di indicare il valore del canale alfa.</p>
             <p>Nello specifico, i valori di colore e trasparenza sono indicati con <b>glColor4f (0.5, 0.5, 0.5, 0.3)</b> che utilizza un grigio con 0.3 di trasparenza.</p>
-
             <blockquote>
               <code>
               glEnable(GL_BLEND);<br>
@@ -97,7 +107,7 @@
               glColor4f (0.5, 0.5, 0.5, 0.3);
               </code>
             </blockquote>
-
+            <hr>
             <h3 id="pannellocontrollo">Pannello di controllo</h3>
             <p>Il pannello di controllo comprende alcuni bottoni a schermo per modificare la visualizzazione di alcune componenti grafiche. Di seguito i possibili comandi:
               <ul>
