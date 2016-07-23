@@ -226,12 +226,12 @@ void SetupPhotoTexture(Point3 min, Point3 max, bool loser, bool flipHorizontal) 
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
 
   int flip = 1;
-  if(flipHorizontal){
+  if (flipHorizontal) {
     flip = -1;
   }
 
-  float sx = flip*1.0 / (max.X() - min.X()); // Inverto per flip sx - dx
-  
+  float sx = flip * 1.0 / (max.X() - min.X()); // Inverto per flip sx - dx
+
   float ty = 1.0 / (min.Y() - max.Y()); // Inverto per flip up - down
 
   float s[4] = {sx, 0, 0,  - min.X()*sx };
@@ -566,7 +566,6 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     glPushMatrix();
     glTranslate(  asta.Center() );
     glRotatef( 1 * sterzo, 0, 1, 0);
-    //glRotatef(-1 * mozzoA, 1, 0, 0);
     glTranslate( -asta.Center() );
     glColor3f(0, 0, 0);
     brakes.RenderNxV();
