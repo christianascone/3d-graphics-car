@@ -6,7 +6,7 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Grafica 3D - Christian Ascone</title>
+    <title>Documentazione Grafica 3D - Christian Ascone</title>
     <link rel="alternate" type="application/rss+xml" title="frittt.com" href="feed/index.html">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/style.css">
@@ -16,7 +16,7 @@
     <div class="wrapper">
       <header>
         <div class="container">
-          <h2 class="lone-header">Grafica 3D - Christian Ascone</h2>
+          <h2 class="lone-header">Documentazione Grafica 3D - Christian Ascone</h2>
         </div>
       </header>
       <section>
@@ -75,8 +75,8 @@
                 <li>Freno a mano</li>
               </ul>
               Queste componenti, si distinguono dalle restanti perché subiscono delle trasformazioni specifiche, rispetto alla sola traslazione.
-              </p>
-              <p>
+            </p>
+            <p>
               Per adattarsi alla struttura del veicolo, la ruota anteriore è stata posizionata in maniera differente da quelle posteriori e viene ruotata, in base allo sterzo:
               <blockquote>
                 <code>
@@ -86,14 +86,23 @@
                 glRotatef( sign * sterzo, 0, 1, 0);<br>
                 glRotatef(-sign * mozzoA, 1, 0, 0);</code>
               </blockquote>
-              La stessa tecnica è stata applicata per il manubrio, che viene ruotato, sempre in fase di sterzo:
+              La stessa tecnica è stata applicata per il manubrio, che viene ruotato, sempre in fase di sterzo. Il manubrio e i due freni ad esso collegati, ruotano attorno al centro dell'asta stessa.
+              <blockquote>
+                <code>
+                glTranslate(  asta.Center() );<br>
+                glRotatef( 1 * sterzo, 0, 1, 0);<br>
+                glTranslate( -asta.Center() );<br>
+                glColor3f(0, 0, 0);<br>
+                brakes.RenderNxV();<br>
+                asta.RenderNxV();<br>
+                </code>
+              </blockquote>
+              Infine, il freno a mano (attivabile con il tasto X) viene ruotato, sull'asse x, per simularne l'attivazione.
               <blockquote>
                 <code>
                 glRotatef( 1 * -freno, 1, 0, 0);
                 </code>
               </blockquote>
-
-Infine, il freno a mano (attivabile con il tasto X) 
             </p>
             
             <h4>Rendering di testo</h4>
@@ -115,6 +124,35 @@ Infine, il freno a mano (attivabile con il tasto X)
             <p>Le renderizzazione della mappa avviene mediante una viewport e una camera dedicate. Nello specifico, viene utilizzata una viewport nell'angolo in basso a sinistra della Window, con una camera posizionata perpendicolarmente al terreno.</p>
             <p>In seguito all'inizializzazione delle suddette componenti, vengono renderizzati la pista, il veicolo e i checkpoint, poiché sono gli unici elementi realmente utili nella mappa e i restanti (terreno, alberi e cartellone) potrebbero appesantire inutilmente la fase di rendering.</p>
             <p>Vista la necessità di avere un punto di riferimento e non una renderizzazione precisa degli oggetti 3D, i checkpoint e il veicolo vengono renderizzati come quadrati sul terreno: il veicolo è nero, mentre i checkpoint sono rossi.</p>
+            <h4>Checkpoint</h4>
+            <p>I checkpoint, utili al punteggio, sono rappresentati come circonferenze perpendicolari al terreno. Ognuno di essi è rappresentato dalla seguente struct:
+              <blockquote><code>
+                struct GoalCircle {<br>
+                &nbsp;float x, y, z;<br>
+                &nbsp;float r;<br>
+                &nbsp;bool done;<br>
+                &nbsp;GoalCircle() {<br>
+                &nbsp;}<br>
+                &nbsp;GoalCircle(float x, float y, float z, float r) {<br>
+                &nbsp;&nbsp;this->x = x;<br>
+                &nbsp;&nbsp;this->y = y;<br>
+                &nbsp;&nbsp;this->z = z;<br>
+                &nbsp;&nbsp;this->r = r;<br>
+                &nbsp;&nbsp;this->done = false;<br>
+                &nbsp;}<br>
+                };
+              </code></blockquote>
+            </p>
+            <p>La renderizzazione di ogni checkpoint avviene mediante tre differenti circonferenze con raggio sempre minore, per avere l'aspetto di un bersaglio, mentre mantengono inalterate le coordinate.
+            </p>
+            <p>
+              Ognuna di queste circonferenze viene renderizzata utilizzando <b>glVertex3f</b> con il seguente codice:
+              <blockquote><code>
+                for (int i = 0; i <= n; i++, t += dt) {<br>
+                &nbsp;&nbsp;glVertex3f(x + r * cos(t), y + r * sin(t), z);<br>
+                }
+              </code></blockquote>
+            </p>
             <h4>Advanced rendering</h4>
             <p>Nel progetto sono state implementate due tecniche di advanced rendering:
               <ul>
@@ -123,7 +161,13 @@ Infine, il freno a mano (attivabile con il tasto X)
               </ul>
             </p>
             <h5>Ombre</h5>
-            <p>Per ogni oggetto 3D, si effettuano due renderizzazioni: la prima per avere la mesh 3D sull'ambiente, la seconda per una renderizzazione appiattita della medesima mesh, che rappresenta l'ombra.</p>
+            <p>Per ogni oggetto 3D, si effettuano due renderizzazioni: la prima per avere la mesh 3D sull'ambiente, la seconda per una renderizzazione appiattita della medesima mesh, che rappresenta l'ombra.
+              <blockquote><code>
+                glColor3f(0.1, 0.1, 0.1);<br>
+                glTranslatef(0, 0.01, -2);<br>
+                glScalef(1.01, 0, 1.01);<br>
+              </code></blockquote>
+            </p>
             <h5>Trasparenza</h5>
             <p>La trasparenza è stata applicata mediante i comandi <b>glEnable(GL_BLEND)</b> e <b>glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)</b></p>
             <p>In base al parametro <i>useTransparency</i>, modificabile da pannello di controllo, i due
