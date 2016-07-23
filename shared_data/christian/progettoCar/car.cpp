@@ -421,12 +421,65 @@ void drawGoalCircle(float x, float y, float z, float r) {
   drawCircle(x, y, z, r / 4, false);
 }
 
+// Disegna un quadraato che rappresenta un "obiettivo" per lo score
+void drawGoalSquare(float x, float y, float z, float r, float g, float b) {
+  glDisable(GL_LIGHTING);
+  glPushMatrix();
+  glTranslatef(x, y, z);
+  glScalef(3, 0, 3);
+
+  glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
+  // Top face (y = 1.0f)
+  glColor3f(r, g, b);
+  glVertex3f( 1.0f, 1.0f, -1.0f);
+  glVertex3f(-1.0f, 1.0f, -1.0f);
+  glVertex3f(-1.0f, 1.0f,  1.0f);
+  glVertex3f( 1.0f, 1.0f,  1.0f);
+
+  // Bottom face (y = -1.0f)
+  glVertex3f( 1.0f, -1.0f,  1.0f);
+  glVertex3f(-1.0f, -1.0f,  1.0f);
+  glVertex3f(-1.0f, -1.0f, -1.0f);
+  glVertex3f( 1.0f, -1.0f, -1.0f);
+
+  // Front face  (z = 1.0f)
+  glVertex3f( 1.0f,  1.0f, 1.0f);
+  glVertex3f(-1.0f,  1.0f, 1.0f);
+  glVertex3f(-1.0f, -1.0f, 1.0f);
+  glVertex3f( 1.0f, -1.0f, 1.0f);
+
+  // Back face (z = -1.0f)
+  glVertex3f( 1.0f, -1.0f, -1.0f);
+  glVertex3f(-1.0f, -1.0f, -1.0f);
+  glVertex3f(-1.0f,  1.0f, -1.0f);
+  glVertex3f( 1.0f,  1.0f, -1.0f);
+
+  // Left face (x = -1.0f)
+  glVertex3f(-1.0f,  1.0f,  1.0f);
+  glVertex3f(-1.0f,  1.0f, -1.0f);
+  glVertex3f(-1.0f, -1.0f, -1.0f);
+  glVertex3f(-1.0f, -1.0f,  1.0f);
+
+  // Right face (x = 1.0f)
+  glVertex3f(1.0f,  1.0f, -1.0f);
+  glVertex3f(1.0f,  1.0f,  1.0f);
+  glVertex3f(1.0f, -1.0f,  1.0f);
+  glVertex3f(1.0f, -1.0f, -1.0f);
+  glEnd();  // End of drawing color-cube
+
+  glPopMatrix();
+}
+
 // Disegna la lista di obiettivi
-void drawGoals(int num) {
+void drawGoals(int num, bool isForMap) {
   for (int i = 0; i < num; i++) {
     GoalCircle goal = goals[i];
     if (!goal.done) {
-      drawGoalCircle(goal.x, goal.y, goal.z, goal.r);
+      if (!isForMap) {
+        drawGoalCircle(goal.x, goal.y, goal.z, goal.r);
+      } else {
+        drawGoalSquare(goal.x, goal.y, goal.z, 1, 0, 0);
+      }
     }
   }
 }
@@ -645,25 +698,31 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
   glPopMatrix();
 }
 
+
+
 void Car::Render() const {
-  Car::Render(true);
+  Car::Render(true, false);
 }
 // disegna a schermo
-void Car::Render(bool allParts) const {
-  // sono nello spazio mondo
-  //drawAxis(); // disegno assi spazio mondo
+void Car::Render(bool allParts, bool isForMap) const {
+  if (isForMap) {
+    drawGoalSquare(px, py, pz, 0, 0, 0);
+    return;
+  }
+// sono nello spazio mondo
+//drawAxis(); // disegno assi spazio mondo
   glPushMatrix();
 
   glTranslatef(px, py, pz);
   glRotatef(facing, 0, 1, 0);
 
-  // sono nello spazio MACCHINA
-  //  drawAxis(); // disegno assi spazio macchina
+// sono nello spazio MACCHINA
+//  drawAxis(); // disegno assi spazio macchina
 
 
   RenderAllParts(true, allParts);
 
-  // ombra!
+// ombra!
   if (useShadow)
   {
     glColor3f(0.1, 0.1, 0.1); // colore fisso

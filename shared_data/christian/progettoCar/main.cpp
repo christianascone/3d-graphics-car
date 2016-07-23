@@ -56,7 +56,7 @@ extern void setupGoals();
 extern void drawPista();
 extern void drawTree(bool shadow);
 extern void drawBillboard(bool shadow, bool loser);
-extern void drawGoals(int num);
+extern void drawGoals(int num, bool isForMap);
 
 // Struct che rappresenta un bottone del pannello di controllo
 struct MenuButton {
@@ -502,8 +502,9 @@ void showMap() {
 
   drawFloor(true); // disegna il suolo
   drawPista(); // disegna la pista
+  drawGoals(car.totalGoals, true);
+  car.Render(false, true); // disegna la macchina
 
-  car.Render(false); // disegna la macchina
 
   // attendiamo la fine della rasterizzazione di
   // tutte le primitive mandate
@@ -643,7 +644,7 @@ void rendering(SDL_Window *win) {
 
   car.Render(); // disegna la macchina
 
-  drawGoals(car.totalGoals);
+  drawGoals(car.totalGoals, false);
 
   if (useShadow)
   {
@@ -652,7 +653,7 @@ void rendering(SDL_Window *win) {
     glTranslatef(0, 0.01, -2); // alzo l'ombra di un epsilon per evitare z-fighting con il pavimento
     glScalef(1.01, 0, 1.01); // appiattisco sulla Y, ingrandisco dell'1% sulla Z e sulla X
     glDisable(GL_LIGHTING); // niente lighing per l'ombra
-    
+
     drawTree(false); // disegna la pista
     drawBillboard(false, loser); // disegna il cartellone
 

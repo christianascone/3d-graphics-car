@@ -19,7 +19,7 @@ public:
   // Metodi
   void Init(); // inizializza variabili
   void Render() const; // disegna a schermo
-  void Render(bool allParts) const; // disegna a schermo
+  void Render(bool allParts, bool isForMap) const; // disegna a schermo
   void DoStep(); // computa un passo del motore fisico
   Car() {Init();} // costruttore
 
