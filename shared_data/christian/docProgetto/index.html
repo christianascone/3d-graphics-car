@@ -35,26 +35,27 @@
               <ul>
                 <li>Un veicolo a tre ruote</li>
                 <li>Una pista</li>
-                <li>Due cartelloni</li>
+                <li>Un cartellone</li>
                 <li>Due alberi</li>
+                <li>Checkpoint</li>
               </ul>
             </p>
             <p>Nelle sezioni successive vengono indicate nel dettaglio le dinamiche e le modalità di gioco, le funzionalità di OpenGL utilizzate.</p>
             <hr>
             <h3 id="videogame">Videogame</h3>
             <p>Il gioco non ha un obiettivo finale, si tratta di un endless game, con obiettivi incrementali.</p>
-            <p>L'obiettivo del gioco consiste nel raggiungere un numero determinato di checkpoint entro un tempo limite. Al raggiungimento di tutti i checkpoint, verranno aumentati e collocati casualmente sul terreno, aumentando anche il tempo e si ricomincerà la "cattura".</p>
-            <p>Nel caso in cui si fallisca, raggiungendo lo scadere del tempo senza aver raggiunto tutti i checkpoint, il cartellone mostrerà un messaggio e sarà possibile riavviare il gioco premendo sul bottone <b>Reset</b>.</p>
+            <p>L'obiettivo del gioco consiste nel raggiungere un numero determinato di checkpoint entro un tempo limite. Al raggiungimento di tutti i checkpoint, questi verranno aumentati e collocati casualmente sul terreno, aumentando anche il tempo e ricominciando la "cattura".</p>
+            <p>Nel caso in cui si fallisca, raggiungendo lo scadere del tempo senza aver collezionato tutti i checkpoint, il cartellone mostrerà un messaggio di sconfitta e sarà possibile riavviare il gioco premendo sul pulsante <b>Reset</b>.</p>
             
             <h4>Comandi di gioco</h4>
             <p>Nel pannello di controllo a schermo è possibile vedere i bottoni per alcuni comandi, mentre per il movimento del veicolo è necessario l'utilizzo della tastiera <b>WASD</b>.</p>
             <p>Il veicolo si può muovere avanti e indietro rispettivamente con <b>W</b> e <b>S</b>, ed è possibile sterzare con i tasti <b>A</b> e <b>D</b>.</p>
-            <p>E' inoltre possibile utilizzare il freno a mano mediante il tasto <b>X</b>.</p>
+            <p>E' inoltre possibile utilizzare il freno a mano mediante il tasto <b>X</b>, con cui il veicolo verrà fermato.</p>
             <hr>
             <h3 id="grafica">Grafica</h3>
             <h4>Texture</h4>
             <p>Le texture sono state utilizzate per il veicolo, il terreno, il cielo, gli alberi e il cartellone.</p>
-            <p>Le texture applicate dando le coordinate riguardano le ruote del veicolo e una foto personale applicata sul cartellone pubblicitario. In questo caso sono stati utilizzati i vertici bbmin e bbmax per applicare la texture su una faccia di una mesh.</p>
+            <p>Le texture applicate dando le coordinate, riguardano le ruote del veicolo e una foto personale applicata sul cartellone pubblicitario. In questo caso sono stati utilizzati i vertici bbmin e bbmax per applicare la texture su una faccia di una mesh.</p>
             <blockquote><code>
               glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);<br>
               glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);<br>
@@ -68,13 +69,14 @@
             <p>Nella renderizzazione del terreno di gioco, la texture viene applicata su ogni "riquadro".</p>
             <p>Le restanti texture sono state mappate in maniera automatica e applicate sulle componenti del veicolo, sul corpo del cartellone e sugli alberi.</p>
             <h4>Veicolo</h4>
-            <p>Per la renderizzazione del veicolo, l'oggetto è stato suddiviso in tante mesh per ogni componente significativa. Tali componenti comprendono, tra le tante:
+            <p>Per la renderizzazione del veicolo, l'oggetto è stato suddiviso in tante mesh per ogni componente significativa. Le componenti più peculiari, rispetto a quelle "fisse", sono:
               <ul>
                 <li>Ruote</li>
                 <li>Manubrio</li>
                 <li>Freno a mano</li>
+                <li>Parabrezza e lunotto</li>
               </ul>
-              Queste componenti, si distinguono dalle restanti perché subiscono delle trasformazioni specifiche, rispetto alla sola traslazione.
+              Queste componenti si distinguono dalle restanti perché, rispetto alla sola traslazione, subiscono delle trasformazioni specifiche.
             </p>
             <p>
               Per adattarsi alla struttura del veicolo, la ruota anteriore è stata posizionata in maniera differente da quelle posteriori e viene ruotata, in base allo sterzo:
@@ -105,8 +107,21 @@
               </blockquote>
             </p>
             
-            <h4>Rendering di testo</h4>
-            <p>Il rendering di stringhe di testo è stata realizzata grazie a Freeglut, implementazione open source di GLUT.</p>
+            <h4>Rendering del pannello di controllo</h4>
+            <p>Il pannello di controllo è composto da pulsanti con una label che ne indica la funzione e la scorciatoia da tastiera per utilizzarli. Tale renderizzazione richiede, quindi, che gli oggetti siano renderizzati in 2D per poter essere fissi sullo schermo senza essere influenzati dall'attività di gioco.</p>
+            <p>Per ogni bottone, è stato utilizzato un rettangolo dopo aver utilizzato il comando <b>gluOrtho2D</b> per definire una matrice di proiezione ortografica in 2D.
+              <blockquote><code>
+                gluOrtho2D(0.0, scrW, scrH, 0.0 );<br>
+                //...<br>
+                glBegin(GL_QUADS);<br>
+                glTexCoord2f(0.0f, 0.0f); glVertex2f(X, Y);<br>
+                glTexCoord2f(1.0f, 0.0f); glVertex2f(X + Width, Y);<br>
+                glTexCoord2f(1.0f, 1.0f); glVertex2f(X + Width, Y + Height);<br>
+                glTexCoord2f(0.0f, 1.0f); glVertex2f(X, Y + Height);<br>
+                glEnd();<br>
+              </code></blockquote>
+            </p>
+            <p>Il rendering di stringhe di testo è stata realizzata, invece, grazie a Freeglut, implementazione open source di GLUT.</p>
             <p>
               Dopo aver indicato le coordinate con <b>glRasterPos2f(x, y)</b>, la stampa avviene grazie a <b> glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char *)charArray)</b>.
             </p>
@@ -118,12 +133,13 @@
               (const unsigned char *)charArray);
               </code>
             </blockquote>
+            <p>Così facendo, per ogni pulsante del pannello di controllo, viene visualizzato a schermo un riquadro bianco, con applicata sopra una stringa che ha la funzione di label.</p>
             <h4>Mappa</h4>
             <p>La mappa è visibile su schermo nell'angolo in basso a sinistra.
             Può essere utilizzata come riferimento per la posizione del veicolo rispetto al circuito e all'intero ambiente.</p>
-            <p>Le renderizzazione della mappa avviene mediante una viewport e una camera dedicate. Nello specifico, viene utilizzata una viewport nell'angolo in basso a sinistra della Window, con una camera posizionata perpendicolarmente al terreno.</p>
+            <p>Le renderizzazione della mappa avviene mediante una viewport e una camera dedicate. Nello specifico, viene utilizzata una viewport con le coordinate relative all'angolo della Window, con una camera posizionata perpendicolarmente al terreno.</p>
             <p>In seguito all'inizializzazione delle suddette componenti, vengono renderizzati la pista, il veicolo e i checkpoint, poiché sono gli unici elementi realmente utili nella mappa e i restanti (terreno, alberi e cartellone) potrebbero appesantire inutilmente la fase di rendering.</p>
-            <p>Vista la necessità di avere un punto di riferimento e non una renderizzazione precisa degli oggetti 3D, i checkpoint e il veicolo vengono renderizzati come quadrati sul terreno: il veicolo è nero, mentre i checkpoint sono rossi.</p>
+            <p>Vista la necessità di avere un punto di riferimento e non una renderizzazione precisa degli oggetti 3D, i checkpoint e il veicolo vengono rappresentati come quadrati sul terreno: il veicolo è <b>nero</b>, mentre i checkpoint sono <b>rossi</b>.</p>
             <h4>Checkpoint</h4>
             <p>I checkpoint, utili al punteggio, sono rappresentati come circonferenze perpendicolari al terreno. Ognuno di essi è rappresentato dalla seguente struct:
               <blockquote><code>
@@ -143,7 +159,7 @@
                 };
               </code></blockquote>
             </p>
-            <p>La renderizzazione di ogni checkpoint avviene mediante tre differenti circonferenze con raggio sempre minore, per avere l'aspetto di un bersaglio, mentre mantengono inalterate le coordinate.
+            <p>La renderizzazione di ogni checkpoint avviene mediante tre differenti circonferenze con raggio sempre minore, per avere l'aspetto di un bersaglio, mentre si mantengono inalterate le coordinate.
             </p>
             <p>
               Ognuna di queste circonferenze viene renderizzata utilizzando <b>glVertex3f</b> con il seguente codice:
@@ -161,7 +177,7 @@
               </ul>
             </p>
             <h5>Ombre</h5>
-            <p>Per ogni oggetto 3D, si effettuano due renderizzazioni: la prima per avere la mesh 3D sull'ambiente, la seconda per una renderizzazione appiattita della medesima mesh, che rappresenta l'ombra.
+            <p>Per ogni oggetto 3D, si effettuano due renderizzazioni: la prima per avere la mesh 3D sull'ambiente, la seconda per una versione appiattita della medesima mesh e che rappresenta <b>l'ombra</b>.
               <blockquote><code>
                 glColor3f(0.1, 0.1, 0.1);<br>
                 glTranslatef(0, 0.01, -2);<br>
@@ -172,7 +188,7 @@
             <p>La trasparenza è stata applicata mediante i comandi <b>glEnable(GL_BLEND)</b> e <b>glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)</b></p>
             <p>In base al parametro <i>useTransparency</i>, modificabile da pannello di controllo, i due
             comandi precedenti vengono abilitati prima di applicare la texture sui due oggetti relativi ai vetri, permettendo di indicare il valore del canale alfa.</p>
-            <p>Nello specifico, i valori di colore e trasparenza sono indicati con <b>glColor4f (0.5, 0.5, 0.5, 0.3)</b> che utilizza un grigio con 0.3 di trasparenza.</p>
+            <p>Nello specifico, i valori di colore e trasparenza sono indicati con <b>glColor4f (0.5, 0.5, 0.5, 0.3)</b> che utilizza un grigio con <i>0.3 di trasparenza</i>.</p>
             <blockquote>
               <code>
               glEnable(GL_BLEND);<br>
@@ -182,7 +198,7 @@
             </blockquote>
             <hr>
             <h3 id="pannellocontrollo">Pannello di controllo</h3>
-            <p>Il pannello di controllo comprende alcuni bottoni a schermo per modificare la visualizzazione di alcune componenti grafiche. Di seguito i possibili comandi:
+            <p>Il pannello di controllo comprende dei bottoni a schermo per modificare la visualizzazione di alcune componenti grafiche. Di seguito i possibili comandi:
               <ul>
                 <li>Camera</li>
                 <li>Wireframe</li>
@@ -211,7 +227,34 @@
               <p>Il reset azzera il timer, riporta a 0 i checkpoint raggiunti e ridispone quelli iniziali.
                 Tramite il reset è quindi possibile riavviare il gioco dal punto di partenza.
               </p>
-              
+              <hr>
+              <h4>Scoreboard</h4>
+              <p>Oltre ai pulsanti, l'utente può monitorare il proprio punteggio di gioco.</p>
+              <p>Nella parte centrale alta dello schermo, sono presenti due dati utili per l'andamento del gioco:
+                <ul>
+                  <li>Timer</li>
+                  <li>Checkpoint raggiunti</li>
+                </ul>
+                La stampa di stringhe su schermo viene effettuata con il metodo descritto nella sezione <a href="#grafica">grafica</a> e il punteggio relativo ai checkpoint è rappresentato semplicemente da una stringa che indica la quantità di quelli raggiunti e di quelli totali, mentre per il timer vi è un controllo legato al tempo di sistema.
+              </p>
+              <p>All'avvio del gioco (e in seguito ad ogni reset), viene salvato il tempo relativo al timer di gioco di 40 secondi, che equivale a <b>40 * 1000 millisecondi</b> e si salva il tempo di sistema. Ad ogni renderizzazione, il tempo di sistema viene nuovamente letto e confrontato con l'ultimo salvataggio e dalla sottrazione di questi due tempi, si ottiene la quantità di millisecondi da scalare al timer.
+                <blockquote><code>
+                  time_t now = time(0);<br>
+                  <br>
+                  // Calcolo la differenza tra il tempo attuale e quello<br>
+                  // registrato nell'ultimo render<br>
+                  long newTime = now;<br>
+                  long difference = (newTime - lastCheckTimer) * 1000;<br>
+                  <br>
+                  // Rimuovo la differenza dal tempo del countdown e lo setto<br>
+                  // a 0 se negativo<br>
+                  timerInMillisec -= difference;<br>
+                  if (timerInMillisec < 0) {<br>
+                  &nbsp;&nbsp;timerInMillisec = 0;<br>
+                  }
+                </code></blockquote>
+                Infine, il valore relativo al timer rimanente viene convertito in una stringa dal formato <b>mm:ss</b> e stampata a schermo.
+              </p>
             </div>
           </div>
         </section>
