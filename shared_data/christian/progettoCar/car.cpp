@@ -213,7 +213,7 @@ void SetupWheelTexture(Point3 min, Point3 max) {
 }
 
 // Setup della texture con la foto
-void SetupPhotoTexture(Point3 min, Point3 max, bool loser) {
+void SetupPhotoTexture(Point3 min, Point3 max, bool loser, bool flipHorizontal) {
   // Seleziono la texture in base a "loser"
   if (!loser) {
     glBindTexture(GL_TEXTURE_2D, 9);
@@ -230,8 +230,13 @@ void SetupPhotoTexture(Point3 min, Point3 max, bool loser) {
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
 
-
-  float sx = 1.0 / (max.X() - min.X()); // Inverto per flip sx - dx
+  int flip = 1;
+  if(flipHorizontal){
+    flip = -1;
+  }
+  
+  float sx = flip*1.0 / (max.X() - min.X()); // Inverto per flip sx - dx
+  
   float ty = 1.0 / (min.Y() - max.Y()); // Inverto per flip up - down
 
   float s[4] = {sx, 0, 0,  - min.X()*sx };
@@ -385,9 +390,17 @@ void drawBillboard (bool shadow, bool loser) {
   }
   else {
     if (shadow) glColor3f(1, 1, 1);
-    if (shadow) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax, loser);
+    if (shadow) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax, loser, false);
   }
   billboard_face1.RenderNxV();
+  if (!useEnvmap)
+  {
+    if (shadow) glColor3f(1, 1, 1);
+  }
+  else {
+    if (shadow) glColor3f(1, 1, 1);
+    if (shadow) SetupPhotoTexture(billboard_face2.bbmin, billboard_face2.bbmax, loser, true);
+  }
   billboard_face2.RenderNxV();
   //if (shadow) glEnable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
