@@ -21,7 +21,7 @@
 Mesh antenna((char *)"ape/obj/antenna.obj"); // chiama il costruttore
 Mesh asta((char *)"ape/obj/asta.obj");
 Mesh asta_brake((char *)"ape/obj/asta_brake.obj");
-Mesh backpiruli((char *)"ape/obj/backpiruli.obj"); // chiama il costruttore
+Mesh backdetails((char *)"ape/obj/backdetails.obj"); // chiama il costruttore
 Mesh backsits((char *)"ape/obj/backsits.obj");
 Mesh bars((char *)"ape/obj/bars.obj"); // chiama il costruttore
 Mesh board((char *)"ape/obj/board.obj");
@@ -36,8 +36,8 @@ Mesh lights((char *)"ape/obj/lights.obj"); // chiama il costruttore
 Mesh marmitta((char *)"ape/obj/marmitta.obj");
 Mesh mirrors((char *)"ape/obj/mirrors.obj"); // chiama il costruttore
 Mesh parafango((char *)"ape/obj/parafango.obj"); // chiama il costruttore
-Mesh piruli((char *)"ape/obj/piruli.obj");
-Mesh portapacchi_piruli((char *)"ape/obj/portapacchi_piruli.obj");
+Mesh details((char *)"ape/obj/details.obj");
+Mesh portapacchi_details((char *)"ape/obj/portapacchi_details.obj");
 Mesh shades((char *)"ape/obj/shades.obj");
 
 // Ruote
@@ -598,7 +598,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     glColor3f(0, 0, 0);
     brake_block.RenderNxV();
     antenna.RenderNxV();
-    portapacchi_piruli.RenderNxV();
+    portapacchi_details.RenderNxV();
 
 
 
@@ -614,8 +614,8 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
     else {
       if (usecolor) SetupEnvmapTextureDarkLeather();
     }
-    piruli.RenderNxV();
-    backpiruli.RenderNxV();
+    details.RenderNxV();
+    backdetails.RenderNxV();
     if (usecolor) glEnable(GL_LIGHTING);
 
 
