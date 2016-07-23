@@ -589,9 +589,7 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
     glPushMatrix();
     if (controller.key[Controller::BRAKE]) {
-      glTranslate(  asta_brake.bbmin );
       glRotatef( 1 * -freno, 1, 0, 0);
-      glTranslate( -asta_brake.bbmin );
     }
     asta_brake.RenderNxV();
     glPopMatrix();

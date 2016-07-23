@@ -67,6 +67,30 @@
             </code></blockquote>
             <p>Nella renderizzazione del terreno di gioco, la texture viene applicata su ogni "riquadro".</p>
             <p>Le restanti texture sono state mappate in maniera automatica e applicate sulle componenti del veicolo, sul corpo del cartellone e sugli alberi.</p>
+            <h4>Veicolo</h4>
+            <p>Per la renderizzazione del veicolo, l'oggetto è stato suddiviso in tante mesh per ogni componente significativa. Tali componenti comprendono, tra le tante:
+              <ul>
+                <li>Carlinga</li>
+                <li>Ruote</li>
+                <li>Manubrio</li>
+                <li>Freno a mano</li>
+              </ul>
+              Per adattarsi alla struttura del veicolo, la ruota anteriore è stata posizionata in maniera differente da quelle posteriori e viene ruotata, in base allo sterzo:
+              <blockquote>
+                <code>
+                glTranslatef(-4.7, +wheelFR1.Center().Y() - 0.5, 0 + 5);<br>
+                glTranslatef(-4.7, -wheelFR1.Center().Y() - 0.5, 0 + 5);<br>
+                //...<br>
+                glRotatef( sign * sterzo, 0, 1, 0);<br>
+                glRotatef(-sign * mozzoA, 1, 0, 0);</code>
+              </blockquote>
+              La stessa tecnica è stata applicata per il manubrio, che viene ruotato, sempre in fase di sterzo:
+              <blockquote>
+                <code>
+                glRotatef( 1 * -freno, 1, 0, 0);
+                </code>
+              </blockquote>
+            </p>
             
             <h4>Rendering di testo</h4>
             <p>Il rendering di stringhe di testo è stata realizzata grazie a Freeglut, implementazione open source di GLUT.</p>
@@ -85,7 +109,8 @@
             <p>La mappa è visibile su schermo nell'angolo in basso a sinistra.
             Può essere utilizzata come riferimento per la posizione del veicolo rispetto al circuito e all'intero ambiente.</p>
             <p>Le renderizzazione della mappa avviene mediante una viewport e una camera dedicate. Nello specifico, viene utilizzata una viewport nell'angolo in basso a sinistra della Window, con una camera posizionata perpendicolarmente al terreno.</p>
-            <p>In seguito all'inizializzazione delle suddette componenti, vengono renderizzati la pista e il veicolo, poiché sono gli unici elementi realmente utili nella mappa e i restanti (terreno, alberi e cartellone) potrebbero appesantire inutilmente la fase di rendering.</p>
+            <p>In seguito all'inizializzazione delle suddette componenti, vengono renderizzati la pista, il veicolo e i checkpoint, poiché sono gli unici elementi realmente utili nella mappa e i restanti (terreno, alberi e cartellone) potrebbero appesantire inutilmente la fase di rendering.</p>
+            <p>Vista la necessità di avere un punto di riferimento e non una renderizzazione precisa degli oggetti 3D, i checkpoint e il veicolo vengono renderizzati come quadrati sul terreno: il veicolo è nero, mentre i checkpoint sono rossi.</p>
             <h4>Advanced rendering</h4>
             <p>Nel progetto sono state implementate due tecniche di advanced rendering:
               <ul>
