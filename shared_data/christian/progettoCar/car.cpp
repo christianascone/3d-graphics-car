@@ -41,10 +41,10 @@ Mesh portapacchi_piruli((char *)"ape/obj/portapacchi_piruli.obj");
 Mesh shades((char *)"ape/obj/shades.obj");
 
 // Ruote
-Mesh wheelBR1((char *)"obj/Ferrari_wheel_back_R.obj");
-Mesh wheelFR1((char *)"obj/Ferrari_wheel_front_R.obj");
-Mesh wheelBR2((char *)"obj/Ferrari_wheel_back_R_metal.obj");
-Mesh wheelFR2((char *)"obj/Ferrari_wheel_front_R_metal.obj");
+Mesh wheelBR1((char *)"obj/wheel_back_R.obj");
+Mesh wheelFR1((char *)"obj/wheel_front_R.obj");
+Mesh wheelBR2((char *)"obj/wheel_back_R_metal.obj");
+Mesh wheelFR2((char *)"obj/wheel_front_R_metal.obj");
 
 Mesh pista((char *)"obj/pista.obj");
 
@@ -94,11 +94,6 @@ void setupGoals() {
 
   for (int i = 0; i < goalsNumber; i++) {
     GoalCircle goal = goals[i];
-    printf("Goal %d %f\n", i, goal.x);
-    printf("Goal %d %f\n", i, goal.y);
-    printf("Goal %d %f\n", i, goal.z);
-    printf("Goal %d %f\n", i, goal.r);
-    printf("\n");
   }
 }
 
@@ -234,7 +229,7 @@ void SetupPhotoTexture(Point3 min, Point3 max, bool loser, bool flipHorizontal) 
   if(flipHorizontal){
     flip = -1;
   }
-  
+
   float sx = flip*1.0 / (max.X() - min.X()); // Inverto per flip sx - dx
   
   float ty = 1.0 / (min.Y() - max.Y()); // Inverto per flip up - down
@@ -766,7 +761,7 @@ void Car::checkCollision(float px, float pz) {
     bool isInBoundZ = pz < goal.z + tolerance && pz > goal.z - tolerance;
 
     if (isInBoundX && isInBoundZ) {
-      printf("collision %d\n", i);
+      printf("Collisione con goal %d\n", i);
       goal.done = true;
       goals[i] = goal;
       reached++;

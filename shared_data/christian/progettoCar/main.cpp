@@ -632,6 +632,7 @@ void rendering(SDL_Window *win) {
 
   bool loser = false;
   if (timerInMillisec > 0 && car.goalsReached == car.totalGoals) {
+    printf("\nAggiornamento livello difficoltà \n");
     car.updateDifficultyLevel();
     resetTimer();
     timerInMillisec *= 1.3;
