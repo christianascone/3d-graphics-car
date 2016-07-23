@@ -180,11 +180,6 @@ void SetupEnvmapTextureDecorMetal()
   SetupEnvmapTexture(10);
 }
 
-void SetupEnvmapTextureRoad()
-{
-  SetupEnvmapTexture(11);
-}
-
 // funzione che prepara tutto per creare le coordinate texture (s,t) da (x,y,z)
 // Mappo l'intervallo [ minY , maxY ] nell'intervallo delle T [0..1]
 //     e l'intervallo [ minZ , maxZ ] nell'intervallo delle S [0..1]
@@ -308,8 +303,6 @@ void Car::DoStep() {
   pz += vz;
 }
 
-//void drawCube(); // questa e' definita altrove (quick hack)
-void drawAxis(); // anche questa
 
 // Disegno la pista con la mesh
 void drawPista () {
@@ -328,22 +321,22 @@ void drawTree (bool shadow) {
   // Setup della texture dei tronchi
   if (!useEnvmap)
   {
-    if (shadow) glColor3f(0.1f, 0.0f, 0.0f);//Brown
+    if (!shadow) glColor3f(0.1f, 0.0f, 0.0f);//Brown
   }
   else {
-    if (shadow) SetupEnvmapTextureTree();
+    if (!shadow) SetupEnvmapTextureTree();
   }
   tree1.RenderNxV();
   tree3.RenderNxV();
-  //if (shadow) glEnable(GL_LIGHTING);
+  //if (!shadow) glEnable(GL_LIGHTING);
 
   // Setup della texture per le foglie dell'albero
   if (!useEnvmap)
   {
-    if (shadow) glColor3f(0, 1, 0);
+    if (!shadow) glColor3f(0, 1, 0);
   }
   else {
-    if (shadow) SetupEnvmapTextureLeaf();
+    if (!shadow) SetupEnvmapTextureLeaf();
   }
   tree2.RenderNxV();
   //if (shadow) glEnable(GL_LIGHTING);
@@ -358,10 +351,10 @@ void drawBillboard (bool shadow, bool loser) {
   glTranslatef(30, 0, 0);
   if (!useEnvmap)
   {
-    if (shadow) glColor3f(0.1f, 0.1f, 0.1f);
+    if (!shadow) glColor3f(0.1f, 0.1f, 0.1f);
   }
   else {
-    if (shadow) glColor3f(0.5, 0.5, 0.5);
+    if (!shadow) glColor3f(0.5, 0.5, 0.5);
 
     // Applico la texture della parte "metallica" del cartellone
     glBindTexture(GL_TEXTURE_2D, 10);
@@ -381,20 +374,20 @@ void drawBillboard (bool shadow, bool loser) {
 
   if (!useEnvmap)
   {
-    if (shadow) glColor3f(1, 1, 1);
+    if (!shadow) glColor3f(1, 1, 1);
   }
   else {
-    if (shadow) glColor3f(1, 1, 1);
-    if (shadow) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax, loser, false);
+    if (!shadow) glColor3f(1, 1, 1);
+    if (!shadow) SetupPhotoTexture(billboard_face1.bbmin, billboard_face1.bbmax, loser, false);
   }
   billboard_face1.RenderNxV();
   if (!useEnvmap)
   {
-    if (shadow) glColor3f(1, 1, 1);
+    if (!shadow) glColor3f(1, 1, 1);
   }
   else {
-    if (shadow) glColor3f(1, 1, 1);
-    if (shadow) SetupPhotoTexture(billboard_face2.bbmin, billboard_face2.bbmax, loser, true);
+    if (!shadow) glColor3f(1, 1, 1);
+    if (!shadow) SetupPhotoTexture(billboard_face2.bbmin, billboard_face2.bbmax, loser, true);
   }
   billboard_face2.RenderNxV();
   //if (shadow) glEnable(GL_LIGHTING);

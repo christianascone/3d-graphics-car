@@ -411,7 +411,6 @@ void drawSky() {
     glColor3f(1, 1, 1);
     glDisable(GL_LIGHTING);
 
-    //   drawCubeFill();
     drawSphere(200.0, 40, 40);
 
     glDisable(GL_TEXTURE_GEN_S);
@@ -445,23 +444,6 @@ void renderString(float x, float y, std::string text)
   glMatrixMode(GL_MODELVIEW);
 }
 
-void drawFps() {
-  // disegnamo i fps (frame x sec) come una barra a sinistra.
-// (vuota = 0 fps, piena = 100 fps)
-  SetCoordToPixel();
-
-  glBegin(GL_QUADS);
-  float y = scrH * fps / 100;
-  float ramp = fps / 100;
-  glColor3f(1 - ramp, 0, ramp);
-  glVertex2d(10, 0);
-  glVertex2d(10, y);
-  glVertex2d(0, y);
-  glVertex2d(0, 0);
-
-  glEnd();
-}
-
 // Renderizza la mappa su schermo con viewport dedicata
 void showMap() {
   // settiamo il viewport
@@ -483,10 +465,6 @@ void showMap() {
   glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();
 
-  // riempe tutto lo screen buffer di pixel color sfondo
-  //glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-  //drawAxis(); // disegna assi frame VISTA
 
   // setto la posizione luce
   float tmpv[4] = {0, 1, 2,  0}; // ultima comp=0 => luce direzionale
@@ -599,7 +577,6 @@ void rendering(SDL_Window *win) {
   // riempe tutto lo screen buffer di pixel color sfondo
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-  //drawAxis(); // disegna assi frame VISTA
 
   // setto la posizione luce
   float tmpv[4] = {0, 1, 2,  0}; // ultima comp=0 => luce direzionale
@@ -610,23 +587,17 @@ void rendering(SDL_Window *win) {
   setCamera();
 
 
-  //drawAxis(); // disegna assi frame MONDO
-
   static float tmpcol[4] = {1, 1, 1,  1};
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, tmpcol);
   glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 127);
 
   glEnable(GL_LIGHTING);
 
-  // settiamo matrice di modellazione
-  //drawAxis(); // disegna assi frame OGGETTO
-  //drawCubeWire();
-
   drawSky(); // disegna il cielo come sfondo
 
   drawFloor(false); // disegna il suolo
 
-  drawTree(true); // disegna la pista
+  drawTree(false); 
 
   car.checkCollision(car.px, car.pz);
 
@@ -640,12 +611,12 @@ void rendering(SDL_Window *win) {
     loser = true;
   }
 
-  drawBillboard(true, loser); // disegna il cartellone
+  drawBillboard(false, loser); // disegna il cartellone
   drawPista(); // disegna la pista
 
   car.Render(); // disegna la macchina
 
-  drawGoals(car.totalGoals, false);
+  //drawGoals(car.totalGoals, false);
 
   if (useShadow)
   {
@@ -655,8 +626,8 @@ void rendering(SDL_Window *win) {
     glScalef(1.01, 0, 1.01); // appiattisco sulla Y, ingrandisco dell'1% sulla Z e sulla X
     glDisable(GL_LIGHTING); // niente lighing per l'ombra
 
-    drawTree(false); // disegna la pista
-    drawBillboard(false, loser); // disegna il cartellone
+    drawTree(true); 
+    drawBillboard(true, loser); // disegna il cartellone
 
     glEnable(GL_LIGHTING);
     glPopMatrix();
@@ -673,8 +644,6 @@ void rendering(SDL_Window *win) {
 
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
-
-  //drawFps();
 
   drawControlPanel();
   printCommands();
@@ -754,7 +723,6 @@ int main(int argc, char* argv[])
   if (!LoadTexture(8, (char *)"texture/dark_leather.jpg")) return 0;
   if (!LoadTexture(9, (char *)"texture/selfie.jpg")) return 0;
   if (!LoadTexture(10, (char *)"texture/decor_metal.jpg")) return 0;
-  if (!LoadTexture(11, (char *)"texture/road2.jpg")) return 0;
   if (!LoadTexture(12, (char *)"texture/grass.jpg")) return 0;
   if (!LoadTexture(13, (char *)"texture/button.jpg")) return 0;
   if (!LoadTexture(14, (char *)"texture/lose.jpg")) return 0;
