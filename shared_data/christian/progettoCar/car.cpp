@@ -421,7 +421,7 @@ void drawGoalCircle(float x, float y, float z, float r) {
   drawCircle(x, y, z, r / 4, false);
 }
 
-// Disegna un quadraato che rappresenta un "obiettivo" per lo score
+// Disegna un quadraato con coordinate e colore passati come parametri
 void drawGoalSquare(float x, float y, float z, float r, float g, float b) {
   glDisable(GL_LIGHTING);
   glPushMatrix();
