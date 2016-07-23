@@ -18,24 +18,24 @@
 ** Inizializzazione mesh
 */
 // Corpo Macchina
-Mesh antenna((char *)"ape/obj/antenna.obj"); // chiama il costruttore
+Mesh antenna((char *)"ape/obj/antenna.obj");
 Mesh asta((char *)"ape/obj/asta.obj");
 Mesh asta_brake((char *)"ape/obj/asta_brake.obj");
-Mesh backdetails((char *)"ape/obj/backdetails.obj"); // chiama il costruttore
+Mesh backdetails((char *)"ape/obj/backdetails.obj");
 Mesh backsits((char *)"ape/obj/backsits.obj");
-Mesh bars((char *)"ape/obj/bars.obj"); // chiama il costruttore
+Mesh bars((char *)"ape/obj/bars.obj");
 Mesh board((char *)"ape/obj/board.obj");
-Mesh bottomsits((char *)"ape/obj/bottomsits.obj"); // chiama il costruttore
+Mesh bottomsits((char *)"ape/obj/bottomsits.obj");
 Mesh brakes((char *)"ape/obj/brakes.obj");
 Mesh brake_block((char *)"ape/obj/brake_block.obj");
-Mesh carlinga((char *)"ape/obj/carlinga.obj"); // chiama il costruttore
+Mesh carlinga((char *)"ape/obj/carlinga.obj");
 Mesh glasses((char *)"ape/obj/glass.obj");
-Mesh interni((char *)"ape/obj/interni.obj"); // chiama il costruttore
+Mesh interni((char *)"ape/obj/interni.obj");
 Mesh lateral((char *)"ape/obj/lateral.obj");
-Mesh lights((char *)"ape/obj/lights.obj"); // chiama il costruttore
+Mesh lights((char *)"ape/obj/lights.obj");
 Mesh marmitta((char *)"ape/obj/marmitta.obj");
-Mesh mirrors((char *)"ape/obj/mirrors.obj"); // chiama il costruttore
-Mesh parafango((char *)"ape/obj/parafango.obj"); // chiama il costruttore
+Mesh mirrors((char *)"ape/obj/mirrors.obj");
+Mesh parafango((char *)"ape/obj/parafango.obj");
 Mesh details((char *)"ape/obj/details.obj");
 Mesh portapacchi_details((char *)"ape/obj/portapacchi_details.obj");
 Mesh shades((char *)"ape/obj/shades.obj");
@@ -588,7 +588,9 @@ void Car::RenderAllParts(bool usecolor, bool allParts) const {
 
     glPushMatrix();
     if (controller.key[Controller::BRAKE]) {
+      glTranslate(  asta_brake.bbmin );
       glRotatef( 1 * -freno, 1, 0, 0);
+      glTranslate( -asta_brake.bbmin );
     }
     asta_brake.RenderNxV();
     glPopMatrix();
