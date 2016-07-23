@@ -45,7 +45,9 @@ struct RECT
 RECT  menu[15];
 int   done = 0;
 
-/*added variables for scanline and z-buffer */
+/**
+* Variabili scan_conv per rasterizzazione e zbuffer
+*/
 float z_observer[MAXVERT];    /*coordinate z spazio dell'osservatore */
 float z_prosp_corr[MAXVERT];   /* coordinate con correzione prospettica */
 typedef float rvector[4];
@@ -56,8 +58,9 @@ float scan;
 
 float near = 20; // near plane
 float far = 30;  // far plane
-float B_correction;
+
 float A_correction;
+float B_correction;
 int polx[4], poly[4];
 float polz[4];
 float polz_e[4], polx_e[4], poly_e[4];
@@ -300,10 +303,11 @@ void trasf_prosp_gen(int k, int *init, float x, float y, float z,
   // Osservatore Z
   z_observer[k] = *ze = -x * cteta * sfi - y * steta * sfi - z * cfi + D;
 
-  /* scala piramide di vista */
+  // Scaling piramide vista
   *xe = *xe / tan(alpha);
   *ye = *ye / tan(alpha);
-  /* correzione prospettica */
+
+  // correzione prospettica
   *xe = *xe / *ze;
   *ye = *ye / *ze;
   *ze = A_correction + B_correction / *ze;
@@ -348,6 +352,7 @@ void define_view() {
      angolare iniziale */
   alpha = atan(s / D);
   /* printf("\nApertura angolare: %f \n",alpha);*/
+
   /* valori per correzione prospettica */
   A_correction = far / (far - near);
   B_correction = -(near * far) / (far - near);
@@ -392,7 +397,10 @@ float f01(float x0, float y0, float x1, float y1, float x, float y)
   return (y0 - y1) * x + (x1 - x0) * y + x0 * y1 - x1 * y0;
 }
 
-
+/*                                                                    */
+/*                       CLEAR_ZBUFFER                                */
+/*                                                                    */
+/*  Pulisce tabella dello zbuffer, mettendo a 2 tutti i valori.       */
 void clear_zbuffer() {
   for (int i = 0; i < AREA_ZBUFFER; i++) {
     for (int j = 0; j < AREA_ZBUFFER; j++) {
@@ -570,6 +578,8 @@ void fillscan(SDL_Renderer *ren) {
     z2 = za[startedge + 1];
     dz = (z2 - z1) / (x2 - x1);
     while (x1 <= x2) {
+      // Applico zbuffer verificando se il valore z è minore di quello
+      // salvato nella tabella dello z buffer
       if (z1 < z_buffer[y][x1]) {
         z_buffer[y][x1] = z1;
         alpha = f01(polx[1], poly[1], polx[2], poly[2], x1, y) /
@@ -642,10 +652,13 @@ void scanconv(SDL_Renderer *ren, int n) {
 void draw_texture(SDL_Renderer *ren, int kf, int i1, int i2, int i3, int i4) {
   int x0, y0, x1, y1, x2, y2;
   float z0, z1, z2;
+  int k;
 
   /*ogni faccia quadrata viene divisa in due triangoli */
-  for (int k = 0; k < 2; k++) {
-    if (k == 0) {
+  for (k = 0; k < 2; k++)
+  {
+    if (k == 0)
+    {
       /*triangolo immagine con cui texturare il triangolo schermo */
       xim0 = tx[kf][3]; yim0 = ty[kf][3];
       xim1 = tx[kf][2]; yim1 = ty[kf][2];
@@ -656,11 +669,14 @@ void draw_texture(SDL_Renderer *ren, int kf, int i1, int i2, int i3, int i4) {
       x1 = xs[i3]; y1 = ys[i3]; z1 = z_prosp_corr[i3];
       x2 = xs[i1]; y2 = ys[i1]; z2 = z_prosp_corr[i1];
 
+      // Coordinate immagine relative ai vertici
       polz_e[0] = z_observer[i4];
       polz_e[1] = z_observer[i3];
       polz_e[2] = z_observer[i1];
       polz_e[3] = z_observer[i4];
-    } else {
+    }
+    else
+    {
       /*triangolo immagine con cui texturare il triangolo schermo */
       xim0 = tx[kf][2]; yim0 = ty[kf][2];
       xim1 = tx[kf][1]; yim1 = ty[kf][1];
@@ -671,6 +687,7 @@ void draw_texture(SDL_Renderer *ren, int kf, int i1, int i2, int i3, int i4) {
       x1 = xs[i2]; y1 = ys[i2]; z1 = z_prosp_corr[i2];
       x2 = xs[i1]; y2 = ys[i1]; z2 = z_prosp_corr[i1];
 
+      // Coordinate immagine relative ai vertici
       polz_e[0] = z_observer[i3];
       polz_e[1] = z_observer[i2];
       polz_e[2] = z_observer[i1];
@@ -690,6 +707,8 @@ void draw_texture(SDL_Renderer *ren, int kf, int i1, int i2, int i3, int i4) {
     polz[1] = z1;
     polz[2] = z2;
     polz[3] = z0;
+    // Applico rasterizzazione scan_conv con
+    // specializzazione per i triangoli (3 lati)
     scanconv(ren, 3);
   }
 }
@@ -707,6 +726,7 @@ void draw_mesh(SDL_Renderer *ren, SDL_Surface *tux)
     ys[k] = (int)(Sy * (ywmin - ye) + yvmax + 0.5);
     z_prosp_corr[k] = ze;
   }
+  // Pulisco zbuffer prima di disegnare la texture
   clear_zbuffer();
   SDL_SetRenderDrawColor(ren, 100, 0, 0, 255);
   for (int k = 0; k < nface; k++) {
@@ -783,7 +803,7 @@ int main() {
     return 1;
   }
 
-  /* clear z-buffer */
+  // Inizializzo lo zbuffer
   clear_zbuffer();
 
   /* compute parameters */
