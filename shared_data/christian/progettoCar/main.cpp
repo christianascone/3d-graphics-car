@@ -49,6 +49,7 @@ Uint32 timeLastInterval = 0; // quando e' cominciato l'ultimo intervallo
 long timerInMillisec = 0;
 // Ultimo tempo (in millisecondi) raccolto
 long lastCheckTimer = 0;
+long maxTimer = 0;
 
 
 extern void setupGoals();
@@ -606,7 +607,8 @@ void rendering(SDL_Window *win) {
     printf("\nAggiornamento livello difficoltà \n");
     car.updateDifficultyLevel();
     resetTimer();
-    timerInMillisec *= 1.3;
+    timerInMillisec = maxTimer * 1.3;
+    maxTimer = timerInMillisec;
   } else if (timerInMillisec <= 0) {
     loser = true;
   }
@@ -733,6 +735,7 @@ int main(int argc, char* argv[])
   setupGoals();
 
   resetTimer();
+  maxTimer = timerInMillisec;
 
   bool done = 0;
   while (!done) {
@@ -751,7 +754,7 @@ int main(int argc, char* argv[])
         if (e.key.keysym.sym == SDLK_F4) useTransparency = !useTransparency;
         if (e.key.keysym.sym == SDLK_F5) useShadow = !useShadow;
         if (e.key.keysym.sym == SDLK_F6) useMap = !useMap;
-        if (e.key.keysym.sym == SDLK_F7) {car.resetScore(); resetTimer();}
+        if (e.key.keysym.sym == SDLK_F7) {car.resetScore(); resetTimer(); maxTimer = timerInMillisec;}
         break;
       case SDL_KEYUP:
         car.controller.EatKey(e.key.keysym.sym, keymap , false);
@@ -828,6 +831,7 @@ int main(int argc, char* argv[])
               } else if (index == 6) {
                 car.resetScore();
                 resetTimer();
+                maxTimer = timerInMillisec;
               }
             }
           }
