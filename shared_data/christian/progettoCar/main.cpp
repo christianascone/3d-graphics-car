@@ -616,7 +616,7 @@ void rendering(SDL_Window *win) {
 
   car.Render(); // disegna la macchina
 
-  //drawGoals(car.totalGoals, false);
+  drawGoals(car.totalGoals, false);
 
   if (useShadow)
   {
