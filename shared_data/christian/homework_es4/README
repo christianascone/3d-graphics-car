@@ -1,0 +1,9 @@
+Esercizio slide g10_rasterizing1516.pdf
+
+--
+
+Per compilare il sorgente ed eseguire il programma bisogna lanciare il seguente comando:
+    $ make run
+
+Una volta eseguito il programma si puo' interagire con la finestra usando i seguenti tasti:
+    - <esc> per chiudere la finestra
