@@ -1,0 +1,17 @@
+README
+
+include:
+File sorgente dell'homework
+GCGraLib2
+questo README
+Makefile
+FreeSans.ttf
+
+Homework #3 - persp_mesh
+
+All'interno è presente la GCGraLib2.
+All'avvio dell'eseguibile sarà possibile vedere la mesh mostrata in due finestre con osservatori diversi.
+
+Per disegnare la mesh è stato utilizzato una funzione generica che accettava in input tre parametri per modificare rispettivamente lo zoom, l'angolo teta e l'angolo fi. In questo modo, tale funzione è stata utilizzata per la prima finestra passando 0 in questi tre parametri, mentre per la seconda sono stati definiti al fine di avere un osservatore diverso.
+
+Per muovere la mesh si può utilizzare il mouse sulla mesh stessa oppure è anche possibile modificare i parametri mediante gli appositi bottoni a schermo.
