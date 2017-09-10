@@ -24,13 +24,13 @@ Vagrant.configure(2) do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-   #config.vm.provider "virtualbox" do |vb|
-     # Display the VirtualBox GUI when booting the machine
-    # vb.gui = true
+   config.vm.provider "virtualbox" do |vb|
+     #Display the VirtualBox GUI when booting the machine
+    #vb.gui = true
   
-     # Customize the amount of memory on the VM:
-     # vb.memory = "1024"
-   #end
+     #Customize the amount of memory on the VM:
+     vb.memory = "2048"
+   end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
@@ -50,7 +50,7 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
 config.vm.provision "shell" do |s|
-      s.inline = "apt-get update && apt-cache search libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev && apt-get install -y libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev lxde"
+      s.inline = "apt-get update && apt-cache search libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev && apt-get install -y libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev lxde g++ freeglut3-dev libgl1-mesa-glx mesa-utils"
       s.privileged = true
      end
 end
