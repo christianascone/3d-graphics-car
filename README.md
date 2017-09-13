@@ -1,4 +1,9 @@
-# 3d-graphics-car
+3d-graphics-car
+===============
+
+[![GitHub release](https://img.shields.io/github/release/christianascone/3d-graphics-car.svg?maxAge=2592000)](https://github.com/christianascone/3d-graphics-car/releases/latest)
+[![Apache2.0 licensed](https://img.shields.io/github/license/christianascone/3d-graphics-car.svg)](https://github.com/christianascone/3d-graphics-car/blob/master/LICENSE)
+
 3D computer graphics project which simulates a simple game with a car
 
 ## Getting Started
